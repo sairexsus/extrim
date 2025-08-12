@@ -135,16 +135,16 @@
   /* Рулетка */
   #rouletteWrapper {
     position: relative;
-    width: 180px;
-    height: 180px;
+    width: 240px;
+    height: 240px;
     user-select: none;
   }
   #rouletteWheel {
-    width: 180px;
-    height: 180px;
+    width: 240px;
+    height: 240px;
     border-radius: 50%;
-    border: 6px solid gold;
-    box-shadow: 0 0 20px gold;
+    border: 8px solid gold;
+    box-shadow: 0 0 30px gold;
     transition: transform 5s cubic-bezier(0.33, 1, 0.68, 1);
     background: conic-gradient(
       #a6f5a6 0deg 180deg,  /* зелёная половина */
@@ -155,7 +155,7 @@
     justify-content: center;
     align-items: center;
     font-weight: bold;
-    font-size: 22px;
+    font-size: 18px;
     user-select: none;
     text-shadow: 0 0 5px #000;
     color: #fff;
@@ -164,6 +164,8 @@
     user-select: none;
     pointer-events: none;
     color: #fff;
+    display: flex;
+    gap: 8px;
   }
   #labelCombined .green {
     color: #0a0;
@@ -175,14 +177,14 @@
   }
   #arrow {
     position: absolute;
-    top: -30px;
+    top: -40px;
     left: 50%;
-    transform: translateX(-50%) rotate(180deg);
+    transform: translateX(-50%) rotate(0deg);
     width: 0;
     height: 0;
     border-left: 15px solid transparent;
     border-right: 15px solid transparent;
-    border-top: 30px solid gold;
+    border-bottom: 30px solid gold;
     filter: drop-shadow(0 0 3px #fff);
     z-index: 10;
   }
@@ -227,7 +229,7 @@
   <div id="rouletteWrapper">
     <div id="arrow"></div>
     <div id="rouletteWheel">
-      <div id="labelCombined"><span class="green">x2</span> | <span class="red">Сгорело</span></div>
+      <div id="labelCombined"><span class="red">Сгорело</span> | <span class="green">x2</span></div>
     </div>
   </div>
 </div>
