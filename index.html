@@ -8,7 +8,7 @@
   body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: url('https://cdn.discordapp.com/attachments/1374833926157107230/1404916053280034876/photo_2025-08-12_22-54-11.jpg?ex=689ced89&is=689b9c09&hm=dbce8ca859a5a91a817267d7122bb7977&') no-repeat center center fixed;
+    background: url('https://cdn.pixabay.com/photo/2016/11/29/03/35/background-1869237_1280.jpg') no-repeat center center fixed;
     background-size: cover;
     display: flex;
     justify-content: center;
@@ -135,67 +135,59 @@
   /* Рулетка */
   #rouletteWrapper {
     position: relative;
-    width: 240px;
-    height: 240px;
+    width: 220px;
+    height: 220px;
     user-select: none;
   }
   #rouletteWheel {
-    width: 240px;
-    height: 240px;
+    width: 220px;
+    height: 220px;
     border-radius: 50%;
-    border: 8px solid gold;
-    box-shadow: 0 0 30px gold;
+    border: 6px solid gold;
+    box-shadow: 0 0 20px gold;
+    transition: transform 5s cubic-bezier(0.33, 1, 0.68, 1);
     background: conic-gradient(
-      #a6f5a6 0deg 180deg,  /* зелёная половина */
-      #f5a6a6 180deg 360deg /* красная половина */
+      #f5a6a6 0deg 180deg,  /* красная половина */
+      #a6f5a6 180deg 360deg /* зелёная половина */
     );
     position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-    font-size: 18px;
-    user-select: none;
-    text-shadow: 0 0 5px #000;
-    color: #fff;
-    transition: transform 5s ease-out;
   }
-  #labelCombined {
-    user-select: none;
-    pointer-events: none;
-    color: #fff;
-    display: flex;
-    gap: 8px;
+  /* Подписи снаружи круга */
+  #labelBurn {
     position: absolute;
     top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-  #labelCombined .red {
+    left: -60px;
+    transform: translateY(-50%);
     color: #a00;
-    text-shadow: 0 0 8px #f00;
+    font-weight: bold;
+    font-size: 16px;
+    user-select: none;
+    text-shadow: 0 0 5px #f00;
   }
-  #labelCombined .green {
+  #labelX2 {
+    position: absolute;
+    top: 50%;
+    right: -40px;
+    transform: translateY(-50%);
     color: #0a0;
-    text-shadow: 0 0 8px #0f0;
+    font-weight: bold;
+    font-size: 16px;
+    user-select: none;
+    text-shadow: 0 0 5px #0f0;
   }
   #arrow {
     position: absolute;
     top: 50%;
-    right: -50px;
-    transform: translateY(-50%) rotate(-90deg);
+    left: 15px;
+    transform: translateY(-50%) rotate(-90deg); /* Повернули стрелку на -90° (влево) */
     width: 0;
     height: 0;
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
-    border-bottom: 30px solid gold;
+    border-top: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+    border-left: 30px solid gold;
     filter: drop-shadow(0 0 3px #fff);
     z-index: 10;
     cursor: pointer;
-    transition: filter 0.3s ease;
-  }
-  #arrow:hover {
-    filter: drop-shadow(0 0 8px gold);
   }
   #resultMessage {
     margin-top: 15px;
@@ -216,7 +208,7 @@
 
     <div id="buttonsWrapper">
       <div id="twitchBtn" class="channel-btn active">
-        <img src="https://cdn.discordapp.com/attachments/1374833926157107230/1404918424618143866/twitch_logo_icon_189242.png?ex=689cefbe&is=689b9e3e&hm=21b7b891eeec9aae7f9d722dce7c5aacc398650975330bd7b35f89babffe5215&" alt="Twitch" />
+        <img src="https://cdn.discordapp.com/attachments/1374833926157107230/1404918424618143866/twitch_logo_icon_189242.png" alt="Twitch" />
         Twitch
       </div>
       <div id="youtubeBtn" class="channel-btn">
@@ -236,10 +228,10 @@
   </div>
 
   <div id="rouletteWrapper">
-    <div id="rouletteWheel">
-      <div id="labelCombined"><span class="red">Сгорело</span> | <span class="green">x2</span></div>
-    </div>
-    <div id="arrow" title="Стрелка рулетки (наведение)"></div>
+    <div id="arrow" title="Крутить рулетку"></div>
+    <div id="rouletteWheel"></div>
+    <div id="labelBurn">Сгорело</div>
+    <div id="labelX2">x2</div>
   </div>
 </div>
 
@@ -370,50 +362,57 @@
     createGrid();
   });
 
-  rouletteBtn.addEventListener('click', () => {
+  function spinRoulette() {
     if(rouletteSpinning || selectedCellIndex === null) return;
 
     rouletteSpinning = true;
     rouletteBtn.disabled = true;
     twitchBtn.classList.add('disabled');
     youtubeBtn.classList.add('disabled');
+    arrow.style.pointerEvents = 'none';
 
     resultMessage.textContent = 'Рулетка крутится...';
 
-    // Выбираем случайно выигрыш или сгорание
+    // 50/50 шанс, 0 или 1
     const winningHalf = Math.random() < 0.5 ? 0 : 1;
 
-    // Полное количество оборотов (3-6) для реалистичности
-    const spins = 3 + Math.random() * 3;
+    // Вращаем с 6 полными оборотами плюс случайный угол в нужном секторе
+    const spins = 6;
+    const sectorAngle = 180; // половина круга
+    
+    // Чтобы сделать рандомный угол внутри сектора:
+    // 0 - красная половина (0-180), 1 - зеленая (180-360)
+    let baseAngle = winningHalf === 0 ? 0 : 180;
+    let randomAngleInSector = Math.random() * sectorAngle;
+    let finalAngle = 360 * spins + baseAngle + randomAngleInSector;
 
-    // Угол остановки: 0..360 + offset чтобы попасть в нужную половину
-    // Зеленая половина: 0-180 градусов, красная: 180-360
-    const baseAngle = Math.random() * 180;
-    const stopAngle = 360 * spins + (winningHalf === 0 ? baseAngle : 180 + baseAngle);
-
-    // Применяем плавный переход вращения
-    rouletteWheel.style.transition = 'transform 5s cubic-bezier(0.25, 0.1, 0.25, 1)';
-    rouletteWheel.style.transform = `rotate(${stopAngle}deg)`;
+    rouletteWheel.style.transition = 'transform 5s cubic-bezier(0.33, 1, 0.68, 1)';
+    rouletteWheel.style.transform = `rotate(${finalAngle}deg)`;
 
     setTimeout(() => {
       rouletteSpinning = false;
-      if(winningHalf === 0) {
+      arrow.style.pointerEvents = 'auto';
+
+      const cell = grid.children[selectedCellIndex];
+
+      if(winningHalf === 1) {
         // Зеленая половина - выигрыш x2
-        const cell = grid.children[selectedCellIndex];
         let currentValue = parseInt(cell.textContent) || 0;
         let newValue = currentValue * 2;
         cell.textContent = newValue;
         resultMessage.innerHTML = `Поздравляем! Награда удвоена: <span style="color:#0f0;">${newValue}</span>`;
       } else {
         // Красная половина - сгорание суммы
-        const cell = grid.children[selectedCellIndex];
         cell.textContent = '💔';
         cell.classList.add('bomb');
         resultMessage.innerHTML = `<span style="color:#f00;">Сумма сгорела! 😢</span>`;
         gameOver = true;
       }
     }, 5200);
-  });
+  }
+
+  rouletteBtn.addEventListener('click', spinRoulette);
+  arrow.addEventListener('click', spinRoulette);
 
   showAllBtn.addEventListener('click', () => {
     for(let i=0; i < cellsCount; i++) {
