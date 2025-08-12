@@ -12,10 +12,14 @@
     background-size: cover;
     color: white;
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-direction: row;
+    align-items: flex-start;
     min-height: 100vh;
     padding: 20px;
+    gap: 30px;
+  }
+  main {
+    flex-grow: 1;
   }
   h1 {
     background: rgba(0,0,0,0.5);
@@ -92,20 +96,21 @@
     justify-content: center;
     gap: 10px;
   }
-  /* Рулетка */
+  /* Рулетка сбоку */
   #rouletteContainer {
-    margin-top: 30px;
-    width: 300px;
-    height: 300px;
+    width: 320px;
+    height: 320px;
     position: relative;
+    border: 6px solid gold;
+    border-radius: 50%;
+    background: #222;
+    box-shadow: 0 0 15px gold;
   }
   #roulette {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    border: 6px solid gold;
-    position: relative;
-    overflow: hidden;
+    display: block;
   }
   #arrow {
     position: absolute;
@@ -116,7 +121,7 @@
     height: 0; 
     border-left: 20px solid transparent;
     border-right: 20px solid transparent;
-    border-bottom: 30px solid red;
+    border-bottom: 30px solid #88cc88;
     z-index: 10;
   }
   /* Источник кнопок */
@@ -150,23 +155,25 @@
 </head>
 <body>
 
-<h1>EXTRIM Miner</h1>
+<main>
+  <h1>EXTRIM Miner</h1>
 
-<div id="sourceButtons">
-  <button id="twitchBtn" disabled>Twitch</button>
-  <button id="youtubeBtn">YouTube</button>
-</div>
+  <div id="sourceButtons">
+    <button id="twitchBtn" disabled>Twitch</button>
+    <button id="youtubeBtn">YouTube</button>
+  </div>
 
-<div id="grid"></div>
+  <div id="grid"></div>
 
-<div id="controls" style="display:none;">
-  <button id="showAllBtn">Показать скрытые ячейки</button>
-  <button id="upgradeBtn">Улучшить награду</button>
-</div>
+  <div id="controls" style="display:none;">
+    <button id="showAllBtn">Показать скрытые ячейки</button>
+    <button id="upgradeBtn">Улучшить награду</button>
+  </div>
+</main>
 
 <div id="rouletteContainer" style="display:none;">
   <div id="arrow"></div>
-  <canvas id="roulette" width="300" height="300"></canvas>
+  <canvas id="roulette" width="320" height="320"></canvas>
 </div>
 
 <script>
@@ -209,6 +216,7 @@
   let selectedIndex = null;
   let currentReward = 0;
   let rouletteSpinning = false;
+  let gameBlocked = false;
 
   function weightedRandom(weights) {
     const sum = weights.reduce((acc, cur) => acc + cur.weight, 0);
@@ -284,7 +292,7 @@
   }
 
   function onCellClick(i, cell) {
-    if(selectedIndex !== null) return;
+    if(gameBlocked || selectedIndex !== null) return;
     openCell(i, cell);
     selectedIndex = i;
     currentReward = cellsData[i].type === 'reward' ? cellsData[i].value : 0;
@@ -305,12 +313,12 @@
 
   // Рулетка setup
   const segments = [
-    {color: 'green', label: 'x2', multiplier: 2},
-    {color: 'red', label: 'Сгорело', multiplier: 0},
-    {color: 'green', label: 'x2', multiplier: 2},
-    {color: 'red', label: 'Сгорело', multiplier: 0},
-    {color: 'green', label: 'x2', multiplier: 2},
-    {color: 'red', label: 'Сгорело', multiplier: 0},
+    {color: '#a3d9a5', label: 'x2', multiplier: 2},    // мягкий зеленый
+    {color: '#e7a3a3', label: 'Сгорело', multiplier: 0}, // мягкий красный
+    {color: '#a3d9a5', label: 'x2', multiplier: 2},
+    {color: '#e7a3a3', label: 'Сгорело', multiplier: 0},
+    {color: '#a3d9a5', label: 'x2', multiplier: 2},
+    {color: '#e7a3a3', label: 'Сгорело', multiplier: 0},
   ];
   const segmentCount = segments.length;
   const segmentAngle = (2 * Math.PI) / segmentCount;
@@ -381,12 +389,13 @@
       animateNumber(cell, currentReward);
       alert('Поздравляем! Награда удвоена!');
     } else {
-      alert('Увы, награда сгорела!');
+      alert('Увы, награда сгорела! Игра окончена.');
       currentReward = 0;
       cell.textContent = '';
       cell.classList.remove('opened', 'selected', 'bomb');
       selectedIndex = null;
       controls.style.display = 'none';
+      gameBlocked = true;  // блокируем дальнейшие действия
     }
     rouletteContainer.style.display = 'none';
     upgradeBtn.disabled = false;
@@ -408,12 +417,14 @@
   }
 
   twitchBtn.onclick = () => {
+    if(gameBlocked) return;
     currentSource = 'twitch';
     twitchBtn.disabled = true;
     youtubeBtn.disabled = false;
     initGame();
   };
   youtubeBtn.onclick = () => {
+    if(gameBlocked) return;
     currentSource = 'youtube';
     twitchBtn.disabled = false;
     youtubeBtn.disabled = true;
@@ -426,6 +437,7 @@
   function initGame() {
     selectedIndex = null;
     currentReward = 0;
+    gameBlocked = false;
     controls.style.display = 'none';
     rouletteContainer.style.display = 'none';
     upgradeBtn.disabled = false;
