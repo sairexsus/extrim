@@ -151,35 +151,33 @@
       #f5a6a6 180deg 360deg /* красная половина */
     );
     position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 22px;
+    user-select: none;
+    text-shadow: 0 0 5px #000;
+    color: #fff;
   }
-  /* Подписи снаружи круга */
-  #labelX2 {
-    position: absolute;
-    top: 50%;
-    left: -40px;
-    transform: translateY(-50%);
+  #labelCombined {
+    user-select: none;
+    pointer-events: none;
+    color: #fff;
+  }
+  #labelCombined .green {
     color: #0a0;
-    font-weight: bold;
-    font-size: 20px;
-    user-select: none;
-    text-shadow: 0 0 5px #0f0;
+    text-shadow: 0 0 8px #0f0;
   }
-  #labelBurn {
-    position: absolute;
-    top: 50%;
-    right: -60px;
-    transform: translateY(-50%);
+  #labelCombined .red {
     color: #a00;
-    font-weight: bold;
-    font-size: 20px;
-    user-select: none;
-    text-shadow: 0 0 5px #f00;
+    text-shadow: 0 0 8px #f00;
   }
   #arrow {
     position: absolute;
     top: -30px;
     left: 50%;
-    transform: translateX(-50%) rotate(180deg); /* Повернули стрелку на 180° */
+    transform: translateX(-50%) rotate(180deg);
     width: 0;
     height: 0;
     border-left: 15px solid transparent;
@@ -228,9 +226,9 @@
 
   <div id="rouletteWrapper">
     <div id="arrow"></div>
-    <div id="rouletteWheel"></div>
-    <div id="labelX2">x2</div>
-    <div id="labelBurn">Сгорело</div>
+    <div id="rouletteWheel">
+      <div id="labelCombined"><span class="green">x2</span> | <span class="red">Сгорело</span></div>
+    </div>
   </div>
 </div>
 
@@ -373,11 +371,7 @@
     // 50/50 шанс, 0 или 1
     const winningHalf = Math.random() < 0.5 ? 0 : 1;
 
-    // Вращаем с 6 полными оборотами плюс нужный угол
     const spins = 6;
-    const sectorAngle = 180; // половина круга
-    // Угол остановки так, чтобы стрелка была по центру сектора:
-    // Если выигрыш (зелёная), сектор 0°-180°, стрелка смотрит вниз — значит угол поворота с учётом 360 градусов:
     const stopAngle = 360 * spins + (winningHalf === 0 ? 270 : 90);
 
     rouletteWheel.style.transition = 'transform 5s cubic-bezier(0.33, 1, 0.68, 1)';
