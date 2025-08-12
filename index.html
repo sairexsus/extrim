@@ -5,118 +5,202 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>EXTRIM Miner</title>
 <style>
-body {
+  /* Фон с затемнением и легким размытием */
+  body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    /* Фон с картинкой extrim.png из той же папки */
-    background: url('extrim.png') no-repeat center center fixed;
-    background-size: cover;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    height: 100vh;
-    color: white;
-}
-
-h1 {
+    justify-content: flex-start;
+    background: url('extrim.png') no-repeat center center fixed;
+    background-size: cover;
+    position: relative;
+    color: #fff;
+  }
+  /* Полупрозрачный тёмный слой для читаемости */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
     background: rgba(0, 0, 0, 0.6);
-    padding: 10px 20px;
-    border-radius: 10px;
-    user-select: none;
-}
+    backdrop-filter: blur(5px);
+    z-index: 0;
+  }
 
-.grid {
-    display: grid;
-    grid-template-columns: repeat(8, 60px);
-    grid-template-rows: repeat(8, 60px);
-    gap: 5px;
-    margin-top: 20px;
-    background: rgba(0, 0, 0, 0.5); /* полупрозрачный фон для сетки */
-    padding: 10px;
-    border-radius: 10px;
-}
+  h1 {
+    margin: 20px 0 10px 0;
+    font-weight: 700;
+    font-size: 2.5rem;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 0 10px rgba(0,0,0,0.7);
+  }
 
-.cell {
-    background: rgba(255, 255, 255, 0.9);
-    border: 2px solid #000;
+  .button-container {
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .source-btn {
+    font-size: 16px;
+    font-weight: 600;
+    padding: 10px 25px;
+    margin: 0 8px;
+    border: none;
+    border-radius: 30px;
     cursor: pointer;
-    font-size: 18px;
+    background-color: rgba(255, 215, 0, 0.8);
+    color: #000;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.6);
+    transition: background-color 0.3s, transform 0.2s;
+    user-select: none;
+  }
+  .source-btn:hover {
+    background-color: gold;
+    transform: scale(1.05);
+  }
+  .source-btn.active {
+    background-color: #ffd700;
+    box-shadow: 0 0 20px gold;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(8, 70px);
+    grid-template-rows: repeat(8, 70px);
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.45);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.7);
+    position: relative;
+    z-index: 1;
+  }
+
+  .cell {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    border: 2px solid #222;
+    box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+    font-size: 20px;
+    font-weight: 700;
+    color: #111;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: black;
-    font-weight: bold;
-    transition: transform 0.2s, background-color 0.3s;
+    cursor: pointer;
     user-select: none;
-    border-radius: 6px;
-}
+    transition: transform 0.2s, background-color 0.3s;
+  }
 
-.cell:hover {
-    transform: scale(1.05);
-    background: rgba(255, 255, 255, 1);
-}
+  .cell:hover {
+    background: #fff;
+    transform: scale(1.08);
+  }
 
-.cell[data-clicked="true"] {
-    background: rgba(200, 200, 200, 1);
+  .cell[data-clicked="true"] {
     cursor: default;
     transform: none;
-}
+    background: #eee;
+    color: #333;
+  }
 
-.bomb {
-    animation: bombFlash 0.5s infinite alternate;
-    background: red !important;
+  .bomb {
+    animation: bombFlash 0.6s infinite alternate;
+    background: #c62828 !important;
     color: white !important;
-    font-size: 24px;
-}
+    font-size: 26px;
+    box-shadow: 0 0 15px #ff3d3d;
+  }
+  @keyframes bombFlash {
+    0% { background: #c62828; }
+    100% { background: #b71c1c; }
+  }
 
-@keyframes bombFlash {
-    from { background: red; }
-    to { background: darkred; }
-}
+  .reward {
+    color: #2e7d32;
+    text-shadow: 0 0 6px #4caf50;
+  }
 
-.reward {
-    color: #00aa00;
-}
-
-button {
-    margin-top: 15px;
-    padding: 10px 25px;
-    font-size: 18px;
-    background: gold;
+  #upgradeBtn {
+    margin-top: 25px;
+    padding: 14px 40px;
+    font-size: 20px;
+    font-weight: 700;
     border: none;
-    border-radius: 5px;
+    border-radius: 40px;
+    background: linear-gradient(45deg, #ffd700, #ffab00);
+    color: #000;
     cursor: pointer;
-    font-weight: bold;
+    box-shadow: 0 0 25px #ffea00;
     user-select: none;
-    box-shadow: 0 0 8px gold;
-    transition: background-color 0.3s;
-}
-
-button:hover {
-    background-color: #ffdb4d;
-}
+    transition: background-color 0.3s, transform 0.2s;
+    position: relative;
+    z-index: 1;
+  }
+  #upgradeBtn:hover {
+    background: linear-gradient(45deg, #ffea00, #ffc107);
+    transform: scale(1.05);
+  }
+  #upgradeBtn:active {
+    transform: scale(0.95);
+  }
 </style>
 </head>
 <body>
 
 <h1>EXTRIM Miner</h1>
+
+<div class="button-container">
+  <button id="btnTwitch" class="source-btn active">Twitch</button>
+  <button id="btnYouTube" class="source-btn">YouTube</button>
+</div>
+
 <div class="grid" id="grid"></div>
 <button id="upgradeBtn" style="display:none;">Улучшить награду</button>
 
 <script>
   const grid = document.getElementById("grid");
   const upgradeBtn = document.getElementById("upgradeBtn");
+  const btnTwitch = document.getElementById("btnTwitch");
+  const btnYouTube = document.getElementById("btnYouTube");
+
   let currentRewardCell = null;
+  let currentSource = 'twitch';
 
-  const rewards = [2000, 2500, 3000, 4000, 5000];
+  // Twitch суммы и веса (чем больше сумма — тем меньше шанс)
+  const twitchRewards = [
+    {value: 1000, weight: 40},
+    {value: 1500, weight: 30},
+    {value: 2000, weight: 15},
+    {value: 2500, weight: 10},
+    {value: 5000, weight: 5},
+  ];
 
-  for (let i = 0; i < 64; i++) {
-    const cell = document.createElement("div");
-    cell.classList.add("cell");
-    cell.dataset.clicked = "false";
-    cell.addEventListener("click", () => handleClick(cell));
-    grid.appendChild(cell);
+  // YouTube сумма фиксированная 10000
+  const youtubeReward = 10000;
+
+  function weightedRandom(items) {
+    let total = items.reduce((sum, item) => sum + item.weight, 0);
+    let rand = Math.random() * total;
+    for (let item of items) {
+      if (rand < item.weight) return item.value;
+      rand -= item.weight;
+    }
+  }
+
+  function createGrid() {
+    grid.innerHTML = '';
+    for (let i = 0; i < 64; i++) {
+      const cell = document.createElement("div");
+      cell.classList.add("cell");
+      cell.dataset.clicked = "false";
+      cell.addEventListener("click", () => handleClick(cell));
+      grid.appendChild(cell);
+    }
   }
 
   function handleClick(cell) {
@@ -129,13 +213,20 @@ button:hover {
       cell.classList.add("bomb");
       upgradeBtn.style.display = "none";
       currentRewardCell = null;
-    } else {
-      let finalValue = rewards[Math.floor(Math.random() * rewards.length)];
-      animateNumber(cell, finalValue);
-      cell.classList.add("reward");
-      currentRewardCell = cell;
-      upgradeBtn.style.display = "block";
+      return;
     }
+
+    let finalValue;
+    if (currentSource === 'twitch') {
+      finalValue = weightedRandom(twitchRewards);
+    } else if (currentSource === 'youtube') {
+      finalValue = youtubeReward;
+    }
+
+    animateNumber(cell, finalValue);
+    cell.classList.add("reward");
+    currentRewardCell = cell;
+    upgradeBtn.style.display = "block";
   }
 
   function animateNumber(cell, target) {
@@ -158,6 +249,28 @@ button:hover {
       animateNumber(currentRewardCell, newValue);
     }
   });
+
+  btnTwitch.addEventListener("click", () => {
+    currentSource = 'twitch';
+    btnTwitch.classList.add("active");
+    btnYouTube.classList.remove("active");
+    resetGrid();
+  });
+
+  btnYouTube.addEventListener("click", () => {
+    currentSource = 'youtube';
+    btnYouTube.classList.add("active");
+    btnTwitch.classList.remove("active");
+    resetGrid();
+  });
+
+  function resetGrid() {
+    upgradeBtn.style.display = "none";
+    currentRewardCell = null;
+    createGrid();
+  }
+
+  createGrid();
 </script>
 
 </body>
