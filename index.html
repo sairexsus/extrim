@@ -11,14 +11,23 @@
     background: url('https://cdn.discordapp.com/attachments/1374833926157107230/1404916053280034876/photo_2025-08-12_22-54-11.jpg?ex=689ced89&is=689b9c09&hm=dbce8ca859b5b1fd093a02839aa670011908ba19a05a91a817267d7122bb7977&') no-repeat center center fixed;
     background-size: cover;
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    justify-content: center;
     padding: 20px;
     color: #eee;
     user-select: none;
     min-height: 100vh;
     background-color: rgba(0,0,0,0.6);
     background-blend-mode: multiply;
+  }
+  #container {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+  }
+  #leftSide {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   h1 {
     margin-bottom: 20px;
@@ -51,7 +60,6 @@
     opacity: 0.5;
     cursor: not-allowed;
   }
-  /* Иконки у кнопок */
   .channel-btn img {
     position: absolute;
     left: 10px;
@@ -65,7 +73,6 @@
     display: grid;
     grid-template-columns: repeat(8, 90px);
     grid-gap: 10px;
-    margin-bottom: 20px;
   }
   .cell {
     background: rgba(255,255,255,0.1);
@@ -123,28 +130,99 @@
     cursor: not-allowed;
     color: #555;
   }
+  /* Рулетка */
+  #rouletteWrapper {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    user-select: none;
+  }
+  #rouletteWheel {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 6px solid gold;
+    box-shadow: 0 0 20px gold;
+    transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
+  }
+  /* Секторы рулетки */
+  .sector {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    top: 50%;
+    left: 50%;
+    transform-origin: 0% 0%;
+    clip-path: polygon(100% 0, 0 100%, 0 0);
+    font-weight: bold;
+    color: black;
+    font-size: 18px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 10px;
+    user-select: none;
+  }
+  .sector.green {
+    background: #a6f5a6;
+  }
+  .sector.red {
+    background: #f5a6a6;
+  }
+  #arrow {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 30px solid gold;
+    filter: drop-shadow(0 0 3px #fff);
+  }
+  #resultMessage {
+    margin-top: 15px;
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+    min-height: 30px;
+    color: gold;
+    text-shadow: 0 0 5px #fff;
+  }
 </style>
 </head>
 <body>
 
-<h1>EXTRIM Miner</h1>
+<div id="container">
+  <div id="leftSide">
+    <h1>EXTRIM Miner</h1>
 
-<div id="buttonsWrapper">
-  <div id="twitchBtn" class="channel-btn active">
-    <img src="https://cdn.discordapp.com/attachments/1374833926157107230/1404918424618143866/twitch_logo_icon_189242.png?ex=689cefbe&is=689b9e3e&hm=21b7b891eeec9aae7f9d722dce7c5aacc398650975330bd7b35f89babffe5215&" alt="Twitch" />
-    Twitch
+    <div id="buttonsWrapper">
+      <div id="twitchBtn" class="channel-btn active">
+        <img src="https://cdn.discordapp.com/attachments/1374833926157107230/1404918424618143866/twitch_logo_icon_189242.png?ex=689cefbe&is=689b9e3e&hm=21b7b891eeec9aae7f9d722dce7c5aacc398650975330bd7b35f89babffe5215&" alt="Twitch" />
+        Twitch
+      </div>
+      <div id="youtubeBtn" class="channel-btn">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png" alt="YouTube" />
+        YouTube
+      </div>
+    </div>
+
+    <div id="grid"></div>
+
+    <div>
+      <button id="rouletteBtn" disabled>Запустить рулетку</button>
+      <button id="showAllBtn" disabled>Показать все ячейки</button>
+    </div>
+
+    <div id="resultMessage"></div>
   </div>
-  <div id="youtubeBtn" class="channel-btn">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png" alt="YouTube" />
-    YouTube
+
+  <div id="rouletteWrapper">
+    <div id="arrow"></div>
+    <div id="rouletteWheel"></div>
   </div>
-</div>
-
-<div id="grid"></div>
-
-<div style="margin-bottom: 20px;">
-  <button id="rouletteBtn" disabled>Запустить рулетку</button>
-  <button id="showAllBtn" disabled>Показать все ячейки</button>
 </div>
 
 <script>
@@ -153,12 +231,12 @@
   const youtubeBtn = document.getElementById('youtubeBtn');
   const rouletteBtn = document.getElementById('rouletteBtn');
   const showAllBtn = document.getElementById('showAllBtn');
+  const rouletteWheel = document.getElementById('rouletteWheel');
+  const resultMessage = document.getElementById('resultMessage');
 
-  // Награды для каждого канала
   const twitchRewards = [1000, 1500, 2000, 2500, 5000];
   const youtubeRewards = [1000, 1500, 2000, 2500, 5000, 10000];
 
-  // Вероятности выпадения наград (только для генерации)
   const twitchChances = [0.4, 0.3, 0.15, 0.1, 0.05];
   const youtubeChances = [0.4, 0.3, 0.15, 0.1, 0.05, 0.03];
 
@@ -169,15 +247,44 @@
   let cellsData = [];
   let selectedCellIndex = null;
   let gameOver = false;
+  let rouletteSpinning = false;
 
-  // Создаём сетку ячеек
+  // Секторы рулетки: true = зелёный (х2), false = красный (сгорает)
+  const rouletteSectors = [
+    {color: 'green', label: 'x2'},
+    {color: 'red', label: 'Сгорело'},
+    {color: 'green', label: 'x2'},
+    {color: 'red', label: 'Сгорело'},
+    {color: 'green', label: 'x2'},
+    {color: 'red', label: 'Сгорело'},
+    {color: 'green', label: 'x2'},
+    {color: 'red', label: 'Сгорело'}
+  ];
+
+  // Создаем рулетку визуально
+  function createRoulette() {
+    rouletteWheel.innerHTML = '';
+    const sectorAngle = 360 / rouletteSectors.length;
+
+    rouletteSectors.forEach((sector, i) => {
+      const div = document.createElement('div');
+      div.className = 'sector ' + sector.color;
+      div.style.transform = `rotate(${i * sectorAngle}deg) skewY(-${90 - sectorAngle}deg)`;
+      div.textContent = sector.label;
+      rouletteWheel.appendChild(div);
+    });
+  }
+
+  // Создаем поле ячеек
   function createGrid() {
     grid.innerHTML = '';
     cellsData = [];
     selectedCellIndex = null;
     gameOver = false;
+    rouletteSpinning = false;
     rouletteBtn.disabled = true;
     showAllBtn.disabled = true;
+    resultMessage.textContent = '';
 
     twitchBtn.classList.remove('disabled');
     youtubeBtn.classList.remove('disabled');
@@ -193,17 +300,16 @@
     generateCellsData();
   }
 
-  // Генерируем данные для ячеек (бомбы или сумма)
+  // Генерируем данные для ячеек
   function generateCellsData() {
     cellsData = [];
-    // Чтобы гарантировать высокую награду где-то
     const guaranteedIndex = Math.floor(Math.random() * cellsCount);
 
     for(let i=0; i < cellsCount; i++) {
       if(i === guaranteedIndex) {
         cellsData.push({type: 'reward', value: rewards[rewards.length - 1]});
       } else {
-        const bombChance = 0.2; // 20% вероятность бомбы
+        const bombChance = 0.2;
         if(Math.random() < bombChance) {
           cellsData.push({type: 'bomb'});
         } else {
@@ -226,8 +332,8 @@
 
   // Клик по ячейке
   function onCellClick(e) {
-    if(gameOver) return;
-    if(selectedCellIndex !== null) return; // Открывать можно только 1 ячейку
+    if(gameOver || rouletteSpinning) return;
+    if(selectedCellIndex !== null) return;
 
     const cell = e.currentTarget;
     const index = +cell.dataset.index;
@@ -247,15 +353,17 @@
       youtubeBtn.classList.add('disabled');
       twitchBtn.classList.remove('active');
       youtubeBtn.classList.remove('active');
+      resultMessage.textContent = 'Взорвалась бомба! Игра окончена.';
     } else {
       cell.textContent = data.value;
       rouletteBtn.disabled = false;
+      resultMessage.textContent = '';
     }
   }
 
   // Переключение каналов
   twitchBtn.addEventListener('click', () => {
-    if(gameOver) return;
+    if(gameOver || rouletteSpinning) return;
     if(selectedCellIndex !== null) return;
     rewards = twitchRewards;
     chances = twitchChances;
@@ -265,7 +373,7 @@
   });
 
   youtubeBtn.addEventListener('click', () => {
-    if(gameOver) return;
+    if(gameOver || rouletteSpinning) return;
     if(selectedCellIndex !== null) return;
     rewards = youtubeRewards;
     chances = youtubeChances;
@@ -274,11 +382,48 @@
     createGrid();
   });
 
+  // Запуск рулетки
   rouletteBtn.addEventListener('click', () => {
-    alert('Рулетка запущена! (Здесь добавь свою анимацию)');
+    if(rouletteSpinning || selectedCellIndex === null) return;
+
+    rouletteSpinning = true;
     rouletteBtn.disabled = true;
     twitchBtn.classList.add('disabled');
     youtubeBtn.classList.add('disabled');
+
+    resultMessage.textContent = 'Рулетка крутится...';
+
+    // Случайный сектор рулетки (0-7)
+    const winningIndex = Math.floor(Math.random() * rouletteSectors.length);
+
+    // Поворот рулетки на несколько полных оборотов + сектор
+    const spins = 6;
+    const sectorAngle = 360 / rouletteSectors.length;
+    const stopAngle = 360 * spins + (360 - winningIndex * sectorAngle) - sectorAngle / 2;
+
+    rouletteWheel.style.transition = 'transform 5s cubic-bezier(0.33, 1, 0.68, 1)';
+    rouletteWheel.style.transform = `rotate(${stopAngle}deg)`;
+
+    setTimeout(() => {
+      rouletteSpinning = false;
+      const sector = rouletteSectors[winningIndex];
+
+      if(sector.color === 'green') {
+        // Умножаем сумму в выбранной ячейке на 2
+        const cell = grid.children[selectedCellIndex];
+        let currentValue = parseInt(cell.textContent) || 0;
+        let newValue = currentValue * 2;
+        cell.textContent = newValue;
+        resultMessage.innerHTML = `Поздравляем! Награда удвоена: <span style="color:#0f0;">${newValue}</span>`;
+      } else {
+        // Сгорает сумма — ячейка краснеет, и игра заканчивается
+        const cell = grid.children[selectedCellIndex];
+        cell.textContent = '💔';
+        cell.classList.add('bomb');
+        resultMessage.innerHTML = `<span style="color:#f00;">Сумма сгорела! 😢</span>`;
+        gameOver = true;
+      }
+    }, 5200);
   });
 
   showAllBtn.addEventListener('click', () => {
@@ -297,6 +442,7 @@
     showAllBtn.disabled = true;
   });
 
+  createRoulette();
   createGrid();
 </script>
 
