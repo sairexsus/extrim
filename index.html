@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>EXTRIM Miner - Игра с ячейками</title>
+<title>EXTRIM Miner - Обновленная версия</title>
 <style>
   body {
     margin: 0;
@@ -68,13 +68,23 @@
     border-radius: 6px;
     font-weight: bold;
     cursor: pointer;
-    background: gold;
+    background: linear-gradient(45deg, #FFD700, #FFA500);
     color: black;
     user-select: none;
+    box-shadow: 0 0 8px #FFD700;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+  }
+  #showAllBtn:hover, #upgradeBtn:hover {
+    background: linear-gradient(45deg, #FFA500, #FFD700);
+    box-shadow: 0 0 14px #FFA500;
   }
   #upgradeBtn {
-    background: #4caf50;
     margin-left: 10px;
+  }
+  #upgradeBtn:disabled {
+    background: #666;
+    box-shadow: none;
+    cursor: not-allowed;
   }
   #controls {
     margin-top: 15px;
@@ -109,11 +119,43 @@
     border-bottom: 30px solid red;
     z-index: 10;
   }
+  /* Источник кнопок */
+  #sourceButtons {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 15px;
+  }
+  #sourceButtons button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 6px;
+    border: none;
+    background: linear-gradient(45deg, #FFD700, #FFA500);
+    color: black;
+    box-shadow: 0 0 8px #FFD700;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+  }
+  #sourceButtons button:hover:not(:disabled) {
+    background: linear-gradient(45deg, #FFA500, #FFD700);
+    box-shadow: 0 0 14px #FFA500;
+  }
+  #sourceButtons button:disabled {
+    background: #666;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
 </style>
 </head>
 <body>
 
 <h1>EXTRIM Miner</h1>
+
+<div id="sourceButtons">
+  <button id="twitchBtn" disabled>Twitch</button>
+  <button id="youtubeBtn">YouTube</button>
+</div>
 
 <div id="grid"></div>
 
@@ -136,26 +178,13 @@
   const rouletteCanvas = document.getElementById('roulette');
   const ctx = rouletteCanvas.getContext('2d');
 
+  const twitchBtn = document.getElementById('twitchBtn');
+  const youtubeBtn = document.getElementById('youtubeBtn');
+
   const ROWS = 8;
   const COLS = 8;
   const TOTAL_CELLS = ROWS * COLS;
 
-  // Суммы Twitch и YouTube
-  // Twitch: 1000, 1500, 2000, 2500, 5000 (круглые, меньше шанс на большие)
-  // YouTube: добавляем 10000
-
-  // Вероятности (чем больше сумма - тем меньше шанс)
-  // Можно использовать веса: например
-  // 1000 - 30%
-  // 1500 - 25%
-  // 2000 - 20%
-  // 2500 - 15%
-  // 5000 - 8%
-  // 10000 - 2%
-
-  // Но 10000 только для YouTube, остальные для Twitch
-
-  // Для упрощения создадим массив с весами для Twitch
   const twitchValues = [
     {value: 1000, weight: 30},
     {value: 1500, weight: 25},
@@ -173,22 +202,14 @@
     {value: 10000, weight: 2},
   ];
 
-  // Начинаем с Twitch как по умолчанию
   let currentSource = 'twitch';
-
-  // Вероятность бомбы - 20%
   const bombChance = 0.2;
 
-  // Массив с данными по ячейкам, чтобы хранить реальные значения
   let cellsData = [];
-
-  // Выбранная ячейка (индекс)
   let selectedIndex = null;
-
-  // Текущая сумма в выбранной ячейке
   let currentReward = 0;
+  let rouletteSpinning = false;
 
-  // Функция для выбора значения по весам
   function weightedRandom(weights) {
     const sum = weights.reduce((acc, cur) => acc + cur.weight, 0);
     let rnd = Math.random() * sum;
@@ -199,18 +220,14 @@
     return weights[weights.length -1].value;
   }
 
-  // Гарантируем хотя бы одну 5000 в массиве
   function generateCells() {
     cellsData = [];
-
-    // Сначала ставим одну 5000 случайно
     const guaranteedIndex = Math.floor(Math.random() * TOTAL_CELLS);
     for(let i=0; i<TOTAL_CELLS; i++) {
       if(i === guaranteedIndex) {
         cellsData[i] = { type: 'reward', value: 5000 };
         continue;
       }
-      // Решаем бомба или сумма
       if(Math.random() < bombChance) {
         cellsData[i] = { type: 'bomb' };
       } else {
@@ -221,7 +238,6 @@
     }
   }
 
-  // Создаем сетку
   function createGrid() {
     grid.innerHTML = '';
     for(let i=0; i<TOTAL_CELLS; i++) {
@@ -234,7 +250,6 @@
     }
   }
 
-  // Открытие ячейки
   function openCell(i, cell) {
     const data = cellsData[i];
     cell.classList.add('opened');
@@ -246,23 +261,30 @@
     }
   }
 
-  // Анимация числа
   function animateNumber(cell, target) {
-    let value = 0;
-    let step = Math.ceil(target / 20);
-    const interval = setInterval(() => {
-      value += step;
-      if(value >= target) {
-        value = target;
-        clearInterval(interval);
+    let value = parseInt(cell.textContent) || 0;
+    let start = value;
+    let diff = target - start;
+    let duration = 600;
+    let startTime = null;
+
+    function step(timestamp) {
+      if(!startTime) startTime = timestamp;
+      let progress = timestamp - startTime;
+      let percent = Math.min(progress / duration, 1);
+      let current = Math.floor(start + diff * percent);
+      cell.textContent = current;
+      if(percent < 1) {
+        requestAnimationFrame(step);
+      } else {
+        cell.textContent = target;
       }
-      cell.textContent = value;
-    }, 30);
+    }
+    requestAnimationFrame(step);
   }
 
-  // Клик по ячейке
   function onCellClick(i, cell) {
-    if(selectedIndex !== null) return; // уже выбрана ячейка
+    if(selectedIndex !== null) return;
     openCell(i, cell);
     selectedIndex = i;
     currentReward = cellsData[i].type === 'reward' ? cellsData[i].value : 0;
@@ -272,36 +294,16 @@
     upgradeBtn.style.display = cellsData[i].type === 'reward' ? 'inline-block' : 'none';
   }
 
-  // Показать все ячейки
   function showAllCells() {
     const cells = document.querySelectorAll('.cell');
     cells.forEach((cell, idx) => {
-      if(idx === selectedIndex) return; // уже открыта и подсвечена
+      if(idx === selectedIndex) return;
       openCell(idx, cell);
     });
     showAllBtn.style.display = 'none';
   }
 
-  // Обновление суммы в выбранной ячейке
-  function upgradeReward() {
-    // 50% шанс что сработает
-    if(Math.random() > 0.5) {
-      alert('Удача не на твоей стороне! Сумма сгорела!');
-      currentReward = 0;
-      const cell = document.querySelector(`.cell[data-index='${selectedIndex}']`);
-      if(cell) {
-        cell.textContent = '';
-        cell.classList.remove('opened', 'selected', 'bomb');
-      }
-      selectedIndex = null;
-      controls.style.display = 'none';
-      return;
-    }
-    // Появляется рулетка для выбора x2 или сгорания
-    startRoulette();
-  }
-
-  // Рулетка
+  // Рулетка setup
   const segments = [
     {color: 'green', label: 'x2', multiplier: 2},
     {color: 'red', label: 'Сгорело', multiplier: 0},
@@ -335,7 +337,6 @@
       ctx.lineTo(0,0);
       ctx.fill();
 
-      // Текст
       ctx.fillStyle = 'black';
       ctx.font = 'bold 20px Arial';
       ctx.textAlign = 'center';
@@ -353,14 +354,11 @@
     if(!spinStartTime) spinStartTime = timestamp;
     const elapsed = timestamp - spinStartTime;
 
-    // easing для плавного торможения
     const easeOut = t => 1 - Math.pow(1 - t, 3);
-
     let progress = Math.min(elapsed / spinDuration, 1);
     const easedProgress = easeOut(progress);
 
-    // Угол крутится много раз + до нужного сегмента
-    const rotations = 6; // сколько полных оборотов
+    const rotations = 6;
     const finalAngle = rotations * 2 * Math.PI + (segmentCount - finalSegmentIndex) * segmentAngle - segmentAngle/2;
 
     rouletteAngle = finalAngle * easedProgress;
@@ -379,12 +377,10 @@
 
     const seg = segments[finalSegmentIndex];
     if(seg.multiplier === 2) {
-      // Удваиваем сумму
       currentReward *= 2;
       animateNumber(cell, currentReward);
       alert('Поздравляем! Награда удвоена!');
     } else {
-      // Сгорает
       alert('Увы, награда сгорела!');
       currentReward = 0;
       cell.textContent = '';
@@ -394,61 +390,39 @@
     }
     rouletteContainer.style.display = 'none';
     upgradeBtn.disabled = false;
+    rouletteSpinning = false;
   }
 
   function startRoulette() {
-    if(spinning) return;
-    spinning = true;
+    if(rouletteSpinning) return;
+    if(currentReward === 0) {
+      alert('Нет награды для улучшения!');
+      return;
+    }
+    rouletteSpinning = true;
     upgradeBtn.disabled = true;
     rouletteContainer.style.display = 'block';
-    // Выбираем случайный сегмент
     finalSegmentIndex = Math.floor(Math.random() * segmentCount);
     spinStartTime = null;
     requestAnimationFrame(animateRoulette);
   }
 
-  // Кнопки для смены источника (Twitch/YouTube)
-  function createSourceButtons() {
-    const container = document.createElement('div');
-    container.style.marginBottom = '20px';
-    container.style.display = 'flex';
-    container.style.gap = '15px';
+  twitchBtn.onclick = () => {
+    currentSource = 'twitch';
+    twitchBtn.disabled = true;
+    youtubeBtn.disabled = false;
+    initGame();
+  };
+  youtubeBtn.onclick = () => {
+    currentSource = 'youtube';
+    twitchBtn.disabled = false;
+    youtubeBtn.disabled = true;
+    initGame();
+  };
 
-    const twitchBtn = document.createElement('button');
-    twitchBtn.textContent = 'Twitch';
-    twitchBtn.style.padding = '10px 20px';
-    twitchBtn.style.fontSize = '16px';
-    twitchBtn.style.cursor = 'pointer';
-    twitchBtn.style.fontWeight = 'bold';
+  showAllBtn.onclick = () => showAllCells();
+  upgradeBtn.onclick = () => startRoulette();
 
-    const youtubeBtn = document.createElement('button');
-    youtubeBtn.textContent = 'YouTube';
-    youtubeBtn.style.padding = '10px 20px';
-    youtubeBtn.style.fontSize = '16px';
-    youtubeBtn.style.cursor = 'pointer';
-    youtubeBtn.style.fontWeight = 'bold';
-
-    twitchBtn.onclick = () => {
-      currentSource = 'twitch';
-      initGame();
-      twitchBtn.disabled = true;
-      youtubeBtn.disabled = false;
-    };
-    youtubeBtn.onclick = () => {
-      currentSource = 'youtube';
-      initGame();
-      twitchBtn.disabled = false;
-      youtubeBtn.disabled = true;
-    };
-
-    container.appendChild(twitchBtn);
-    container.appendChild(youtubeBtn);
-
-    document.body.insertBefore(container, grid);
-    twitchBtn.disabled = true; // По умолчанию выбран Twitch
-  }
-
-  // Инициализация игры
   function initGame() {
     selectedIndex = null;
     currentReward = 0;
@@ -459,18 +433,7 @@
     createGrid();
   }
 
-  // Навешиваем обработчики кнопок
-  showAllBtn.onclick = () => {
-    showAllCells();
-  };
-  upgradeBtn.onclick = () => {
-    upgradeReward();
-  };
-
-  // Стартуем
-  createSourceButtons();
   initGame();
-
 </script>
 </body>
 </html>
