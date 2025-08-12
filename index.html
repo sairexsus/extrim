@@ -71,7 +71,7 @@
   }
   #grid {
     display: grid;
-    grid-template-columns: repeat(8, 100px);
+    grid-template-columns: repeat(8, 80px);
     grid-gap: 10px;
   }
   .cell {
@@ -80,15 +80,15 @@
     border-radius: 12px;
     cursor: pointer;
     font-weight: bold;
-    font-size: 32px;
+    font-size: 24px;
     color: #b0f2b6;
     display: flex;
     align-items: center;
     justify-content: center;
     user-select: none;
     transition: background-color 0.3s, transform 0.3s;
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
   }
   .cell:hover:not(.opened) {
     background-color: rgba(50,255,50,0.3);
@@ -135,13 +135,13 @@
   /* Рулетка */
   #rouletteWrapper {
     position: relative;
-    width: 200px;
-    height: 200px;
+    width: 180px;
+    height: 180px;
     user-select: none;
   }
   #rouletteWheel {
-    width: 200px;
-    height: 200px;
+    width: 180px;
+    height: 180px;
     border-radius: 50%;
     border: 6px solid gold;
     box-shadow: 0 0 20px gold;
@@ -152,19 +152,19 @@
   /* Секторы рулетки */
   .sector {
     position: absolute;
-    width: 100px;
-    height: 100px;
+    width: 90px;
+    height: 90px;
     top: 50%;
     left: 50%;
     transform-origin: 0% 0%;
     clip-path: polygon(100% 0, 0 100%, 0 0);
     font-weight: bold;
     color: black;
-    font-size: 18px;
+    font-size: 16px;
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    padding-left: 10px;
+    padding-left: 8px;
     user-select: none;
   }
   .sector.green {
@@ -175,14 +175,14 @@
   }
   #arrow {
     position: absolute;
-    top: -25px;
+    top: -20px;
     left: 50%;
     transform: translateX(-50%);
     width: 0;
     height: 0;
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
-    border-bottom: 30px solid gold;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-bottom: 25px solid gold;
     filter: drop-shadow(0 0 3px #fff);
     z-index: 10;
   }
@@ -254,7 +254,6 @@
   let gameOver = false;
   let rouletteSpinning = false;
 
-  // Секторы рулетки: true = зелёный (х2), false = красный (сгорает)
   const rouletteSectors = [
     {color: 'green', label: 'x2'},
     {color: 'red', label: 'Сгорело'},
@@ -266,7 +265,6 @@
     {color: 'red', label: 'Сгорело'}
   ];
 
-  // Создаем рулетку визуально
   function createRoulette() {
     rouletteWheel.innerHTML = '';
     const sectorAngle = 360 / rouletteSectors.length;
@@ -280,7 +278,6 @@
     });
   }
 
-  // Создаем поле ячеек
   function createGrid() {
     grid.innerHTML = '';
     cellsData = [];
@@ -305,7 +302,6 @@
     generateCellsData();
   }
 
-  // Генерируем данные для ячеек
   function generateCellsData() {
     cellsData = [];
     const guaranteedIndex = Math.floor(Math.random() * cellsCount);
@@ -324,7 +320,6 @@
     }
   }
 
-  // Получить случайную награду по шансам
   function getRandomReward() {
     let r = Math.random();
     let sum = 0;
@@ -335,7 +330,6 @@
     return rewards[0];
   }
 
-  // Клик по ячейке
   function onCellClick(e) {
     if(gameOver || rouletteSpinning) return;
     if(selectedCellIndex !== null) return;
@@ -366,7 +360,6 @@
     }
   }
 
-  // Переключение каналов
   twitchBtn.addEventListener('click', () => {
     if(gameOver || rouletteSpinning) return;
     if(selectedCellIndex !== null) return;
@@ -387,7 +380,6 @@
     createGrid();
   });
 
-  // Запуск рулетки
   rouletteBtn.addEventListener('click', () => {
     if(rouletteSpinning || selectedCellIndex === null) return;
 
@@ -398,10 +390,8 @@
 
     resultMessage.textContent = 'Рулетка крутится...';
 
-    // Случайный сектор рулетки (0-7)
     const winningIndex = Math.floor(Math.random() * rouletteSectors.length);
 
-    // Поворот рулетки на несколько полных оборотов + сектор
     const spins = 6;
     const sectorAngle = 360 / rouletteSectors.length;
     const stopAngle = 360 * spins + (360 - winningIndex * sectorAngle) - sectorAngle / 2;
@@ -414,14 +404,12 @@
       const sector = rouletteSectors[winningIndex];
 
       if(sector.color === 'green') {
-        // Умножаем сумму в выбранной ячейке на 2
         const cell = grid.children[selectedCellIndex];
         let currentValue = parseInt(cell.textContent) || 0;
         let newValue = currentValue * 2;
         cell.textContent = newValue;
         resultMessage.innerHTML = `Поздравляем! Награда удвоена: <span style="color:#0f0;">${newValue}</span>`;
       } else {
-        // Сгорает сумма — ячейка краснеет, и игра заканчивается
         const cell = grid.children[selectedCellIndex];
         cell.textContent = '💔';
         cell.classList.add('bomb');
