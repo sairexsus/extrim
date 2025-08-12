@@ -1,2 +1,2 @@
 # extrim
-Extrim miner 
+Extrim miner
