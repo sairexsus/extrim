@@ -8,7 +8,7 @@
   body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: url('https://cdn.discordapp.com/attachments/1374833926157107230/1404916053280034876/photo_2025-08-12_22-54-11.jpg?ex=689ced89&is=689b9c09&hm=dbce8ca859b5b1fd093a02839aa670011908ba19a05a91a817267d7122bb7977&') no-repeat center center fixed;
+    background: url('https://cdn.discordapp.com/attachments/1374833926157107230/1404916053280034876/photo_2025-08-12_22-54-11.jpg?ex=689ced89&is=689b9c09&hm=dbce8ca859a5a91a817267d7122bb7977&') no-repeat center center fixed;
     background-size: cover;
     display: flex;
     justify-content: center;
@@ -152,15 +152,13 @@
     );
     position: relative;
     display: flex;
-    justify-content: flex-start; /* сдвинули текст влево */
+    justify-content: center;
     align-items: center;
     font-weight: bold;
     font-size: 18px;
     user-select: none;
     text-shadow: 0 0 5px #000;
     color: #fff;
-    padding-left: 25px;
-    box-sizing: border-box;
   }
   #labelCombined {
     user-select: none;
@@ -168,6 +166,10 @@
     color: #fff;
     display: flex;
     gap: 8px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
   #labelCombined .red {
     color: #a00;
@@ -179,9 +181,9 @@
   }
   #arrow {
     position: absolute;
-    top: -40px;
-    left: 60%; /* сдвинули вправо от центра */
-    transform: translateX(-50%) rotate(0deg);
+    top: 50%;
+    right: -50px; /* ровно сбоку рулетки */
+    transform: translateY(-50%) rotate(0deg);
     width: 0;
     height: 0;
     border-left: 15px solid transparent;
@@ -234,10 +236,10 @@
   </div>
 
   <div id="rouletteWrapper">
-    <div id="arrow" title="Стрелка рулетки (наведение)"></div>
     <div id="rouletteWheel">
       <div id="labelCombined"><span class="red">Сгорело</span> | <span class="green">x2</span></div>
     </div>
+    <div id="arrow" title="Стрелка рулетки (наведение)"></div>
   </div>
 </div>
 
