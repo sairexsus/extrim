@@ -145,7 +145,6 @@
     border-radius: 50%;
     border: 8px solid gold;
     box-shadow: 0 0 30px gold;
-    transition: transform 5s cubic-bezier(0.33, 1, 0.68, 1);
     background: conic-gradient(
       #a6f5a6 0deg 180deg,  /* зелёная половина */
       #f5a6a6 180deg 360deg /* красная половина */
@@ -159,6 +158,7 @@
     user-select: none;
     text-shadow: 0 0 5px #000;
     color: #fff;
+    transition: transform 5s ease-out;
   }
   #labelCombined {
     user-select: none;
@@ -182,8 +182,8 @@
   #arrow {
     position: absolute;
     top: 50%;
-    right: -50px; /* ровно сбоку рулетки */
-    transform: translateY(-50%) rotate(0deg);
+    right: -50px;
+    transform: translateY(-50%) rotate(-90deg);
     width: 0;
     height: 0;
     border-left: 15px solid transparent;
@@ -380,13 +380,19 @@
 
     resultMessage.textContent = 'Рулетка крутится...';
 
-    // 50/50 шанс, 0 или 1
+    // Выбираем случайно выигрыш или сгорание
     const winningHalf = Math.random() < 0.5 ? 0 : 1;
 
-    const spins = 6;
-    const stopAngle = 360 * spins + (winningHalf === 0 ? 270 : 90);
+    // Полное количество оборотов (3-6) для реалистичности
+    const spins = 3 + Math.random() * 3;
 
-    rouletteWheel.style.transition = 'transform 5s cubic-bezier(0.33, 1, 0.68, 1)';
+    // Угол остановки: 0..360 + offset чтобы попасть в нужную половину
+    // Зеленая половина: 0-180 градусов, красная: 180-360
+    const baseAngle = Math.random() * 180;
+    const stopAngle = 360 * spins + (winningHalf === 0 ? baseAngle : 180 + baseAngle);
+
+    // Применяем плавный переход вращения
+    rouletteWheel.style.transition = 'transform 5s cubic-bezier(0.25, 0.1, 0.25, 1)';
     rouletteWheel.style.transform = `rotate(${stopAngle}deg)`;
 
     setTimeout(() => {
