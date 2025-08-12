@@ -105,6 +105,8 @@
     border-radius: 50%;
     background: #222;
     box-shadow: 0 0 15px gold;
+    margin-top: 20px; /* немного отступ сверху */
+    overflow: visible; /* чтобы стрелка не обрезалась */
   }
   #roulette {
     width: 100%;
@@ -114,15 +116,16 @@
   }
   #arrow {
     position: absolute;
-    top: -20px;
+    top: -40px; /* поднята выше */
     left: 50%;
     transform: translateX(-50%);
-    width: 0; 
-    height: 0; 
+    width: 0;
+    height: 0;
     border-left: 20px solid transparent;
     border-right: 20px solid transparent;
     border-bottom: 30px solid #88cc88;
-    z-index: 10;
+    z-index: 20;
+    filter: drop-shadow(0 0 2px #333);
   }
   /* Источник кнопок */
   #sourceButtons {
