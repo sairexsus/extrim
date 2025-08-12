@@ -8,7 +8,7 @@
   body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: url('https://cdn.discordapp.com/attachments/1374833926157107230/1404916053280034876/photo_2025-08-12_22-54-11.jpg') no-repeat center center fixed;
+    background: url('https://i.imgur.com/kRkQq3z.jpg') no-repeat center center fixed;
     background-size: cover;
     display: flex;
     justify-content: center;
@@ -216,7 +216,7 @@
 
     <div id="buttonsWrapper">
       <div id="twitchBtn" class="channel-btn active">
-        <img src="https://cdn.discordapp.com/attachments/1374833926157107230/1404918424618143866/twitch_logo_icon_189242.png?ex=689cefbe&is=689b9e3e&hm=21b7b891eeec9aae7f9d722dce7c5aacc398650975330bd7b35f89babffe5215&" alt="Twitch" />
+        <img src="https://cdn.discordapp.com/attachments/1374833926157107230/1404918424618143866/twitch_logo_icon_189242.png" alt="Twitch" />
         Twitch
       </div>
       <div id="youtubeBtn" class="channel-btn">
@@ -386,7 +386,7 @@
     // Полное количество оборотов (3-6) для реалистичности
     const spins = 3 + Math.random() * 3;
 
-    // Угол остановки: 0..180 + offset чтобы попасть в нужную половину
+    // Угол остановки: 0..360 + offset чтобы попасть в нужную половину
     // Зеленая половина: 0-180 градусов, красная: 180-360
     const baseAngle = Math.random() * 180;
     const stopAngle = 360 * spins + (winningHalf === 0 ? baseAngle : 180 + baseAngle);
