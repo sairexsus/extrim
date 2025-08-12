@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>EXTRIM Miner</title>
+<title></title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600&family=Roboto&display=swap');
   body {
     margin: 0;
     font-family: 'Roboto', sans-serif;
-    background: linear-gradient(135deg, #1f1c2c, #928dab);
+    background: url('https://cdn.discordapp.com/attachments/1374833926157107230/1404916053280034876/photo_2025-08-12_22-54-11.jpg?ex=689ced89&is=689b9c09&hm=dbce8ca859b5b1fd093a02839aa670011908ba19a05a91a817267d7122bb7977&') no-repeat center center fixed;
+    background-size: cover;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -18,6 +19,15 @@
     color: #eee;
     padding: 25px 20px;
     user-select: none;
+    position: relative;
+  }
+  /* затемнение фона для читаемости */
+  body::before {
+    content: '';
+    position: fixed;
+    top:0; left:0; right:0; bottom:0;
+    background: rgba(0,0,0,0.55);
+    z-index: -1;
   }
   h1 {
     font-family: 'Montserrat', sans-serif;
@@ -90,14 +100,27 @@
     text-shadow: 0 0 10px #00ff00;
   }
   .cell.bomb {
-    animation: bombFlash 0.7s infinite alternate;
     background: #ff3d3d !important;
     color: #fff !important;
     text-shadow: 0 0 12px #ff0000;
+    animation: bombExplode 0.8s ease forwards;
   }
-  @keyframes bombFlash {
-    from { box-shadow: 0 0 10px 3px #ff3d3d; }
-    to { box-shadow: 0 0 30px 10px #ff0000; }
+  @keyframes bombExplode {
+    0% {
+      box-shadow: 0 0 20px 5px #ff3d3d;
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      box-shadow: 0 0 40px 20px #ff0000;
+      transform: scale(1.3);
+      opacity: 1;
+    }
+    100% {
+      box-shadow: 0 0 60px 40px #ff0000;
+      transform: scale(1.6);
+      opacity: 0;
+    }
   }
   #rouletteBtn {
     padding: 14px 28px;
@@ -318,9 +341,14 @@
     if(data.type === 'bomb') {
       cell.textContent = '💣';
       cell.classList.add('bomb');
-      rouletteBtn.disabled = true; // Заблокировать рулетку при бомбе
+      // Убрал alert
+      // После анимации взрыва блокируем игру
       gameOver = true;
-      alert('Вы попали на бомбу! Игра окончена.');
+      rouletteBtn.disabled = true;
+      // Через 800мс убрать возможность кликов
+      setTimeout(() => {
+        // Можно добавить дополнительные действия после анимации взрыва
+      }, 800);
     } else {
       animateNumber(cell, 0, data.value);
       cell.classList.add('reward');
@@ -412,55 +440,4 @@
       spinTime += 30;
       if(spinTime >= spinTimeTotal) {
         finishSpin();
-        return;
-      }
-      const angle = easeOut(spinTime / spinTimeTotal) * 2 * Math.PI * 6;
-      drawRoulette(angle);
-      requestAnimationFrame(rotate);
-    }
-
-    function finishSpin() {
-      const finalAngle = easeOut(spinTime / spinTimeTotal) * 2 * Math.PI * 6;
-      const normalizedAngle = finalAngle % (2 * Math.PI);
-      let pointerAngle = (normalizedAngle + Math.PI) % (2 * Math.PI);
-
-      let wonDouble = pointerAngle < Math.PI;
-
-      if(wonDouble) {
-        let currentVal = parseInt(cell.textContent);
-        let newVal = currentVal * 2;
-        animateNumber(cell, currentVal, newVal);
-        rouletteResult.textContent = 'Умножено на 2! 🎉';
-        rouletteResult.className = 'win';
-      } else {
-        cell.textContent = '0';
-        cell.classList.remove('reward');
-        cell.classList.add('bomb');
-        rouletteResult.textContent = 'Сгорело! 💔';
-        rouletteResult.className = 'lose';
-        gameOver = true;
-      }
-    }
-
-    rotate();
-  }
-
-  twitchBtn.addEventListener('click', () => {
-    if(gameOver || rouletteUsed) return;
-    rewards = twitchRewards;
-    chances = twitchChances;
-    createGrid();
-  });
-
-  youtubeBtn.addEventListener('click', () => {
-    if(gameOver || rouletteUsed) return;
-    rewards = youtubeRewards;
-    chances = youtubeChances;
-    createGrid();
-  });
-
-  createGrid();
-</script>
-
-</body>
-</html>
+        return
