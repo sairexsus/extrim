@@ -152,13 +152,15 @@
     );
     position: relative;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start; /* сдвинули текст влево */
     align-items: center;
     font-weight: bold;
     font-size: 18px;
     user-select: none;
     text-shadow: 0 0 5px #000;
     color: #fff;
+    padding-left: 25px;
+    box-sizing: border-box;
   }
   #labelCombined {
     user-select: none;
@@ -167,18 +169,18 @@
     display: flex;
     gap: 8px;
   }
-  #labelCombined .green {
-    color: #0a0;
-    text-shadow: 0 0 8px #0f0;
-  }
   #labelCombined .red {
     color: #a00;
     text-shadow: 0 0 8px #f00;
   }
+  #labelCombined .green {
+    color: #0a0;
+    text-shadow: 0 0 8px #0f0;
+  }
   #arrow {
     position: absolute;
     top: -40px;
-    left: 50%;
+    left: 60%; /* сдвинули вправо от центра */
     transform: translateX(-50%) rotate(0deg);
     width: 0;
     height: 0;
@@ -187,6 +189,11 @@
     border-bottom: 30px solid gold;
     filter: drop-shadow(0 0 3px #fff);
     z-index: 10;
+    cursor: pointer;
+    transition: filter 0.3s ease;
+  }
+  #arrow:hover {
+    filter: drop-shadow(0 0 8px gold);
   }
   #resultMessage {
     margin-top: 15px;
@@ -227,7 +234,7 @@
   </div>
 
   <div id="rouletteWrapper">
-    <div id="arrow"></div>
+    <div id="arrow" title="Стрелка рулетки (наведение)"></div>
     <div id="rouletteWheel">
       <div id="labelCombined"><span class="red">Сгорело</span> | <span class="green">x2</span></div>
     </div>
@@ -242,6 +249,7 @@
   const showAllBtn = document.getElementById('showAllBtn');
   const rouletteWheel = document.getElementById('rouletteWheel');
   const resultMessage = document.getElementById('resultMessage');
+  const arrow = document.getElementById('arrow');
 
   const twitchRewards = [1000, 1500, 2000, 2500, 5000];
   const youtubeRewards = [1000, 1500, 2000, 2500, 5000, 10000];
