@@ -147,36 +147,39 @@
     box-shadow: 0 0 20px gold;
     transition: transform 5s cubic-bezier(0.33, 1, 0.68, 1);
     background: conic-gradient(
-      #a6f5a6 0deg 180deg,
-      #f5a6a6 180deg 360deg
+      #a6f5a6 0deg 180deg,  /* зелёная половина */
+      #f5a6a6 180deg 360deg /* красная половина */
     );
     position: relative;
   }
-  #rouletteWheel::after {
-    content: "x2";
+  /* Подписи снаружи круга */
+  #labelX2 {
     position: absolute;
-    top: 40%;
-    left: 25%;
+    top: 50%;
+    left: -40px;
+    transform: translateY(-50%);
     color: #0a0;
     font-weight: bold;
     font-size: 20px;
     user-select: none;
+    text-shadow: 0 0 5px #0f0;
   }
-  #rouletteWheel::before {
-    content: "Сгорело";
+  #labelBurn {
     position: absolute;
-    top: 40%;
-    right: 20%;
+    top: 50%;
+    right: -60px;
+    transform: translateY(-50%);
     color: #a00;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 20px;
     user-select: none;
+    text-shadow: 0 0 5px #f00;
   }
   #arrow {
     position: absolute;
     top: -30px;
     left: 50%;
-    transform: translateX(-50%) rotate(180deg);
+    transform: translateX(-50%) rotate(180deg); /* Повернули стрелку на 180° */
     width: 0;
     height: 0;
     border-left: 15px solid transparent;
@@ -226,6 +229,8 @@
   <div id="rouletteWrapper">
     <div id="arrow"></div>
     <div id="rouletteWheel"></div>
+    <div id="labelX2">x2</div>
+    <div id="labelBurn">Сгорело</div>
   </div>
 </div>
 
@@ -371,7 +376,9 @@
     // Вращаем с 6 полными оборотами плюс нужный угол
     const spins = 6;
     const sectorAngle = 180; // половина круга
-    const stopAngle = 360 * spins + (360 - winningHalf * sectorAngle) - sectorAngle / 2;
+    // Угол остановки так, чтобы стрелка была по центру сектора:
+    // Если выигрыш (зелёная), сектор 0°-180°, стрелка смотрит вниз — значит угол поворота с учётом 360 градусов:
+    const stopAngle = 360 * spins + (winningHalf === 0 ? 270 : 90);
 
     rouletteWheel.style.transition = 'transform 5s cubic-bezier(0.33, 1, 0.68, 1)';
     rouletteWheel.style.transform = `rotate(${stopAngle}deg)`;
