@@ -8,7 +8,7 @@
   body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: url("https://cdn.discordapp.com/attachments/1374833926157107230/1404916053280034876/photo_2025-08-12_22-54-11.jpg?ex=689ced89&is=689b9c09&hm=dbce8ca859a5a91a817267d7122bb7977") no-repeat center center fixed;
+    background: url('https://cdn.discordapp.com/attachments/1374833926157107230/1404916053280034876/photo_2025-08-12_22-54-11.jpg') no-repeat center center fixed;
     background-size: cover;
     display: flex;
     justify-content: center;
@@ -19,7 +19,6 @@
     background-color: rgba(0,0,0,0.6);
     background-blend-mode: multiply;
   }
-  /* ... остальные стили без изменений ... */
   #container {
     display: flex;
     gap: 40px;
@@ -387,7 +386,7 @@
     // Полное количество оборотов (3-6) для реалистичности
     const spins = 3 + Math.random() * 3;
 
-    // Угол остановки: 0..360 + offset чтобы попасть в нужную половину
+    // Угол остановки: 0..180 + offset чтобы попасть в нужную половину
     // Зеленая половина: 0-180 градусов, красная: 180-360
     const baseAngle = Math.random() * 180;
     const stopAngle = 360 * spins + (winningHalf === 0 ? baseAngle : 180 + baseAngle);
