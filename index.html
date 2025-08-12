@@ -145,34 +145,32 @@
     border-radius: 50%;
     border: 6px solid gold;
     box-shadow: 0 0 20px gold;
-    transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
+    transition: transform 5s cubic-bezier(0.33, 1, 0.68, 1);
+    background: conic-gradient(
+      #a6f5a6 0deg 180deg,
+      #f5a6a6 180deg 360deg
+    );
     position: relative;
-    overflow: hidden;
   }
-  /* Секторы рулетки */
-  .sector {
+  #rouletteWheel::after {
+    content: "x2";
     position: absolute;
-    width: 50%;
-    height: 50%;
-    top: 50%;
-    left: 50%;
-    transform-origin: 0% 0%;
-    clip-path: polygon(100% 0, 0 100%, 0 0);
+    top: 40%;
+    left: 25%;
+    color: #0a0;
     font-weight: bold;
-    color: black;
-    font-size: 16px;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding-left: 8px;
+    font-size: 20px;
     user-select: none;
-    border: 1px solid rgba(0,0,0,0.2);
   }
-  .sector.green {
-    background: #a6f5a6;
-  }
-  .sector.red {
-    background: #f5a6a6;
+  #rouletteWheel::before {
+    content: "Сгорело";
+    position: absolute;
+    top: 40%;
+    right: 20%;
+    color: #a00;
+    font-weight: bold;
+    font-size: 18px;
+    user-select: none;
   }
   #arrow {
     position: absolute;
@@ -254,31 +252,6 @@
   let selectedCellIndex = null;
   let gameOver = false;
   let rouletteSpinning = false;
-
-  // Правильные 8 секторов для рулетки - ровно 45 градусов каждый
-  const rouletteSectors = [
-    {color: 'green', label: 'x2'},
-    {color: 'red', label: 'Сгорело'},
-    {color: 'green', label: 'x2'},
-    {color: 'red', label: 'Сгорело'},
-    {color: 'green', label: 'x2'},
-    {color: 'red', label: 'Сгорело'},
-    {color: 'green', label: 'x2'},
-    {color: 'red', label: 'Сгорело'}
-  ];
-
-  function createRoulette() {
-    rouletteWheel.innerHTML = '';
-    const sectorAngle = 360 / rouletteSectors.length;
-
-    rouletteSectors.forEach((sector, i) => {
-      const div = document.createElement('div');
-      div.className = 'sector ' + sector.color;
-      div.style.transform = `rotate(${i * sectorAngle}deg) skewY(-45deg)`;
-      div.textContent = sector.label;
-      rouletteWheel.appendChild(div);
-    });
-  }
 
   function createGrid() {
     grid.innerHTML = '';
@@ -392,26 +365,28 @@
 
     resultMessage.textContent = 'Рулетка крутится...';
 
-    const winningIndex = Math.floor(Math.random() * rouletteSectors.length);
+    // 50/50 шанс, 0 или 1
+    const winningHalf = Math.random() < 0.5 ? 0 : 1;
 
+    // Вращаем с 6 полными оборотами плюс нужный угол
     const spins = 6;
-    const sectorAngle = 360 / rouletteSectors.length;
-    const stopAngle = 360 * spins + (360 - winningIndex * sectorAngle) - sectorAngle / 2;
+    const sectorAngle = 180; // половина круга
+    const stopAngle = 360 * spins + (360 - winningHalf * sectorAngle) - sectorAngle / 2;
 
     rouletteWheel.style.transition = 'transform 5s cubic-bezier(0.33, 1, 0.68, 1)';
     rouletteWheel.style.transform = `rotate(${stopAngle}deg)`;
 
     setTimeout(() => {
       rouletteSpinning = false;
-      const sector = rouletteSectors[winningIndex];
-
-      if(sector.color === 'green') {
+      if(winningHalf === 0) {
+        // Зеленая половина - выигрыш x2
         const cell = grid.children[selectedCellIndex];
         let currentValue = parseInt(cell.textContent) || 0;
         let newValue = currentValue * 2;
         cell.textContent = newValue;
         resultMessage.innerHTML = `Поздравляем! Награда удвоена: <span style="color:#0f0;">${newValue}</span>`;
       } else {
+        // Красная половина - сгорание суммы
         const cell = grid.children[selectedCellIndex];
         cell.textContent = '💔';
         cell.classList.add('bomb');
@@ -437,7 +412,6 @@
     showAllBtn.disabled = true;
   });
 
-  createRoulette();
   createGrid();
 </script>
 
