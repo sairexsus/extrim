@@ -5,37 +5,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>EXTRIM Miner</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600&family=Roboto&display=swap');
   body {
     margin: 0;
-    font-family: 'Roboto', sans-serif;
+    font-family: Arial, sans-serif;
     background: url('https://cdn.discordapp.com/attachments/1374833926157107230/1404916053280034876/photo_2025-08-12_22-54-11.jpg?ex=689ced89&is=689b9c09&hm=dbce8ca859b5b1fd093a02839aa670011908ba19a05a91a817267d7122bb7977&') no-repeat center center fixed;
     background-size: cover;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 25px 20px 80px;
+    padding: 20px;
     color: #eee;
     user-select: none;
-    position: relative;
     min-height: 100vh;
-  }
-  body::before {
-    content: '';
-    position: fixed;
-    top:0; left:0; right:0; bottom:0;
-    background: rgba(0,0,0,0.55);
-    z-index: -1;
+    background-color: rgba(0,0,0,0.6);
+    background-blend-mode: multiply;
   }
   h1 {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 700;
-    font-size: 3rem;
-    background: linear-gradient(90deg, #ff416c, #ff4b2b);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
     margin-bottom: 20px;
-    text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+    color: #ffd700;
+    text-shadow: 0 0 10px #ffd700;
   }
   #buttonsWrapper {
     display: flex;
@@ -43,191 +31,84 @@
     margin-bottom: 20px;
   }
   .channel-btn {
+    padding: 10px 20px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    background: rgba(255, 255, 255, 0.15);
-    padding: 10px 18px;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 18px;
-    color: #fff;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    transition: background 0.3s ease, transform 0.2s ease;
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+    font-weight: bold;
+    color: #eee;
     user-select: none;
-  }
-  .channel-btn:hover:not(.disabled) {
-    background: rgba(255, 255, 255, 0.35);
-    transform: scale(1.05);
-  }
-  .channel-btn img {
-    height: 28px;
-    width: auto;
-    margin-right: 12px;
-    filter: drop-shadow(0 0 2px rgba(0,0,0,0.5));
+    transition: background-color 0.3s, color 0.3s;
   }
   .channel-btn.active {
-    background: gold !important;
-    color: #000 !important;
-    box-shadow: 0 0 15px gold !important;
+    background: gold;
+    color: black;
   }
   .channel-btn.disabled {
-    cursor: default;
     opacity: 0.5;
-  }
-  .channel-btn.disabled:hover {
-    transform: none;
-    background: rgba(255,255,255,0.15);
+    cursor: not-allowed;
   }
   #grid {
     display: grid;
     grid-template-columns: repeat(8, 70px);
-    grid-template-rows: repeat(8, 70px);
-    gap: 8px;
-    margin-bottom: 25px;
-    user-select: none;
+    grid-gap: 8px;
+    margin-bottom: 20px;
   }
   .cell {
-    background: rgba(255, 255, 255, 0.12);
-    border-radius: 14px;
-    border: 2px solid rgba(255,255,255,0.4);
+    background: rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 12px;
     cursor: pointer;
-    font-size: 22px;
-    font-weight: 700;
+    font-weight: bold;
+    font-size: 20px;
     color: #b0f2b6;
     display: flex;
     align-items: center;
     justify-content: center;
-    text-shadow: 0 0 6px rgba(0,255,0,0.6);
-    transition: transform 0.3s ease, background-color 0.3s ease;
+    user-select: none;
+    transition: background-color 0.3s, transform 0.3s;
   }
   .cell:hover:not(.opened) {
+    background-color: rgba(50,255,50,0.3);
     transform: scale(1.1);
-    background-color: rgba(50, 255, 100, 0.2);
   }
   .cell.opened {
     cursor: default;
     background-color: rgba(0,0,0,0.6);
-    box-shadow: inset 0 0 10px #0f0;
-    text-shadow: 0 0 10px #00ff00;
+    color: #fff;
+    text-shadow: 0 0 6px #0f0;
   }
   .cell.bomb {
-    background: #ff3d3d !important;
-    color: #fff !important;
-    text-shadow: 0 0 12px #ff0000;
-    animation: bombExplode 0.8s ease forwards;
+    background-color: #ff3333 !important;
+    color: white !important;
+    text-shadow: 0 0 10px #ff0000;
   }
-  @keyframes bombExplode {
-    0% {
-      box-shadow: 0 0 20px 5px #ff3d3d;
-      transform: scale(1);
-      opacity: 1;
-    }
-    50% {
-      box-shadow: 0 0 40px 20px #ff0000;
-      transform: scale(1.3);
-      opacity: 1;
-    }
-    100% {
-      box-shadow: 0 0 60px 40px #ff0000;
-      transform: scale(1.6);
-      opacity: 0;
-    }
+  #rouletteBtn, #showAllBtn {
+    padding: 12px 28px;
+    font-size: 18px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 0 10px;
   }
   #rouletteBtn {
-    padding: 14px 28px;
-    font-size: 20px;
-    background: linear-gradient(90deg, #ffd700, #ffa500);
-    border: none;
-    border-radius: 16px;
-    cursor: pointer;
-    font-weight: 700;
-    box-shadow: 0 0 15px #ffa500aa;
-    color: #3a1700;
-    transition: background 0.4s ease, box-shadow 0.4s ease;
-    margin-bottom: 20px;
-    width: 220px;
-    user-select: none;
+    background: gold;
+    color: black;
   }
   #rouletteBtn:disabled {
     background: #666;
-    box-shadow: none;
-    cursor: not-allowed;
     color: #ccc;
-    position: relative;
-  }
-  #rouletteBtn:disabled::after {
-    content: ' 🔒';
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 24px;
+    cursor: not-allowed;
   }
   #showAllBtn {
-    padding: 12px 24px;
-    font-size: 18px;
     background: #444;
-    border: none;
-    border-radius: 14px;
     color: #eee;
-    cursor: pointer;
-    user-select: none;
-    margin-bottom: 25px;
-    width: 220px;
-    box-shadow: 0 0 10px #222;
-    transition: background 0.3s ease;
   }
   #showAllBtn:disabled {
     background: #222;
     cursor: not-allowed;
-  }
-  #rouletteWrapper {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 230px;
-    height: 280px;
-    background: rgba(15,15,15,0.85);
-    border-radius: 16px;
-    padding: 12px;
-    box-sizing: border-box;
-    user-select: none;
-    display: none;
-    z-index: 1000;
-    box-shadow: 0 0 20px #ffa500cc;
-  }
-  #rouletteCanvas {
-    display: block;
-    margin: 0 auto;
-    background: #111;
-    border-radius: 50%;
-    box-shadow: inset 0 0 12px #ffa500aa;
-  }
-  #rouletteArrow {
-    width: 0; 
-    height: 0; 
-    border-left: 18px solid transparent;
-    border-right: 18px solid transparent;
-    border-top: 30px solid #00ff00;
-    margin: 0 auto 14px;
-    filter: drop-shadow(0 0 5px #0f0);
-    transform: rotate(180deg);
-  }
-  #rouletteResult {
-    text-align: center;
-    font-weight: 700;
-    font-size: 20px;
-    min-height: 28px;
-    margin-top: 12px;
-  }
-  #rouletteResult.win {
-    color: #4caf50;
-    text-shadow: 0 0 10px #4caf50cc;
-  }
-  #rouletteResult.lose {
-    color: #ff4444;
-    text-shadow: 0 0 15px #ff4444cc;
+    color: #555;
   }
 </style>
 </head>
@@ -236,42 +117,29 @@
 <h1>EXTRIM Miner</h1>
 
 <div id="buttonsWrapper">
-  <div id="twitchBtn" class="channel-btn active" title="Twitch">
-    <img src="https://cdn-icons-png.flaticon.com/512/733/733635.png" alt="Twitch" />
-    Twitch
-  </div>
-  <div id="youtubeBtn" class="channel-btn" title="YouTube">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_(2017).svg" alt="YouTube" />
-    YouTube
-  </div>
+  <div id="twitchBtn" class="channel-btn active">Twitch</div>
+  <div id="youtubeBtn" class="channel-btn">YouTube</div>
 </div>
 
 <div id="grid"></div>
 
-<button id="rouletteBtn" disabled>Запустить рулетку</button>
-<button id="showAllBtn" disabled>Показать все ячейки</button>
-
-<div id="rouletteWrapper">
-  <div id="rouletteArrow"></div>
-  <canvas id="rouletteCanvas" width="200" height="200"></canvas>
-  <div id="rouletteResult"></div>
+<div style="margin-bottom: 20px;">
+  <button id="rouletteBtn" disabled>Запустить рулетку</button>
+  <button id="showAllBtn" disabled>Показать все ячейки</button>
 </div>
 
 <script>
-  const grid = document.getElementById("grid");
-  const rouletteBtn = document.getElementById("rouletteBtn");
-  const showAllBtn = document.getElementById("showAllBtn");
-  const rouletteWrapper = document.getElementById("rouletteWrapper");
-  const rouletteCanvas = document.getElementById("rouletteCanvas");
-  const rouletteResult = document.getElementById("rouletteResult");
-  const ctx = rouletteCanvas.getContext("2d");
+  const grid = document.getElementById('grid');
+  const twitchBtn = document.getElementById('twitchBtn');
+  const youtubeBtn = document.getElementById('youtubeBtn');
+  const rouletteBtn = document.getElementById('rouletteBtn');
+  const showAllBtn = document.getElementById('showAllBtn');
 
-  const twitchBtn = document.getElementById("twitchBtn");
-  const youtubeBtn = document.getElementById("youtubeBtn");
-
+  // Награды для каждого канала
   const twitchRewards = [1000, 1500, 2000, 2500, 5000];
   const youtubeRewards = [1000, 1500, 2000, 2500, 5000, 10000];
 
+  // Вероятности выпадения наград (только для генерации)
   const twitchChances = [0.4, 0.3, 0.15, 0.1, 0.05];
   const youtubeChances = [0.4, 0.3, 0.15, 0.1, 0.05, 0.03];
 
@@ -282,66 +150,67 @@
   let cellsData = [];
   let selectedCellIndex = null;
   let gameOver = false;
-  let rouletteUsed = false;
 
+  // Создаём сетку ячеек
   function createGrid() {
     grid.innerHTML = '';
     cellsData = [];
     selectedCellIndex = null;
     gameOver = false;
-    rouletteUsed = false;
     rouletteBtn.disabled = true;
-    rouletteWrapper.style.display = 'none';
-    rouletteResult.textContent = '';
-    rouletteResult.className = '';
     showAllBtn.disabled = true;
 
     twitchBtn.classList.remove('disabled');
     youtubeBtn.classList.remove('disabled');
 
-    for(let i = 0; i < cellsCount; i++) {
+    for(let i=0; i < cellsCount; i++) {
       const cell = document.createElement('div');
       cell.classList.add('cell');
       cell.dataset.index = i;
-      cell.textContent = '';
-      cell.addEventListener('click', () => onCellClick(cell));
+      cell.addEventListener('click', onCellClick);
       grid.appendChild(cell);
     }
 
     generateCellsData();
   }
 
+  // Генерируем данные для ячеек (бомбы или сумма)
   function generateCellsData() {
     cellsData = [];
-    let guaranteedHighRewardIndex = Math.floor(Math.random() * cellsCount);
+    // Чтобы гарантировать высокую награду где-то
+    const guaranteedIndex = Math.floor(Math.random() * cellsCount);
 
-    for(let i = 0; i < cellsCount; i++) {
-      if (i === guaranteedHighRewardIndex) {
-        cellsData.push({ type: 'reward', value: rewards[rewards.length-1] });
+    for(let i=0; i < cellsCount; i++) {
+      if(i === guaranteedIndex) {
+        cellsData.push({type: 'reward', value: rewards[rewards.length - 1]});
       } else {
-        const isBomb = Math.random() < 0.2;
-        if(isBomb) {
-          cellsData.push({ type: 'bomb', value: null });
+        const bombChance = 0.2; // 20% вероятность бомбы
+        if(Math.random() < bombChance) {
+          cellsData.push({type: 'bomb'});
         } else {
-          cellsData.push({ type: 'reward', value: getRandomRewardByChance() });
+          cellsData.push({type: 'reward', value: getRandomReward()});
         }
       }
     }
   }
 
-  function getRandomRewardByChance() {
-    let rand = Math.random();
-    let cumulative = 0;
-    for(let i=0; i<chances.length; i++) {
-      cumulative += chances[i];
-      if(rand <= cumulative) return rewards[i];
+  // Получить случайную награду по шансам
+  function getRandomReward() {
+    let r = Math.random();
+    let sum = 0;
+    for(let i=0; i < chances.length; i++) {
+      sum += chances[i];
+      if(r <= sum) return rewards[i];
     }
     return rewards[0];
   }
 
-  function onCellClick(cell) {
+  // Клик по ячейке
+  function onCellClick(e) {
     if(gameOver) return;
-    if(selectedCellIndex !== null) return; // Открываем только 1 ячейку
+    if(selectedCellIndex !== null) return; // Открывать можно только 1 ячейку
+
+    const cell = e.currentTarget;
     const index = +cell.dataset.index;
     if(cell.classList.contains('opened')) return;
 
@@ -360,27 +229,15 @@
       twitchBtn.classList.remove('active');
       youtubeBtn.classList.remove('active');
     } else {
-      animateNumber(cell, 0, data.value);
-      cell.classList.add('reward');
+      cell.textContent = data.value;
       rouletteBtn.disabled = false;
     }
   }
 
-  function animateNumber(cell, start, end) {
-    let current = start;
-    const step = Math.ceil((end - start) / 20);
-    const interval = setInterval(() => {
-      current += step;
-      if(current >= end) {
-        current = end;
-        clearInterval(interval);
-      }
-      cell.textContent = current;
-    }, 50);
-  }
-
+  // Переключение каналов
   twitchBtn.addEventListener('click', () => {
-    if(gameOver || rouletteUsed) return;
+    if(gameOver) return;
+    if(selectedCellIndex !== null) return;
     rewards = twitchRewards;
     chances = twitchChances;
     twitchBtn.classList.add('active');
@@ -389,7 +246,8 @@
   });
 
   youtubeBtn.addEventListener('click', () => {
-    if(gameOver || rouletteUsed) return;
+    if(gameOver) return;
+    if(selectedCellIndex !== null) return;
     rewards = youtubeRewards;
     chances = youtubeChances;
     youtubeBtn.classList.add('active');
@@ -398,52 +256,31 @@
   });
 
   rouletteBtn.addEventListener('click', () => {
-    if(gameOver || rouletteUsed) return;
-    if(selectedCellIndex === null) return;
-    rouletteWrapper.style.display = 'block';
-    startRoulette(grid.children[selectedCellIndex]);
+    alert('Рулетка запущена! (Здесь добавь свою анимацию)');
+    // После запуска рулетки блокируем кнопки и нельзя менять канал
+    rouletteBtn.disabled = true;
+    twitchBtn.classList.add('disabled');
+    youtubeBtn.classList.add('disabled');
   });
 
   showAllBtn.addEventListener('click', () => {
-    if(selectedCellIndex === null) return;
-    cellsData.forEach((data, i) => {
+    for(let i=0; i < cellsCount; i++) {
       const cell = grid.children[i];
-      if(cell.classList.contains('opened')) return;
+      if(cell.classList.contains('opened')) continue;
+      const data = cellsData[i];
       cell.classList.add('opened');
       if(data.type === 'bomb') {
         cell.textContent = '💣';
         cell.classList.add('bomb');
       } else {
         cell.textContent = data.value;
-        cell.classList.add('reward');
       }
-    });
+    }
     showAllBtn.disabled = true;
   });
 
-  function startRoulette(cell) {
-    rouletteUsed = true;
-    rouletteBtn.disabled = true;
-    twitchBtn.classList.add('disabled');
-    youtubeBtn.classList.add('disabled');
+  createGrid();
+</script>
 
-    const segments = [
-      { color: '#0a0', text: 'x2' },
-      { color: '#a00', text: '💔' },
-    ];
-
-    let spinTime = 0;
-    const spinTimeTotal = 3500;
-
-    function drawRoulette(angle) {
-      const centerX = rouletteCanvas.width / 2;
-      const centerY = rouletteCanvas.height / 2;
-      const radius = centerX - 10;
-      ctx.clearRect(0, 0, rouletteCanvas.width, rouletteCanvas.height);
-
-      let startAngleSeg = angle;
-      for(let i=0; i<segments.length; i++) {
-        ctx.beginPath();
-        ctx.moveTo(centerX, centerY);
-        ctx.fillStyle = segments[i].color;
-        ctx.arc(centerX, centerY, radius, startAngleSeg, startAngleSeg +
+</body>
+</html>
