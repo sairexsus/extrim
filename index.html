@@ -7,137 +7,116 @@
 <style>
   body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background: url('https://cdn.discordapp.com/attachments/1374833926157107230/1404916053280034876/photo_2025-08-12_22-54-11.jpg?ex=689ced89&is=689b9c09&hm=dbce8ca859b5b1fd093a02839aa670011908ba19a05a91a817267d7122bb7977&') no-repeat center center fixed;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: url('https://cdn.discordapp.com/attachments/1374833926157107230/1404916053280034876/photo_2025-08-12_22-54-11.jpg') no-repeat center center fixed;
     background-size: cover;
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-    color: #eee;
-    user-select: none;
-    min-height: 100vh;
-    background-color: rgba(0,0,0,0.6);
-    background-blend-mode: multiply;
-  }
-  #container {
-    display: flex;
-    gap: 40px;
-    align-items: flex-start;
-  }
-  #leftSide {
+    color: white;
     display: flex;
     flex-direction: column;
     align-items: center;
+    min-height: 100vh;
+    padding: 10px;
   }
   h1 {
-    margin-bottom: 20px;
-    color: #ffd700;
-    text-shadow: 0 0 10px #ffd700;
+    margin: 15px 0;
+    background: rgba(0,0,0,0.6);
+    padding: 12px 25px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    text-shadow: 0 0 5px #000;
   }
-  #buttonsWrapper {
+  .buttons {
+    margin-bottom: 15px;
     display: flex;
     gap: 20px;
-    margin-bottom: 20px;
   }
-  .channel-btn {
-    padding: 10px 25px 10px 40px;
-    cursor: pointer;
-    background: rgba(255,255,255,0.2);
-    border-radius: 10px;
-    font-weight: bold;
-    color: #eee;
-    user-select: none;
-    transition: background-color 0.3s, color 0.3s;
-    position: relative;
+  button.platformBtn {
     display: flex;
     align-items: center;
+    gap: 8px;
+    background: #222;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    padding: 10px 18px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 600;
+    color: white;
+    transition: border-color 0.3s ease, background 0.3s ease;
+    user-select: none;
   }
-  .channel-btn.active {
-    background: gold;
-    color: black;
-  }
-  .channel-btn.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-  .channel-btn img {
-    position: absolute;
-    left: 10px;
-    width: 20px;
-    height: 20px;
+  button.platformBtn img {
+    width: 24px;
+    height: 24px;
     object-fit: contain;
-    top: 50%;
-    transform: translateY(-50%);
   }
+  button.platformBtn.active {
+    border-color: gold;
+    background: rgba(255 215 0 / 0.3);
+    box-shadow: 0 0 10px gold;
+  }
+
+  /* Grid of cells */
   #grid {
     display: grid;
-    grid-template-columns: repeat(8, 80px);
-    grid-gap: 10px;
+    grid-template-columns: repeat(8, 50px);
+    grid-template-rows: repeat(8, 50px);
+    gap: 5px;
+    margin-bottom: 20px;
   }
   .cell {
-    background: rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.15);
     border: 2px solid rgba(255,255,255,0.3);
-    border-radius: 12px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 24px;
-    color: #b0f2b6;
+    border-radius: 6px;
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    cursor: pointer;
     user-select: none;
-    transition: background-color 0.3s, transform 0.3s;
-    width: 80px;
-    height: 80px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
   }
   .cell:hover:not(.opened) {
-    background-color: rgba(50,255,50,0.3);
+    background-color: rgba(255,255,255,0.3);
     transform: scale(1.1);
   }
   .cell.opened {
     cursor: default;
     background-color: rgba(0,0,0,0.6);
-    color: #fff;
-    text-shadow: 0 0 6px #0f0;
   }
   .cell.bomb {
-    background-color: #ff3333 !important;
-    color: white !important;
-    text-shadow: 0 0 10px #ff0000;
+    animation: bombFlash 0.7s infinite alternate;
+    background-color: #cc0000 !important;
+    color: #fff !important;
   }
-  #rouletteBtn, #showAllBtn {
-    padding: 12px 28px;
-    font-size: 18px;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-    margin: 0 10px;
+  @keyframes bombFlash {
+    from { background-color: #cc0000; }
+    to { background-color: #800000; }
   }
-  #rouletteBtn {
-    background: gold;
-    color: black;
+  .cell.reward {
+    color: #90ee90;
   }
-  #rouletteBtn:disabled {
-    background: #666;
-    color: #ccc;
-    cursor: not-allowed;
+  .cell.burned {
+    background-color: #800000 !important;
+    color: #ff4d4d !important;
+    font-size: 20px;
+    user-select: none;
   }
-  #showAllBtn {
-    background: #444;
-    color: #eee;
-  }
-  #showAllBtn:disabled {
-    background: #222;
-    cursor: not-allowed;
-    color: #555;
-  }
-  /* Рулетка */
+
+  /* Upgrade button - removed as per last instructions */
+
+  /* Roulette Styles */
   #rouletteWrapper {
     position: relative;
     width: 180px;
     height: 180px;
     user-select: none;
+    margin-left: 30px;
+    flex-shrink: 0;
   }
   #rouletteWheel {
     width: 180px;
@@ -152,34 +131,11 @@
     );
     position: relative;
   }
-  /* Подписи снаружи круга */
-  #labelX2 {
-    position: absolute;
-    top: 50%;
-    left: -40px;
-    transform: translateY(-50%);
-    color: #0a0;
-    font-weight: bold;
-    font-size: 20px;
-    user-select: none;
-    text-shadow: 0 0 5px #0f0;
-  }
-  #labelBurn {
-    position: absolute;
-    top: 50%;
-    right: -60px;
-    transform: translateY(-50%);
-    color: #a00;
-    font-weight: bold;
-    font-size: 20px;
-    user-select: none;
-    text-shadow: 0 0 5px #f00;
-  }
   #arrow {
     position: absolute;
-    top: -30px;
+    top: calc(100% - 10px);
     left: 50%;
-    transform: translateX(-50%) rotate(180deg); /* Повернули стрелку на 180° */
+    transform: translateX(-50%) rotate(0deg);
     width: 0;
     height: 0;
     border-left: 15px solid transparent;
@@ -188,238 +144,286 @@
     filter: drop-shadow(0 0 3px #fff);
     z-index: 10;
   }
-  #resultMessage {
-    margin-top: 15px;
-    font-size: 22px;
-    font-weight: bold;
-    text-align: center;
-    min-height: 30px;
-    color: gold;
-    text-shadow: 0 0 5px #fff;
+  #labelX2 {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    color: #0a0;
+    font-weight: 700;
+    font-size: 20px;
+    user-select: none;
+    text-shadow: 0 0 5px #0f0;
+  }
+  #labelBurn {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    color: #a00;
+    font-weight: 700;
+    font-size: 20px;
+    user-select: none;
+    text-shadow: 0 0 5px #f00;
+  }
+
+  /* Layout container */
+  #mainContent {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 800px;
+  }
+
+  /* Show hidden button */
+  #showHiddenBtn {
+    margin-bottom: 20px;
+    padding: 10px 18px;
+    font-size: 16px;
+    background: gold;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 0 10px gold;
+    user-select: none;
   }
 </style>
 </head>
 <body>
 
-<div id="container">
-  <div id="leftSide">
-    <h1>EXTRIM Miner</h1>
+<h1>EXTRIM Miner</h1>
 
-    <div id="buttonsWrapper">
-      <div id="twitchBtn" class="channel-btn active">
-        <img src="https://cdn.discordapp.com/attachments/1374833926157107230/1404918424618143866/twitch_logo_icon_189242.png?ex=689cefbe&is=689b9e3e&hm=21b7b891eeec9aae7f9d722dce7c5aacc398650975330bd7b35f89babffe5215&" alt="Twitch" />
-        Twitch
-      </div>
-      <div id="youtubeBtn" class="channel-btn">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png" alt="YouTube" />
-        YouTube
-      </div>
-    </div>
+<div class="buttons">
+  <button id="btnTwitch" class="platformBtn active" title="Выбрать Twitch">
+    <img src="https://cdn.discordapp.com/attachments/1374833926157107230/1404918424618143866/twitch_logo_icon_189242.png" alt="Twitch" />
+    Twitch
+  </button>
+  <button id="btnYouTube" class="platformBtn" title="Выбрать YouTube">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png" alt="YouTube" />
+    YouTube
+  </button>
+</div>
 
-    <div id="grid"></div>
+<div id="mainContent">
 
-    <div>
-      <button id="rouletteBtn" disabled>Запустить рулетку</button>
-      <button id="showAllBtn" disabled>Показать все ячейки</button>
-    </div>
+  <div id="grid"></div>
 
-    <div id="resultMessage"></div>
-  </div>
-
-  <div id="rouletteWrapper">
-    <div id="arrow"></div>
+  <div id="rouletteWrapper" title="Нажмите, чтобы крутить рулетку">
     <div id="rouletteWheel"></div>
+    <div id="arrow"></div>
     <div id="labelX2">x2</div>
     <div id="labelBurn">Сгорело</div>
   </div>
+
 </div>
+
+<button id="showHiddenBtn" style="display:none;">Показать скрытые ячейки</button>
 
 <script>
   const grid = document.getElementById('grid');
-  const twitchBtn = document.getElementById('twitchBtn');
-  const youtubeBtn = document.getElementById('youtubeBtn');
-  const rouletteBtn = document.getElementById('rouletteBtn');
-  const showAllBtn = document.getElementById('showAllBtn');
+  const btnTwitch = document.getElementById('btnTwitch');
+  const btnYouTube = document.getElementById('btnYouTube');
   const rouletteWheel = document.getElementById('rouletteWheel');
-  const resultMessage = document.getElementById('resultMessage');
+  const rouletteWrapper = document.getElementById('rouletteWrapper');
+  const arrow = document.getElementById('arrow');
+  const showHiddenBtn = document.getElementById('showHiddenBtn');
+
+  let platform = 'twitch'; // 'twitch' или 'youtube'
+  let cellsData = [];
+  let openedCell = null;
+  let rouletteSpinning = false;
+  let burned = false;
 
   const twitchRewards = [1000, 1500, 2000, 2500, 5000];
-  const youtubeRewards = [1000, 1500, 2000, 2500, 5000, 10000];
+  const twitchChances = [0.4, 0.3, 0.15, 0.1, 0.05]; // сумма шансов 1
+  const youtubeRewards = [...twitchRewards, 10000];
+  const youtubeChances = [0.4, 0.3, 0.15, 0.1, 0.04, 0.01];
 
-  const twitchChances = [0.4, 0.3, 0.15, 0.1, 0.05];
-  const youtubeChances = [0.4, 0.3, 0.15, 0.1, 0.05, 0.03];
-
-  let rewards = twitchRewards;
-  let chances = twitchChances;
-
-  const cellsCount = 64;
-  let cellsData = [];
-  let selectedCellIndex = null;
-  let gameOver = false;
-  let rouletteSpinning = false;
-
-  function createGrid() {
-    grid.innerHTML = '';
-    cellsData = [];
-    selectedCellIndex = null;
-    gameOver = false;
-    rouletteSpinning = false;
-    rouletteBtn.disabled = true;
-    showAllBtn.disabled = true;
-    resultMessage.textContent = '';
-
-    twitchBtn.classList.remove('disabled');
-    youtubeBtn.classList.remove('disabled');
-
-    for(let i=0; i < cellsCount; i++) {
-      const cell = document.createElement('div');
-      cell.classList.add('cell');
-      cell.dataset.index = i;
-      cell.addEventListener('click', onCellClick);
-      grid.appendChild(cell);
+  function weightedRandom(rewards, chances) {
+    const r = Math.random();
+    let sum = 0;
+    for(let i=0; i<rewards.length; i++) {
+      sum += chances[i];
+      if(r <= sum) return rewards[i];
     }
-
-    generateCellsData();
+    return rewards[rewards.length-1];
   }
 
-  function generateCellsData() {
+  function generateCells() {
     cellsData = [];
-    const guaranteedIndex = Math.floor(Math.random() * cellsCount);
+    // 20% бомб, остальное — суммы
+    // Нужно гарантировать минимум одну сумму 5000 (для твича) или 10000 (ютуб)
+    let guaranteedHighValue = platform === 'twitch' ? 5000 : 10000;
+    let guaranteedPlaced = false;
 
-    for(let i=0; i < cellsCount; i++) {
-      if(i === guaranteedIndex) {
-        cellsData.push({type: 'reward', value: rewards[rewards.length - 1]});
+    for(let i=0; i<64; i++) {
+      if (!guaranteedPlaced && i === 10) {
+        cellsData.push({type:'reward', value: guaranteedHighValue});
+        guaranteedPlaced = true;
       } else {
-        const bombChance = 0.2;
-        if(Math.random() < bombChance) {
-          cellsData.push({type: 'bomb'});
+        if(Math.random() < 0.2) {
+          cellsData.push({type:'bomb'});
         } else {
-          cellsData.push({type: 'reward', value: getRandomReward()});
+          let val;
+          if(platform === 'twitch') {
+            val = weightedRandom(twitchRewards, twitchChances);
+          } else {
+            val = weightedRandom(youtubeRewards, youtubeChances);
+          }
+          cellsData.push({type:'reward', value: val});
         }
       }
     }
   }
 
-  function getRandomReward() {
-    let r = Math.random();
-    let sum = 0;
-    for(let i=0; i < chances.length; i++) {
-      sum += chances[i];
-      if(r <= sum) return rewards[i];
+  function renderGrid() {
+    grid.innerHTML = '';
+    for(let i=0; i<64; i++) {
+      const cell = document.createElement('div');
+      cell.classList.add('cell');
+      cell.dataset.index = i;
+      cell.textContent = '';
+      cell.addEventListener('click', () => onCellClick(cell, i));
+      grid.appendChild(cell);
     }
-    return rewards[0];
   }
 
-  function onCellClick(e) {
-    if(gameOver || rouletteSpinning) return;
-    if(selectedCellIndex !== null) return;
+  function onCellClick(cell, idx) {
+    if (openedCell || rouletteSpinning || burned) return;
+    if (cell.classList.contains('opened')) return;
 
-    const cell = e.currentTarget;
-    const index = +cell.dataset.index;
-    if(cell.classList.contains('opened')) return;
-
+    openedCell = idx;
+    const data = cellsData[idx];
     cell.classList.add('opened');
-    selectedCellIndex = index;
-    showAllBtn.disabled = false;
 
-    const data = cellsData[index];
-    if(data.type === 'bomb') {
-      cell.textContent = '💣';
+    if (data.type === 'bomb') {
       cell.classList.add('bomb');
-      gameOver = true;
-      rouletteBtn.disabled = true;
-      twitchBtn.classList.add('disabled');
-      youtubeBtn.classList.add('disabled');
-      twitchBtn.classList.remove('active');
-      youtubeBtn.classList.remove('active');
-      resultMessage.textContent = 'Взорвалась бомба! Игра окончена.';
+      cell.textContent = '💣';
+      burned = true;
+      alert('Бомба взорвалась! Игра окончена.');
+      // После бомбы блокируем рулетку (ничего нельзя делать)
+      rouletteSpinning = true;
+      showHiddenBtn.style.display = 'block';
+      highlightSelectedCell(cell);
     } else {
-      cell.textContent = data.value;
-      rouletteBtn.disabled = false;
-      resultMessage.textContent = '';
+      animateNumber(cell, 0, data.value, () => {
+        showHiddenBtn.style.display = 'block';
+      });
+      highlightSelectedCell(cell);
     }
   }
 
-  twitchBtn.addEventListener('click', () => {
-    if(gameOver || rouletteSpinning) return;
-    if(selectedCellIndex !== null) return;
-    rewards = twitchRewards;
-    chances = twitchChances;
-    twitchBtn.classList.add('active');
-    youtubeBtn.classList.remove('active');
-    createGrid();
-  });
+  function highlightSelectedCell(cell) {
+    // Подсветить красным выбранную ячейку (если бомба)
+    cell.style.boxShadow = '0 0 10px 3px red';
+  }
 
-  youtubeBtn.addEventListener('click', () => {
-    if(gameOver || rouletteSpinning) return;
-    if(selectedCellIndex !== null) return;
-    rewards = youtubeRewards;
-    chances = youtubeChances;
-    youtubeBtn.classList.add('active');
-    twitchBtn.classList.remove('active');
-    createGrid();
-  });
+  function animateNumber(cell, start, end, callback) {
+    let current = start;
+    const step = Math.ceil((end - start) / 30);
+    const interval = setInterval(() => {
+      current += step;
+      if (current >= end) {
+        current = end;
+        clearInterval(interval);
+        if(callback) callback();
+      }
+      cell.textContent = current;
+    }, 40);
+  }
 
-  rouletteBtn.addEventListener('click', () => {
-    if(rouletteSpinning || selectedCellIndex === null) return;
+  function spinRoulette() {
+    if (rouletteSpinning || !openedCell || burned) return;
 
     rouletteSpinning = true;
-    rouletteBtn.disabled = true;
-    twitchBtn.classList.add('disabled');
-    youtubeBtn.classList.add('disabled');
+    showHiddenBtn.disabled = true;
 
-    resultMessage.textContent = 'Рулетка крутится...';
+    // Случайный угол для остановки рулетки (мин 3 вращения)
+    const spins = 3 + Math.floor(Math.random() * 3);
+    const stopAngle = Math.random() * 360 + 360 * spins;
 
-    // 50/50 шанс, 0 или 1
-    const winningHalf = Math.random() < 0.5 ? 0 : 1;
-
-    // Вращаем с 6 полными оборотами плюс нужный угол
-    const spins = 6;
-    const sectorAngle = 180; // половина круга
-    // Угол остановки так, чтобы стрелка была по центру сектора:
-    // Если выигрыш (зелёная), сектор 0°-180°, стрелка смотрит вниз — значит угол поворота с учётом 360 градусов:
-    const stopAngle = 360 * spins + (winningHalf === 0 ? 270 : 90);
-
-    rouletteWheel.style.transition = 'transform 5s cubic-bezier(0.33, 1, 0.68, 1)';
+    rouletteWheel.style.transition = 'transform 4s cubic-bezier(0.33, 1, 0.68, 1)';
     rouletteWheel.style.transform = `rotate(${stopAngle}deg)`;
 
+    // Определяем выигрыш после окончания анимации
     setTimeout(() => {
-      rouletteSpinning = false;
-      if(winningHalf === 0) {
-        // Зеленая половина - выигрыш x2
-        const cell = grid.children[selectedCellIndex];
-        let currentValue = parseInt(cell.textContent) || 0;
-        let newValue = currentValue * 2;
-        cell.textContent = newValue;
-        resultMessage.innerHTML = `Поздравляем! Награда удвоена: <span style="color:#0f0;">${newValue}</span>`;
+      rouletteWheel.style.transition = 'none';
+      // Приводим угол в диапазон 0-360
+      const normalizedAngle = stopAngle % 360;
+
+      // 0-180 зелёная зона (выигрыш), 180-360 красная (сгорание)
+      if (normalizedAngle <= 180) {
+        // выигрыш х2
+        const cell = grid.children[openedCell];
+        const val = parseInt(cell.textContent);
+        const doubled = val * 2;
+        animateNumber(cell, val, doubled);
       } else {
-        // Красная половина - сгорание суммы
-        const cell = grid.children[selectedCellIndex];
-        cell.textContent = '💔';
-        cell.classList.add('bomb');
-        resultMessage.innerHTML = `<span style="color:#f00;">Сумма сгорела! 😢</span>`;
-        gameOver = true;
+        // сгорание суммы
+        const cell = grid.children[openedCell];
+        cell.classList.add('burned');
+        cell.textContent = '💔 Сгорело';
+        burned = true;
       }
-    }, 5200);
+
+      rouletteSpinning = false;
+      showHiddenBtn.disabled = false;
+    }, 4100);
+  }
+
+  btnTwitch.addEventListener('click', () => {
+    if (rouletteSpinning) return;
+    platform = 'twitch';
+    btnTwitch.classList.add('active');
+    btnYouTube.classList.remove('active');
+    resetGame();
   });
 
-  showAllBtn.addEventListener('click', () => {
-    for(let i=0; i < cellsCount; i++) {
+  btnYouTube.addEventListener('click', () => {
+    if (rouletteSpinning) return;
+    platform = 'youtube';
+    btnYouTube.classList.add('active');
+    btnTwitch.classList.remove('active');
+    resetGame();
+  });
+
+  showHiddenBtn.addEventListener('click', () => {
+    // Показать все значения ячеек
+    for(let i=0; i<64; i++) {
       const cell = grid.children[i];
-      if(cell.classList.contains('opened')) continue;
-      const data = cellsData[i];
-      cell.classList.add('opened');
-      if(data.type === 'bomb') {
-        cell.textContent = '💣';
-        cell.classList.add('bomb');
-      } else {
-        cell.textContent = data.value;
+      if (!cell.classList.contains('opened')) {
+        const data = cellsData[i];
+        if (data.type === 'bomb') {
+          cell.textContent = '💣';
+          cell.classList.add('bomb');
+        } else {
+          cell.textContent = data.value;
+          cell.classList.add('reward');
+        }
+        cell.classList.add('opened');
       }
     }
-    showAllBtn.disabled = true;
+    showHiddenBtn.style.display = 'none';
   });
 
-  createGrid();
+  // Инициализация игры
+  function resetGame() {
+    openedCell = null;
+    rouletteSpinning = false;
+    burned = false;
+    showHiddenBtn.style.display = 'none';
+    generateCells();
+    renderGrid();
+    rouletteWheel.style.transition = 'none';
+    rouletteWheel.style.transform = 'rotate(0deg)';
+  }
+
+  rouletteWrapper.addEventListener('click', spinRoulette);
+
+  resetGame();
 </script>
 
 </body>
