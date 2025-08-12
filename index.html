@@ -152,8 +152,8 @@
   /* Секторы рулетки */
   .sector {
     position: absolute;
-    width: 90px;
-    height: 90px;
+    width: 50%;
+    height: 50%;
     top: 50%;
     left: 50%;
     transform-origin: 0% 0%;
@@ -166,6 +166,7 @@
     align-items: center;
     padding-left: 8px;
     user-select: none;
+    border: 1px solid rgba(0,0,0,0.2);
   }
   .sector.green {
     background: #a6f5a6;
@@ -175,14 +176,14 @@
   }
   #arrow {
     position: absolute;
-    top: -20px;
+    top: -30px;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) rotate(180deg);
     width: 0;
     height: 0;
-    border-left: 12px solid transparent;
-    border-right: 12px solid transparent;
-    border-bottom: 25px solid gold;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 30px solid gold;
     filter: drop-shadow(0 0 3px #fff);
     z-index: 10;
   }
@@ -254,6 +255,7 @@
   let gameOver = false;
   let rouletteSpinning = false;
 
+  // Правильные 8 секторов для рулетки - ровно 45 градусов каждый
   const rouletteSectors = [
     {color: 'green', label: 'x2'},
     {color: 'red', label: 'Сгорело'},
@@ -272,7 +274,7 @@
     rouletteSectors.forEach((sector, i) => {
       const div = document.createElement('div');
       div.className = 'sector ' + sector.color;
-      div.style.transform = `rotate(${i * sectorAngle}deg) skewY(-${90 - sectorAngle}deg)`;
+      div.style.transform = `rotate(${i * sectorAngle}deg) skewY(-45deg)`;
       div.textContent = sector.label;
       rouletteWheel.appendChild(div);
     });
