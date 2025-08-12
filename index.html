@@ -71,7 +71,7 @@
   }
   #grid {
     display: grid;
-    grid-template-columns: repeat(8, 90px);
+    grid-template-columns: repeat(8, 100px);
     grid-gap: 10px;
   }
   .cell {
@@ -80,13 +80,15 @@
     border-radius: 12px;
     cursor: pointer;
     font-weight: bold;
-    font-size: 28px;
+    font-size: 32px;
     color: #b0f2b6;
     display: flex;
     align-items: center;
     justify-content: center;
     user-select: none;
     transition: background-color 0.3s, transform 0.3s;
+    width: 100px;
+    height: 100px;
   }
   .cell:hover:not(.opened) {
     background-color: rgba(50,255,50,0.3);
@@ -144,6 +146,8 @@
     border: 6px solid gold;
     box-shadow: 0 0 20px gold;
     transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
+    position: relative;
+    overflow: hidden;
   }
   /* Секторы рулетки */
   .sector {
@@ -171,7 +175,7 @@
   }
   #arrow {
     position: absolute;
-    top: -15px;
+    top: -25px;
     left: 50%;
     transform: translateX(-50%);
     width: 0;
@@ -180,6 +184,7 @@
     border-right: 15px solid transparent;
     border-bottom: 30px solid gold;
     filter: drop-shadow(0 0 3px #fff);
+    z-index: 10;
   }
   #resultMessage {
     margin-top: 15px;
