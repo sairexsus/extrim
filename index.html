@@ -38,35 +38,6 @@
     text-shadow: 0 0 10px rgba(0,0,0,0.7);
   }
 
-  .button-container {
-    margin-bottom: 20px;
-    position: relative;
-    z-index: 1;
-  }
-
-  .source-btn {
-    font-size: 16px;
-    font-weight: 600;
-    padding: 10px 25px;
-    margin: 0 8px;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    background-color: rgba(255, 215, 0, 0.8);
-    color: #000;
-    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.6);
-    transition: background-color 0.3s, transform 0.2s;
-    user-select: none;
-  }
-  .source-btn:hover {
-    background-color: gold;
-    transform: scale(1.05);
-  }
-  .source-btn.active {
-    background-color: #ffd700;
-    box-shadow: 0 0 20px gold;
-  }
-
   .grid {
     display: grid;
     grid-template-columns: repeat(8, 70px);
@@ -154,34 +125,22 @@
 
 <h1>EXTRIM Miner</h1>
 
-<div class="button-container">
-  <button id="btnTwitch" class="source-btn active">Twitch</button>
-  <button id="btnYouTube" class="source-btn">YouTube</button>
-</div>
-
 <div class="grid" id="grid"></div>
 <button id="upgradeBtn" style="display:none;">Улучшить награду</button>
 
 <script>
   const grid = document.getElementById("grid");
   const upgradeBtn = document.getElementById("upgradeBtn");
-  const btnTwitch = document.getElementById("btnTwitch");
-  const btnYouTube = document.getElementById("btnYouTube");
-
   let currentRewardCell = null;
-  let currentSource = 'twitch';
 
-  // Twitch суммы и веса (чем больше сумма — тем меньше шанс)
-  const twitchRewards = [
+  const rewards = [
     {value: 1000, weight: 40},
     {value: 1500, weight: 30},
     {value: 2000, weight: 15},
-    {value: 2500, weight: 10},
+    {value: 2500, weight: 8},
     {value: 5000, weight: 5},
+    {value: 10000, weight: 2},
   ];
-
-  // YouTube сумма фиксированная 10000
-  const youtubeReward = 10000;
 
   function weightedRandom(items) {
     let total = items.reduce((sum, item) => sum + item.weight, 0);
@@ -216,13 +175,7 @@
       return;
     }
 
-    let finalValue;
-    if (currentSource === 'twitch') {
-      finalValue = weightedRandom(twitchRewards);
-    } else if (currentSource === 'youtube') {
-      finalValue = youtubeReward;
-    }
-
+    let finalValue = weightedRandom(rewards);
     animateNumber(cell, finalValue);
     cell.classList.add("reward");
     currentRewardCell = cell;
@@ -249,26 +202,6 @@
       animateNumber(currentRewardCell, newValue);
     }
   });
-
-  btnTwitch.addEventListener("click", () => {
-    currentSource = 'twitch';
-    btnTwitch.classList.add("active");
-    btnYouTube.classList.remove("active");
-    resetGrid();
-  });
-
-  btnYouTube.addEventListener("click", () => {
-    currentSource = 'youtube';
-    btnYouTube.classList.add("active");
-    btnTwitch.classList.remove("active");
-    resetGrid();
-  });
-
-  function resetGrid() {
-    upgradeBtn.style.display = "none";
-    currentRewardCell = null;
-    createGrid();
-  }
 
   createGrid();
 </script>
