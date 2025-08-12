@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>EXTRIM Miner - Исправленная версия</title>
+<title>EXTRIM Miner - с логотипами Twitch и YouTube</title>
 <style>
   body {
     margin: 0;
@@ -14,7 +14,7 @@
     display: flex;
     flex-direction: row;
     align-items: flex-start;
-    justify-content: center; /* Центрируем горизонтально весь контент */
+    justify-content: center;
     min-height: 100vh;
     padding: 20px;
     gap: 30px;
@@ -22,7 +22,7 @@
   main {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Центрируем поле с ячейками */
+    align-items: center;
     flex-grow: 1;
   }
   h1 {
@@ -110,7 +110,7 @@
     background: #222;
     box-shadow: 0 0 15px gold;
     margin-top: 20px;
-    overflow: visible; /* чтобы стрелка не обрезалась */
+    overflow: visible;
   }
   #roulette {
     width: 100%;
@@ -120,9 +120,9 @@
   }
   #arrow {
     position: absolute;
-    top: -40px; /* поднята выше */
+    top: -40px;
     left: 50%;
-    transform: translateX(-50%) rotate(180deg); /* Повернули вниз */
+    transform: translateX(-50%) rotate(180deg);
     width: 0;
     height: 0;
     border-left: 20px solid transparent;
@@ -131,7 +131,7 @@
     z-index: 20;
     filter: drop-shadow(0 0 2px #333);
   }
-  /* Источник кнопок */
+  /* Источник кнопок с логотипами */
   #sourceButtons {
     margin-bottom: 20px;
     display: flex;
@@ -148,6 +148,8 @@
     color: black;
     box-shadow: 0 0 8px #FFD700;
     transition: background 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    align-items: center;
   }
   #sourceButtons button:hover:not(:disabled) {
     background: linear-gradient(45deg, #FFA500, #FFD700);
@@ -158,6 +160,11 @@
     box-shadow: none;
     cursor: not-allowed;
   }
+  /* Логотипы в кнопках */
+  #sourceButtons svg {
+    margin-right: 8px;
+    vertical-align: middle;
+  }
 </style>
 </head>
 <body>
@@ -166,8 +173,19 @@
   <h1>EXTRIM Miner</h1>
 
   <div id="sourceButtons">
-    <button id="twitchBtn" disabled>Twitch</button>
-    <button id="youtubeBtn">YouTube</button>
+    <button id="twitchBtn" disabled>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="#9146FF" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 2v20l4-4h6l6-6V2H2zm15 6h-2v5h2V8zM9 8H7v5h2V8z"/>
+      </svg>
+      Twitch
+    </button>
+    <button id="youtubeBtn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="#FF0000" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 15l5.19-3L10 9v6z"/>
+        <path d="M21.8 7.5c-.2-1.5-1.5-2.7-3-2.9C15.5 4 12 4 12 4s-3.5 0-6 .6c-1.5.2-2.8 1.4-3 2.9C2 9 2 12 2 12s0 3 .6 4.5c.2 1.5 1.5 2.7 3 2.9 2.5.6 6 .6 6 .6s3.5 0 6-.6c1.5-.2 2.8-1.4 3-2.9.6-1.5.6-4.5.6-4.5s0-3-.6-4.5z"/>
+      </svg>
+      YouTube
+    </button>
   </div>
 
   <div id="grid"></div>
@@ -402,7 +420,7 @@
       cell.classList.remove('opened', 'selected', 'bomb');
       selectedIndex = null;
       controls.style.display = 'none';
-      gameBlocked = true;  // блокируем дальнейшие действия
+      gameBlocked = true;
     }
     rouletteContainer.style.display = 'none';
     upgradeBtn.disabled = false;
@@ -417,43 +435,4 @@
     }
     rouletteSpinning = true;
     upgradeBtn.disabled = true;
-    rouletteContainer.style.display = 'block';
-    finalSegmentIndex = Math.floor(Math.random() * segmentCount);
-    spinStartTime = null;
-    requestAnimationFrame(animateRoulette);
-  }
-
-  twitchBtn.onclick = () => {
-    if(gameBlocked) return;
-    currentSource = 'twitch';
-    twitchBtn.disabled = true;
-    youtubeBtn.disabled = false;
-    initGame();
-  };
-  youtubeBtn.onclick = () => {
-    if(gameBlocked) return;
-    currentSource = 'youtube';
-    twitchBtn.disabled = false;
-    youtubeBtn.disabled = true;
-    initGame();
-  };
-
-  showAllBtn.onclick = () => showAllCells();
-  upgradeBtn.onclick = () => startRoulette();
-
-  function initGame() {
-    selectedIndex = null;
-    currentReward = 0;
-    gameBlocked = false;
-    controls.style.display = 'none';
-    rouletteContainer.style.display = 'none';
-    upgradeBtn.disabled = false;
-    generateCells();
-    createGrid();
-  }
-
-  initGame();
-</script>
-
-</body>
-</html>
+    rouletteContainer.style
