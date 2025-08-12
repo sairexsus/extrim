@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title></title>
+<title>EXTRIM Miner</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600&family=Roboto&display=swap');
   body {
@@ -21,7 +21,6 @@
     user-select: none;
     position: relative;
   }
-  /* затемнение фона для читаемости */
   body::before {
     content: '';
     position: fixed;
@@ -56,8 +55,9 @@
     color: #fff;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     transition: background 0.3s ease, transform 0.2s ease;
+    user-select: none;
   }
-  .channel-btn:hover {
+  .channel-btn:hover:not(.disabled) {
     background: rgba(255, 255, 255, 0.35);
     transform: scale(1.05);
   }
@@ -67,7 +67,20 @@
     margin-right: 12px;
     filter: drop-shadow(0 0 2px rgba(0,0,0,0.5));
   }
-  .grid {
+  .channel-btn.active {
+    background: gold !important;
+    color: #000 !important;
+    box-shadow: 0 0 15px gold !important;
+  }
+  .channel-btn.disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+  .channel-btn.disabled:hover {
+    transform: none;
+    background: rgba(255,255,255,0.15);
+  }
+  #grid {
     display: grid;
     grid-template-columns: repeat(8, 70px);
     grid-template-rows: repeat(8, 70px);
@@ -135,6 +148,7 @@
     transition: background 0.4s ease, box-shadow 0.4s ease;
     margin-bottom: 20px;
     width: 220px;
+    user-select: none;
   }
   #rouletteBtn:disabled {
     background: #666;
@@ -199,6 +213,7 @@
     border-top: 30px solid #00ff00;
     margin: 0 auto 14px;
     filter: drop-shadow(0 0 5px #0f0);
+    transform: rotate(180deg);
   }
   #rouletteResult {
     text-align: center;
@@ -222,7 +237,7 @@
 <h1>EXTRIM Miner</h1>
 
 <div id="buttonsWrapper">
-  <div id="twitchBtn" class="channel-btn" title="Twitch">
+  <div id="twitchBtn" class="channel-btn active" title="Twitch">
     <img src="https://cdn-icons-png.flaticon.com/512/733/733635.png" alt="Twitch" />
     Twitch
   </div>
@@ -232,7 +247,7 @@
   </div>
 </div>
 
-<div class="grid" id="grid"></div>
+<div id="grid"></div>
 
 <button id="rouletteBtn" disabled>Запустить рулетку</button>
 <button id="showAllBtn" disabled>Показать все ячейки</button>
@@ -285,6 +300,9 @@
     rouletteResult.className = '';
     showAllBtn.disabled = true;
 
+    twitchBtn.classList.remove('disabled');
+    youtubeBtn.classList.remove('disabled');
+
     for(let i = 0; i < cellsCount; i++) {
       const cell = document.createElement('div');
       cell.classList.add('cell');
@@ -327,7 +345,7 @@
 
   function onCellClick(cell) {
     if(gameOver) return;
-    if(selectedCellIndex !== null) return; // Можно открыть только одну ячейку
+    if(selectedCellIndex !== null) return; // Только одна ячейка открывается
     const index = +cell.dataset.index;
     if(cell.classList.contains('opened')) return;
 
@@ -335,23 +353,21 @@
     openedCells++;
     selectedCellIndex = index;
     showAllBtn.disabled = false;
-    rouletteBtn.disabled = false;
 
     const data = cellsData[index];
     if(data.type === 'bomb') {
       cell.textContent = '💣';
       cell.classList.add('bomb');
-      // Убрал alert
-      // После анимации взрыва блокируем игру
       gameOver = true;
       rouletteBtn.disabled = true;
-      // Через 800мс убрать возможность кликов
-      setTimeout(() => {
-        // Можно добавить дополнительные действия после анимации взрыва
-      }, 800);
+      twitchBtn.classList.add('disabled');
+      youtubeBtn.classList.add('disabled');
+      twitchBtn.classList.remove('active');
+      youtubeBtn.classList.remove('active');
     } else {
       animateNumber(cell, 0, data.value);
       cell.classList.add('reward');
+      rouletteBtn.disabled = false;
     }
   }
 
@@ -367,6 +383,24 @@
       cell.textContent = current;
     }, 50);
   }
+
+  twitchBtn.addEventListener('click', () => {
+    if(gameOver || rouletteUsed) return;
+    rewards = twitchRewards;
+    chances = twitchChances;
+    twitchBtn.classList.add('active');
+    youtubeBtn.classList.remove('active');
+    createGrid();
+  });
+
+  youtubeBtn.addEventListener('click', () => {
+    if(gameOver || rouletteUsed) return;
+    rewards = youtubeRewards;
+    chances = youtubeChances;
+    youtubeBtn.classList.add('active');
+    twitchBtn.classList.remove('active');
+    createGrid();
+  });
 
   rouletteBtn.addEventListener('click', () => {
     if(gameOver || rouletteUsed) return;
@@ -395,6 +429,8 @@
   function startRoulette(cell) {
     rouletteUsed = true;
     rouletteBtn.disabled = true;
+    twitchBtn.classList.add('disabled');
+    youtubeBtn.classList.add('disabled');
 
     const segments = [
       { color: '#0a0', text: 'x2' },
@@ -406,38 +442,4 @@
 
     function drawRoulette(angle) {
       const centerX = rouletteCanvas.width / 2;
-      const centerY = rouletteCanvas.height / 2;
-      const radius = centerX - 10;
-      ctx.clearRect(0, 0, rouletteCanvas.width, rouletteCanvas.height);
-
-      let startAngleSeg = angle;
-      for(let i=0; i<segments.length; i++) {
-        ctx.beginPath();
-        ctx.moveTo(centerX, centerY);
-        ctx.fillStyle = segments[i].color;
-        ctx.arc(centerX, centerY, radius, startAngleSeg, startAngleSeg + Math.PI, false);
-        ctx.closePath();
-        ctx.fill();
-
-        ctx.save();
-        ctx.translate(centerX, centerY);
-        ctx.rotate(startAngleSeg + Math.PI/2);
-        ctx.fillStyle = '#fff';
-        ctx.font = 'bold 26px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText(segments[i].text, 0, -radius/2);
-        ctx.restore();
-
-        startAngleSeg += Math.PI;
-      }
-    }
-
-    function easeOut(t) {
-      return --t * t * t + 1;
-    }
-
-    function rotate() {
-      spinTime += 30;
-      if(spinTime >= spinTimeTotal) {
-        finishSpin();
-        return
+      const centerY = rouletteCanvas.height
