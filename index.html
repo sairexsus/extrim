@@ -14,12 +14,11 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
-    min-height: 100vh;
+    padding: 25px 20px 80px;
     color: #eee;
-    padding: 25px 20px;
     user-select: none;
     position: relative;
+    min-height: 100vh;
   }
   body::before {
     content: '';
@@ -281,7 +280,6 @@
 
   const cellsCount = 64;
   let cellsData = [];
-  let openedCells = 0;
   let selectedCellIndex = null;
   let gameOver = false;
   let rouletteUsed = false;
@@ -289,12 +287,10 @@
   function createGrid() {
     grid.innerHTML = '';
     cellsData = [];
-    openedCells = 0;
     selectedCellIndex = null;
     gameOver = false;
     rouletteUsed = false;
     rouletteBtn.disabled = true;
-    rouletteBtn.style.display = 'inline-block';
     rouletteWrapper.style.display = 'none';
     rouletteResult.textContent = '';
     rouletteResult.className = '';
@@ -345,12 +341,11 @@
 
   function onCellClick(cell) {
     if(gameOver) return;
-    if(selectedCellIndex !== null) return; // Только одна ячейка открывается
+    if(selectedCellIndex !== null) return; // Открываем только 1 ячейку
     const index = +cell.dataset.index;
     if(cell.classList.contains('opened')) return;
 
     cell.classList.add('opened');
-    openedCells++;
     selectedCellIndex = index;
     showAllBtn.disabled = false;
 
@@ -442,4 +437,13 @@
 
     function drawRoulette(angle) {
       const centerX = rouletteCanvas.width / 2;
-      const centerY = rouletteCanvas.height
+      const centerY = rouletteCanvas.height / 2;
+      const radius = centerX - 10;
+      ctx.clearRect(0, 0, rouletteCanvas.width, rouletteCanvas.height);
+
+      let startAngleSeg = angle;
+      for(let i=0; i<segments.length; i++) {
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.fillStyle = segments[i].color;
+        ctx.arc(centerX, centerY, radius, startAngleSeg, startAngleSeg +
