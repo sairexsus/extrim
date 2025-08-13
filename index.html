@@ -8,7 +8,7 @@
   body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: url('https://cdn.discordapp.com/attachments/1374833926157107230/1404916053280034876/photo_2025-08-12_22-54-11.jpg?ex=689ced89&is=689b9c09&hm=dbce8ca859b5b1fd093a02839aa670011908ba19a05a91a817267d7122bb7977&') no-repeat center center fixed;
+    background: url('https://cdn.discordapp.com/attachments/1374833926157107230/1404916053280034876/photo_2025-08-12_22-54-11.jpg') no-repeat center center fixed;
     background-size: cover;
     display: flex;
     justify-content: center;
@@ -23,16 +23,32 @@
     display: flex;
     gap: 40px;
     align-items: flex-start;
+    position: relative;
   }
   #leftSide {
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
+  }
+  #headerWrapper {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:20px;
   }
   h1 {
-    margin-bottom: 20px;
+    margin:0;
     color: #ffd700;
     text-shadow: 0 0 10px #ffd700;
+  }
+  #restartLogo {
+    position:absolute;
+    top:20px;
+    left:20px;
+    width:50px;
+    height:50px;
+    cursor:pointer;
   }
   #buttonsWrapper {
     display: flex;
@@ -132,7 +148,6 @@
     cursor: not-allowed;
     color: #555;
   }
-  /* Рулетка */
   #rouletteWrapper {
     position: relative;
     width: 240px;
@@ -146,10 +161,9 @@
     border: 8px solid gold;
     box-shadow: 0 0 30px gold;
     background: conic-gradient(
-      #a6f5a6 0deg 180deg,  /* зелёная половина */
-      #f5a6a6 180deg 360deg /* красная половина */
+      #a6f5a6 0deg 180deg,
+      #f5a6a6 180deg 360deg
     );
-    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -211,11 +225,21 @@
 
 <div id="container">
   <div id="leftSide">
-    <h1>EXTRIM Miner</h1>
+    <!-- Логотип слева от заголовка -->
+    <div id="headerWrapper">
+      <img src="https://cdn.discordapp.com/attachments/1374833926157107230/1405185311327129701/extrim-removebg-preview.png" 
+           alt="Logo" style="width:60px; height:60px;" />
+      <h1>EXTRIM Miner</h1>
+    </div>
+
+    <!-- Логотип-перезапуск слева сверху -->
+    <img id="restartLogo" 
+         src="https://cdn.discordapp.com/attachments/1374833926157107230/1405185311327129701/extrim-removebg-preview.png" 
+         alt="Restart" title="Перезапустить сайт" />
 
     <div id="buttonsWrapper">
       <div id="twitchBtn" class="channel-btn active">
-        <img src="https://cdn.discordapp.com/attachments/1374833926157107230/1404918424618143866/twitch_logo_icon_189242.png?ex=689d987e&is=689c46fe&hm=028b5cd6d96c7888c4668d1ecca6a6f96bb5c3aed0ebac244f74b1e2659e91fd&" alt="Twitch" />
+        <img src="https://cdn.discordapp.com/attachments/1374833926157107230/1404918424618143866/twitch_logo_icon_189242.png" alt="Twitch" />
         Twitch
       </div>
       <div id="youtubeBtn" class="channel-btn">
@@ -226,7 +250,7 @@
 
     <div id="grid"></div>
 
-    <div>
+    <div style="margin-top:20px;">
       <button id="rouletteBtn" disabled>Запустить рулетку</button>
       <button id="showAllBtn" disabled>Показать все ячейки</button>
     </div>
@@ -330,102 +354,4 @@
     selectedCellIndex = index;
     showAllBtn.disabled = false;
 
-    const data = cellsData[index];
-    if (data.type === 'bomb') {
-      cell.textContent = '💣';
-      cell.classList.add('bomb');
-      gameOver = true;
-      rouletteBtn.disabled = true;
-      twitchBtn.classList.add('disabled');
-      youtubeBtn.classList.add('disabled');
-      twitchBtn.classList.remove('active');
-      youtubeBtn.classList.remove('active');
-      resultMessage.textContent = 'Взорвалась бомба! Игра окончена.';
-    } else {
-      cell.textContent = data.value;
-      rouletteBtn.disabled = false;
-      resultMessage.textContent = '';
-    }
-  }
-
-  twitchBtn.addEventListener('click', () => {
-    if (gameOver || rouletteSpinning) return;
-    if (selectedCellIndex !== null) return;
-    rewards = twitchRewards;
-    chances = twitchChances;
-    twitchBtn.classList.add('active');
-    youtubeBtn.classList.remove('active');
-    createGrid();
-  });
-
-  youtubeBtn.addEventListener('click', () => {
-    if (gameOver || rouletteSpinning) return;
-    if (selectedCellIndex !== null) return;
-    rewards = youtubeRewards;
-    chances = youtubeChances;
-    youtubeBtn.classList.add('active');
-    twitchBtn.classList.remove('active');
-    createGrid();
-  });
-
-  // Исправленная рулетка
-  rouletteBtn.addEventListener('click', () => {
-    if (rouletteSpinning || selectedCellIndex === null) return;
-
-    rouletteSpinning = true;
-    rouletteBtn.disabled = true;
-    twitchBtn.classList.add('disabled');
-    youtubeBtn.classList.add('disabled');
-
-    resultMessage.textContent = 'Рулетка крутится...';
-
-    const spins = 3 + Math.random() * 3;
-    const baseAngle = Math.random() * 360;
-    const offset = 90; // стрелка справа
-    const stopAngle = 360 * spins + baseAngle;
-
-    rouletteWheel.style.transition = 'transform 5s cubic-bezier(0.25, 0.1, 0.25, 1)';
-    rouletteWheel.style.transform = `rotate(${stopAngle}deg)`;
-
-    setTimeout(() => {
-      rouletteSpinning = false;
-
-      const finalAngle = (stopAngle + offset) % 360;
-      let isGreen = finalAngle >= 0 && finalAngle < 180;
-
-      const cell = grid.children[selectedCellIndex];
-      if (isGreen) {
-        const currentValue = parseInt(cell.textContent) || 0;
-        const newValue = currentValue * 2;
-        cell.textContent = newValue;
-        resultMessage.innerHTML = `Поздравляем! Награда удвоена: <span style="color:#0f0;">${newValue}</span>`;
-      } else {
-        cell.textContent = '💔';
-        cell.classList.add('bomb');
-        resultMessage.innerHTML = `<span style="color:#f00;">Сумма сгорела! 😢</span>`;
-        gameOver = true;
-      }
-    }, 5200);
-  });
-
-  showAllBtn.addEventListener('click', () => {
-    for (let i = 0; i < cellsCount; i++) {
-      const cell = grid.children[i];
-      if (cell.classList.contains('opened')) continue;
-      const data = cellsData[i];
-      cell.classList.add('opened');
-      if (data.type === 'bomb') {
-        cell.textContent = '💣';
-        cell.classList.add('bomb');
-      } else {
-        cell.textContent = data.value;
-      }
-    }
-    showAllBtn.disabled = true;
-  });
-
-  createGrid();
-</script>
-
-</body>
-</html>
+    const data = cellsData
