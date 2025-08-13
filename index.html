@@ -8,7 +8,7 @@
   body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: url('https://cdn.discordapp.com/attachments/1374833926157107230/1404916053280034876/photo_2025-08-12_22-54-11.jpg?ex=689ced89&is=689b9c09&hm=dbce8ca859b5b1fd093a02839aa670011908ba19a05a91a817267d7122bb7977&') no-repeat center center fixed;
+    background: url('https://cdn.discordapp.com/attachments/1374833926157107230/1404916053280034876/photo_2025-08-12_22-54-11.jpg') no-repeat center center fixed;
     background-size: cover;
     display: flex;
     justify-content: center;
@@ -106,7 +106,7 @@
     text-shadow: 0 0 10px #ff0000;
   }
   #buttonsBottom {
-    margin-top: 20px; /* опускает кнопки ниже */
+    margin-top: 20px;
     display: flex;
     justify-content: center;
   }
@@ -137,7 +137,6 @@
     cursor: not-allowed;
     color: #555;
   }
-  /* Рулетка */
   #rouletteWrapper {
     position: relative;
     width: 240px;
@@ -220,7 +219,7 @@
 
     <div id="buttonsWrapper">
       <div id="twitchBtn" class="channel-btn active">
-        <img src="https://cdn.discordapp.com/attachments/1374833926157107230/1404918424618143866/twitch_logo_icon_189242.png?ex=689d987e&is=689c46fe&hm=028b5cd6d96c7888c4668d1ecca6a6f96bb5c3aed0ebac244f74b1e2659e91fd&" alt="Twitch" />
+        <img src="https://cdn.discordapp.com/attachments/1374833926157107230/1404918424618143866/twitch_logo_icon_189242.png" alt="Twitch" />
         Twitch
       </div>
       <div id="youtubeBtn" class="channel-btn">
@@ -248,187 +247,191 @@
 </div>
 
 <script>
-  const grid = document.getElementById('grid');
-  const twitchBtn = document.getElementById('twitchBtn');
-  const youtubeBtn = document.getElementById('youtubeBtn');
-  const rouletteBtn = document.getElementById('rouletteBtn');
-  const showAllBtn = document.getElementById('showAllBtn');
-  const rouletteWheel = document.getElementById('rouletteWheel');
-  const resultMessage = document.getElementById('resultMessage');
+const grid = document.getElementById('grid');
+const twitchBtn = document.getElementById('twitchBtn');
+const youtubeBtn = document.getElementById('youtubeBtn');
+const rouletteBtn = document.getElementById('rouletteBtn');
+const showAllBtn = document.getElementById('showAllBtn');
+const rouletteWheel = document.getElementById('rouletteWheel');
+const resultMessage = document.getElementById('resultMessage');
 
-  const twitchRewards = [1000, 1500, 2000, 2500, 5000];
-  const youtubeRewards = [1000, 1500, 2000, 2500, 5000, 10000];
+const twitchRewards = [5, 10, 20, 50, 5000];
+const youtubeRewards = [5, 10, 20, 50, 5000, 10000];
 
-  const twitchChances = [0.4, 0.3, 0.15, 0.1, 0.05];
-  const youtubeChances = [0.4, 0.3, 0.15, 0.1, 0.05, 0.03];
+const twitchChances = [0.45, 0.3, 0.15, 0.09, 0.01]; // 5000 = 1%
+const youtubeChances = [0.45, 0.3, 0.15, 0.09, 0.01, 0.005];
 
-  let rewards = twitchRewards;
-  let chances = twitchChances;
+let rewards = twitchRewards;
+let chances = twitchChances;
 
-  const cellsCount = 64;
-  let cellsData = [];
-  let selectedCellIndex = null;
-  let gameOver = false;
-  let rouletteSpinning = false;
+const cellsCount = 64;
+let cellsData = [];
+let selectedCellIndex = null;
+let gameOver = false;
+let rouletteSpinning = false;
 
-  function createGrid() {
-    grid.innerHTML = '';
-    cellsData = [];
-    selectedCellIndex = null;
-    gameOver = false;
-    rouletteSpinning = false;
-    rouletteBtn.disabled = true;
-    showAllBtn.disabled = true;
-    resultMessage.textContent = '';
+function createGrid() {
+  grid.innerHTML = '';
+  cellsData = [];
+  selectedCellIndex = null;
+  gameOver = false;
+  rouletteSpinning = false;
+  rouletteBtn.disabled = true;
+  showAllBtn.disabled = true;
+  resultMessage.textContent = '';
 
-    twitchBtn.classList.remove('disabled');
-    youtubeBtn.classList.remove('disabled');
+  twitchBtn.classList.remove('disabled');
+  youtubeBtn.classList.remove('disabled');
 
-    for (let i = 0; i < cellsCount; i++) {
-      const cell = document.createElement('div');
-      cell.classList.add('cell');
-      cell.dataset.index = i;
-      cell.addEventListener('click', onCellClick);
-      grid.appendChild(cell);
-    }
-
-    generateCellsData();
+  for (let i = 0; i < cellsCount; i++) {
+    const cell = document.createElement('div');
+    cell.classList.add('cell');
+    cell.dataset.index = i;
+    cell.addEventListener('click', onCellClick);
+    grid.appendChild(cell);
   }
 
-  function generateCellsData() {
-    cellsData = [];
-    const guaranteedIndex = Math.floor(Math.random() * cellsCount);
+  generateCellsData();
+}
 
-    for (let i = 0; i < cellsCount; i++) {
-      if (i === guaranteedIndex) {
-        cellsData.push({ type: 'reward', value: rewards[rewards.length - 1] });
+function generateCellsData() {
+  cellsData = [];
+  const guaranteedMaxIndex = Math.floor(Math.random() * cellsCount);
+
+  for (let i = 0; i < cellsCount; i++) {
+    if (i === guaranteedMaxIndex) {
+      cellsData.push({ type: 'reward', value: rewards[rewards.length - 1] });
+    } else {
+      const bombChance = 0.1; // бомбы теперь редкие
+      if (Math.random() < bombChance) {
+        cellsData.push({ type: 'bomb' });
       } else {
-        const bombChance = 0.2;
-        if (Math.random() < bombChance) {
-          cellsData.push({ type: 'bomb' });
-        } else {
-          cellsData.push({ type: 'reward', value: getRandomReward() });
-        }
+        let reward;
+        do {
+          reward = getRandomReward();
+        } while (reward === rewards[rewards.length - 1]);
+        cellsData.push({ type: 'reward', value: reward });
       }
     }
   }
+}
 
-  function getRandomReward() {
-    let r = Math.random();
-    let sum = 0;
-    for (let i = 0; i < chances.length; i++) {
-      sum += chances[i];
-      if (r <= sum) return rewards[i];
-    }
-    return rewards[0];
+function getRandomReward() {
+  let r = Math.random();
+  let sum = 0;
+  for (let i = 0; i < chances.length; i++) {
+    sum += chances[i];
+    if (r <= sum) return rewards[i];
   }
+  return rewards[0];
+}
 
-  function onCellClick(e) {
-    if (gameOver || rouletteSpinning) return;
-    if (selectedCellIndex !== null) return;
+function onCellClick(e) {
+  if (gameOver || rouletteSpinning) return;
+  if (selectedCellIndex !== null) return;
 
-    const cell = e.currentTarget;
-    const index = +cell.dataset.index;
-    if (cell.classList.contains('opened')) return;
+  const cell = e.currentTarget;
+  const index = +cell.dataset.index;
+  if (cell.classList.contains('opened')) return;
 
-    cell.classList.add('opened');
-    selectedCellIndex = index;
-    showAllBtn.disabled = false;
+  cell.classList.add('opened');
+  selectedCellIndex = index;
+  showAllBtn.disabled = false;
 
-    const data = cellsData[index];
-    if (data.type === 'bomb') {
-      cell.textContent = '💣';
-      cell.classList.add('bomb');
-      gameOver = true;
-      rouletteBtn.disabled = true;
-      twitchBtn.classList.add('disabled');
-      youtubeBtn.classList.add('disabled');
-      twitchBtn.classList.remove('active');
-      youtubeBtn.classList.remove('active');
-      resultMessage.textContent = 'Взорвалась бомба! Игра окончена.';
-    } else {
-      cell.textContent = data.value;
-      rouletteBtn.disabled = false;
-      resultMessage.textContent = '';
-    }
-  }
-
-  twitchBtn.addEventListener('click', () => {
-    if (gameOver || rouletteSpinning) return;
-    if (selectedCellIndex !== null) return;
-    rewards = twitchRewards;
-    chances = twitchChances;
-    twitchBtn.classList.add('active');
-    youtubeBtn.classList.remove('active');
-    createGrid();
-  });
-
-  youtubeBtn.addEventListener('click', () => {
-    if (gameOver || rouletteSpinning) return;
-    if (selectedCellIndex !== null) return;
-    rewards = youtubeRewards;
-    chances = youtubeChances;
-    youtubeBtn.classList.add('active');
-    twitchBtn.classList.remove('active');
-    createGrid();
-  });
-
-  rouletteBtn.addEventListener('click', () => {
-    if (rouletteSpinning || selectedCellIndex === null) return;
-
-    rouletteSpinning = true;
+  const data = cellsData[index];
+  if (data.type === 'bomb') {
+    cell.textContent = '💣';
+    cell.classList.add('bomb');
+    gameOver = true;
     rouletteBtn.disabled = true;
     twitchBtn.classList.add('disabled');
     youtubeBtn.classList.add('disabled');
+    twitchBtn.classList.remove('active');
+    youtubeBtn.classList.remove('active');
+    resultMessage.textContent = 'Взорвалась бомба! Игра окончена.';
+  } else {
+    cell.textContent = data.value;
+    rouletteBtn.disabled = false;
+    resultMessage.textContent = '';
+  }
+}
 
-    resultMessage.textContent = 'Рулетка крутится...';
-
-    const spins = 3 + Math.random() * 3;
-    const baseAngle = Math.random() * 360;
-    const offset = 90; 
-    const stopAngle = 360 * spins + baseAngle;
-
-    rouletteWheel.style.transition = 'transform 5s cubic-bezier(0.25, 0.1, 0.25, 1)';
-    rouletteWheel.style.transform = `rotate(${stopAngle}deg)`;
-
-    setTimeout(() => {
-      rouletteSpinning = false;
-
-      const finalAngle = (stopAngle + offset) % 360;
-      let isGreen = finalAngle >= 0 && finalAngle < 180;
-
-      const cell = grid.children[selectedCellIndex];
-      if (isGreen) {
-        const currentValue = parseInt(cell.textContent) || 0;
-        const newValue = currentValue * 2;
-        cell.textContent = newValue;
-        resultMessage.innerHTML = `Поздравляем! Награда удвоена: <span style="color:#0f0;">${newValue}</span>`;
-      } else {
-        cell.textContent = '💔';
-        cell.classList.add('bomb');
-        resultMessage.innerHTML = `<span style="color:#f00;">Сумма сгорела! 😢</span>`;
-        gameOver = true;
-      }
-    }, 5200);
-  });
-
-  showAllBtn.addEventListener('click', () => {
-    for (let i = 0; i < cellsCount; i++) {
-      const cell = grid.children[i];
-      if (cell.classList.contains('opened')) continue;
-      const data = cellsData[i];
-      cell.classList.add('opened');
-      if (data.type === 'bomb') {
-        cell.textContent = '💣';
-        cell.classList.add('bomb');
-      } else {
-        cell.textContent = data.value;
-      }
-    }
-    showAllBtn.disabled = true;
-  });
-
+twitchBtn.addEventListener('click', () => {
+  if (gameOver || rouletteSpinning) return;
+  if (selectedCellIndex !== null) return;
+  rewards = twitchRewards;
+  chances = twitchChances;
+  twitchBtn.classList.add('active');
+  youtubeBtn.classList.remove('active');
   createGrid();
+});
+
+youtubeBtn.addEventListener('click', () => {
+  if (gameOver || rouletteSpinning) return;
+  if (selectedCellIndex !== null) return;
+  rewards = youtubeRewards;
+  chances = youtubeChances;
+  youtubeBtn.classList.add('active');
+  twitchBtn.classList.remove('active');
+  createGrid();
+});
+
+rouletteBtn.addEventListener('click', () => {
+  if (rouletteSpinning || selectedCellIndex === null) return;
+
+  rouletteSpinning = true;
+  rouletteBtn.disabled = true;
+  twitchBtn.classList.add('disabled');
+  youtubeBtn.classList.add('disabled');
+
+  resultMessage.textContent = 'Рулетка крутится...';
+
+  const spins = 3 + Math.random() * 3;
+  const baseAngle = Math.random() * 360;
+  const offset = 90; 
+  const stopAngle = 360 * spins + baseAngle;
+
+  rouletteWheel.style.transition = 'transform 5s cubic-bezier(0.25, 0.1, 0.25, 1)';
+  rouletteWheel.style.transform = `rotate(${stopAngle}deg)`;
+
+  setTimeout(() => {
+    rouletteSpinning = false;
+
+    const finalAngle = (stopAngle + offset) % 360;
+    let isGreen = finalAngle >= 0 && finalAngle < 180;
+
+    const cell = grid.children[selectedCellIndex];
+    if (isGreen) {
+      const currentValue = parseInt(cell.textContent) || 0;
+      const newValue = currentValue * 2;
+      cell.textContent = newValue;
+      resultMessage.innerHTML = `Поздравляем! Награда удвоена: <span style="color:#0f0;">${newValue}</span>`;
+    } else {
+      cell.textContent = '💔';
+      cell.classList.add('bomb');
+      resultMessage.innerHTML = `<span style="color:#f00;">Сумма сгорела! 😢</span>`;
+      gameOver = true;
+    }
+  }, 5200);
+});
+
+showAllBtn.addEventListener('click', () => {
+  for (let i = 0; i < cellsCount; i++) {
+    const cell = grid.children[i];
+    if (cell.classList.contains('opened')) continue;
+    const data = cellsData[i];
+    cell.classList.add('opened');
+    if (data.type === 'bomb') {
+      cell.textContent = '💣';
+      cell.classList.add('bomb');
+    } else {
+      cell.textContent = data.value;
+    }
+  }
+  showAllBtn.disabled = true;
+});
+
+createGrid();
 </script>
 
 </body>
