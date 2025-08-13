@@ -158,7 +158,6 @@
     user-select: none;
     text-shadow: 0 0 5px #000;
     color: #fff;
-    transition: transform 5s ease-out;
   }
   #labelCombined {
     user-select: none;
@@ -216,7 +215,7 @@
 
     <div id="buttonsWrapper">
       <div id="twitchBtn" class="channel-btn active">
-        <img src="https://cdn.discordapp.com/attachments/1374833926157107230/1404918424618143866/twitch_logo_icon_189242.png?ex=689cefbe&is=689b9e3e&hm=21b7b891eeec9aae7f9d722dce7c5aacc398650975330bd7b35f89babffe5215&" alt="Twitch" />
+        <img src="https://cdn.discordapp.com/attachments/1374833926157107230/1404918424618143866/twitch_logo_icon_189242.png" alt="Twitch" />
         Twitch
       </div>
       <div id="youtubeBtn" class="channel-btn">
@@ -251,7 +250,6 @@
   const showAllBtn = document.getElementById('showAllBtn');
   const rouletteWheel = document.getElementById('rouletteWheel');
   const resultMessage = document.getElementById('resultMessage');
-  const arrow = document.getElementById('arrow');
 
   const twitchRewards = [1000, 1500, 2000, 2500, 5000];
   const youtubeRewards = [1000, 1500, 2000, 2500, 5000, 10000];
@@ -370,7 +368,7 @@
     createGrid();
   });
 
-  // ✅ Исправленная рулетка под стрелку СПРАВА
+  // Исправленная рулетка
   rouletteBtn.addEventListener('click', () => {
     if (rouletteSpinning || selectedCellIndex === null) return;
 
@@ -381,33 +379,27 @@
 
     resultMessage.textContent = 'Рулетка крутится...';
 
-    // 0 — зелёная (x2), 1 — красная (сгорело)
-    const winningHalf = Math.random() < 0.5 ? 0 : 1;
-
-    // Полное количество оборотов (3–6) для реалистичности
     const spins = 3 + Math.random() * 3;
+    const baseAngle = Math.random() * 360;
+    const offset = 90; // стрелка справа
+    const stopAngle = 360 * spins + baseAngle;
 
-    // Смещение на 90°, т.к. стрелка справа
-    const baseAngle = Math.random() * 180; // рандом внутри своей половины
-    const offset = 90;
-    const stopAngle = 360 * spins + offset + (winningHalf === 0 ? baseAngle : 180 + baseAngle);
-
-    // Анимация
     rouletteWheel.style.transition = 'transform 5s cubic-bezier(0.25, 0.1, 0.25, 1)';
     rouletteWheel.style.transform = `rotate(${stopAngle}deg)`;
 
     setTimeout(() => {
       rouletteSpinning = false;
-      if (winningHalf === 0) {
-        // Зелёная половина — выигрыш x2
-        const cell = grid.children[selectedCellIndex];
+
+      const finalAngle = (stopAngle + offset) % 360;
+      let isGreen = finalAngle >= 0 && finalAngle < 180;
+
+      const cell = grid.children[selectedCellIndex];
+      if (isGreen) {
         const currentValue = parseInt(cell.textContent) || 0;
         const newValue = currentValue * 2;
         cell.textContent = newValue;
         resultMessage.innerHTML = `Поздравляем! Награда удвоена: <span style="color:#0f0;">${newValue}</span>`;
       } else {
-        // Красная половина — сгорание суммы
-        const cell = grid.children[selectedCellIndex];
         cell.textContent = '💔';
         cell.classList.add('bomb');
         resultMessage.innerHTML = `<span style="color:#f00;">Сумма сгорела! 😢</span>`;
