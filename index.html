@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>EXTRIM Miner</title>
+<title>EXTRIM Прокачки</title>
 <style>
   body {
     margin: 0;
@@ -216,7 +216,7 @@
 
 <div id="container">
   <div id="leftSide">
-    <h1>EXTRIM Miner</h1>
+    <h1>EXTRIM Прокачки</h1>
 
     <div id="buttonsWrapper">
       <div id="twitchBtn" class="channel-btn active">
@@ -259,7 +259,7 @@
   const twitchRewards = [1000, 1500, 2000, 2500, 5000];
   const youtubeRewards = [1000, 1500, 2000, 2500, 5000, 10000];
 
-  const twitchChances = [0.4, 0.3, 0.15, 0.1, 0.05];
+  const twitchChances = [0.4, 0.3, 0.15, 0.1, 0.025];
   const youtubeChances = [0.4, 0.3, 0.15, 0.1, 0.05, 0.03];
 
   let rewards = twitchRewards;
@@ -303,7 +303,7 @@
       if (i === guaranteedIndex) {
         cellsData.push({ type: 'reward', value: rewards[rewards.length - 1] });
       } else {
-        const bombChance = 0.2;
+        const bombChance = 0.1;
         if (Math.random() < bombChance) {
           cellsData.push({ type: 'bomb' });
         } else {
