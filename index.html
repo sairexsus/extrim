@@ -260,7 +260,7 @@
   const youtubeRewards = [1000, 1500, 2000, 2500, 5000, 10000];
 
   const twitchChances = [0.4, 0.25, 0.175, 0.125, 0.09, 0.05];
-  const youtubeChances = [0.35, 0.25, 0.25, 0.125, 0.05, 1];
+  const youtubeChances = [0.35, 0.25, 0.25, 0.125, 0.09, 0.05];
 
   let rewards = twitchRewards;
   let chances = twitchChances;
@@ -303,7 +303,7 @@
       if (i === guaranteedIndex) {
         cellsData.push({ type: 'reward', value: rewards[rewards.length - 1] });
       } else {
-        const bombChance = 0.08;
+        const bombChance = 0.99;
         if (Math.random() < bombChance) {
           cellsData.push({ type: 'bomb' });
         } else {
