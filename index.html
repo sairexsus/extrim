@@ -23,7 +23,6 @@
     display: flex;
     gap: 40px;
     align-items: flex-start;
-    position: relative;
   }
   #leftSide {
     display: flex;
@@ -41,14 +40,6 @@
     margin:0;
     color: #ffd700;
     text-shadow: 0 0 10px #ffd700;
-  }
-  #restartLogo {
-    position:absolute;
-    top:20px;
-    left:20px;
-    width:50px;
-    height:50px;
-    cursor:pointer;
   }
   #buttonsWrapper {
     display: flex;
@@ -223,6 +214,12 @@
 </head>
 <body>
 
+<!-- Логотип-перезапуск слева сверху -->
+<img id="restartLogo" 
+     src="https://cdn.discordapp.com/attachments/1374833926157107230/1405185311327129701/extrim-removebg-preview.png" 
+     alt="Restart" title="Перезапустить сайт"
+     style="position:fixed; top:20px; left:20px; width:50px; height:50px; cursor:pointer;" />
+
 <div id="container">
   <div id="leftSide">
     <!-- Логотип слева от заголовка -->
@@ -231,11 +228,6 @@
            alt="Logo" style="width:60px; height:60px;" />
       <h1>EXTRIM Miner</h1>
     </div>
-
-    <!-- Логотип-перезапуск слева сверху -->
-    <img id="restartLogo" 
-         src="https://cdn.discordapp.com/attachments/1374833926157107230/1405185311327129701/extrim-removebg-preview.png" 
-         alt="Restart" title="Перезапустить сайт" />
 
     <div id="buttonsWrapper">
       <div id="twitchBtn" class="channel-btn active">
@@ -354,4 +346,101 @@
     selectedCellIndex = index;
     showAllBtn.disabled = false;
 
-    const data = cellsData
+    const data = cellsData[index];
+    if (data.type === 'bomb') {
+      cell.textContent = '💣';
+      cell.classList.add('bomb');
+      gameOver = true;
+      rouletteBtn.disabled = true;
+      twitchBtn.classList.add('disabled');
+      youtubeBtn.classList.add('disabled');
+      twitchBtn.classList.remove('active');
+      youtubeBtn.classList.remove('active');
+      resultMessage.textContent = 'Взорвалась бомба! Игра окончена.';
+    } else {
+      cell.textContent = data.value;
+      rouletteBtn.disabled = false;
+      resultMessage.textContent = '';
+    }
+  }
+
+  twitchBtn.addEventListener('click', () => {
+    if (gameOver || rouletteSpinning) return;
+    if (selectedCellIndex !== null) return;
+    rewards = twitchRewards;
+    chances = twitchChances;
+    twitchBtn.classList.add('active');
+    youtubeBtn.classList.remove('active');
+    createGrid();
+  });
+
+  youtubeBtn.addEventListener('click', () => {
+    if (gameOver || rouletteSpinning) return;
+    if (selectedCellIndex !== null) return;
+    rewards = youtubeRewards;
+    chances = youtubeChances;
+    youtubeBtn.classList.add('active');
+    twitchBtn.classList.remove('active');
+    createGrid();
+  });
+
+  rouletteBtn.addEventListener('click', () => {
+    if (rouletteSpinning || selectedCellIndex === null) return;
+
+    rouletteSpinning = true;
+    rouletteBtn.disabled = true;
+    twitchBtn.classList.add('disabled');
+    youtubeBtn.classList.add('disabled');
+
+    resultMessage.textContent = 'Рулетка крутится...';
+
+    const winningHalf = Math.random() < 0.5 ? 0 : 1;
+    const spins = 3 + Math.random() * 3;
+    const baseAngle = Math.random() * 180;
+    const offset = 90;
+    const stopAngle = 360 * spins + offset + (winningHalf === 0 ? baseAngle : 180 + baseAngle);
+
+    rouletteWheel.style.transition = 'transform 5s cubic-bezier(0.25, 0.1, 0.25, 1)';
+    rouletteWheel.style.transform = `rotate(${stopAngle}deg)`;
+
+    setTimeout(() => {
+      rouletteSpinning = false;
+      const cell = grid.children[selectedCellIndex];
+      if (winningHalf === 0) {
+        const currentValue = parseInt(cell.textContent) || 0;
+        const newValue = currentValue * 2;
+        cell.textContent = newValue;
+        resultMessage.innerHTML = `Поздравляем! Награда удвоена: <span style="color:#0f0;">${newValue}</span>`;
+      } else {
+        cell.textContent = '💔';
+        cell.classList.add('bomb');
+        resultMessage.innerHTML = `<span style="color:#f00;">Сумма сгорела! 😢</span>`;
+        gameOver = true;
+      }
+    }, 5200);
+  });
+
+  showAllBtn.addEventListener('click', () => {
+    for (let i = 0; i < cellsCount; i++) {
+      const cell = grid.children[i];
+      if (cell.classList.contains('opened')) continue;
+      const data = cellsData[i];
+      cell.classList.add('opened');
+      if (data.type === 'bomb') {
+        cell.textContent = '💣';
+        cell.classList.add('bomb');
+      } else {
+        cell.textContent = data.value;
+      }
+    }
+    showAllBtn.disabled = true;
+  });
+
+  // Перезапуск сайта по логотипу
+  document.getElementById('restartLogo').addEventListener('click', () => location.reload());
+
+  createGrid();
+</script>
+
+</body>
+</html>
