@@ -28,23 +28,22 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    position: relative;
   }
   #headerWrapper {
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin-bottom:20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
   }
   h1 {
-    margin:0;
+    margin: 0;
     color: #ffd700;
     text-shadow: 0 0 10px #ffd700;
   }
   #buttonsWrapper {
     display: flex;
     gap: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 25px; /* чуть ниже */
   }
   .channel-btn {
     padding: 10px 25px 10px 40px;
@@ -119,7 +118,7 @@
     border: none;
     cursor: pointer;
     font-weight: bold;
-    margin: 0 10px;
+    margin: 10px 10px 0 10px; /* чуть ниже */
   }
   #rouletteBtn {
     background: gold;
@@ -139,6 +138,7 @@
     cursor: not-allowed;
     color: #555;
   }
+  /* Рулетка */
   #rouletteWrapper {
     position: relative;
     width: 240px;
@@ -155,6 +155,7 @@
       #a6f5a6 0deg 180deg,
       #f5a6a6 180deg 360deg
     );
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -210,22 +211,28 @@
     color: gold;
     text-shadow: 0 0 5px #fff;
   }
+  /* Логотип-перезапуск */
+  #restartLogo {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    z-index: 999;
+  }
 </style>
 </head>
 <body>
 
-<!-- Логотип-перезапуск слева сверху -->
-<img id="restartLogo" 
-     src="https://cdn.discordapp.com/attachments/1374833926157107230/1405185311327129701/extrim-removebg-preview.png" 
-     alt="Restart" title="Перезапустить сайт"
-     style="position:fixed; top:20px; left:20px; width:50px; height:50px; cursor:pointer;" />
+<!-- Логотип-перезапуск -->
+<img id="restartLogo" src="https://cdn.discordapp.com/attachments/1374833926157107230/1405185311327129701/extrim-removebg-preview.png" title="Перезапустить сайт" />
 
 <div id="container">
   <div id="leftSide">
     <!-- Логотип слева от заголовка -->
     <div id="headerWrapper">
-      <img src="https://cdn.discordapp.com/attachments/1374833926157107230/1405185311327129701/extrim-removebg-preview.png" 
-           alt="Logo" style="width:60px; height:60px;" />
+      <img src="https://cdn.discordapp.com/attachments/1374833926157107230/1405185311327129701/extrim-removebg-preview.png" style="width:60px;height:60px;" />
       <h1>EXTRIM Miner</h1>
     </div>
 
@@ -242,7 +249,7 @@
 
     <div id="grid"></div>
 
-    <div style="margin-top:20px;">
+    <div>
       <button id="rouletteBtn" disabled>Запустить рулетку</button>
       <button id="showAllBtn" disabled>Показать все ячейки</button>
     </div>
@@ -254,7 +261,7 @@
     <div id="rouletteWheel">
       <div id="labelCombined"><span class="red">Сгорело</span> | <span class="green">x2</span></div>
     </div>
-    <div id="arrow" title="Стрелка рулетки (наведение)"></div>
+    <div id="arrow" title="Стрелка рулетки"></div>
   </div>
 </div>
 
@@ -394,19 +401,20 @@
 
     resultMessage.textContent = 'Рулетка крутится...';
 
-    const winningHalf = Math.random() < 0.5 ? 0 : 1;
     const spins = 3 + Math.random() * 3;
-    const baseAngle = Math.random() * 180;
-    const offset = 90;
-    const stopAngle = 360 * spins + offset + (winningHalf === 0 ? baseAngle : 180 + baseAngle);
+    const baseAngle = Math.random() * 360;
 
     rouletteWheel.style.transition = 'transform 5s cubic-bezier(0.25, 0.1, 0.25, 1)';
-    rouletteWheel.style.transform = `rotate(${stopAngle}deg)`;
+    rouletteWheel.style.transform = `rotate(${360*spins+baseAngle}deg)`;
 
     setTimeout(() => {
       rouletteSpinning = false;
+
+      const finalAngle = (360*spins+baseAngle) % 360;
+      let isGreen = finalAngle >= 0 && finalAngle < 180;
+
       const cell = grid.children[selectedCellIndex];
-      if (winningHalf === 0) {
+      if (isGreen) {
         const currentValue = parseInt(cell.textContent) || 0;
         const newValue = currentValue * 2;
         cell.textContent = newValue;
@@ -436,11 +444,9 @@
     showAllBtn.disabled = true;
   });
 
-  // Перезапуск сайта по логотипу
-  document.getElementById('restartLogo').addEventListener('click', () => location.reload());
+  document.getElementById('restartLogo').addEventListener('click', ()=> location.reload());
 
   createGrid();
 </script>
-
 </body>
 </html>
