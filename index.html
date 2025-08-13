@@ -105,6 +105,11 @@
     color: white !important;
     text-shadow: 0 0 10px #ff0000;
   }
+  #buttonsBottom {
+    margin-top: 20px; /* опускает кнопки ниже */
+    display: flex;
+    justify-content: center;
+  }
   #rouletteBtn, #showAllBtn {
     padding: 12px 28px;
     font-size: 18px;
@@ -146,8 +151,8 @@
     border: 8px solid gold;
     box-shadow: 0 0 30px gold;
     background: conic-gradient(
-      #a6f5a6 0deg 180deg,  /* зелёная половина */
-      #f5a6a6 180deg 360deg /* красная половина */
+      #a6f5a6 0deg 180deg,
+      #f5a6a6 180deg 360deg
     );
     position: relative;
     display: flex;
@@ -226,7 +231,7 @@
 
     <div id="grid"></div>
 
-    <div>
+    <div id="buttonsBottom">
       <button id="rouletteBtn" disabled>Запустить рулетку</button>
       <button id="showAllBtn" disabled>Показать все ячейки</button>
     </div>
@@ -368,7 +373,6 @@
     createGrid();
   });
 
-  // Исправленная рулетка
   rouletteBtn.addEventListener('click', () => {
     if (rouletteSpinning || selectedCellIndex === null) return;
 
@@ -381,7 +385,7 @@
 
     const spins = 3 + Math.random() * 3;
     const baseAngle = Math.random() * 360;
-    const offset = 90; // стрелка справа
+    const offset = 90; 
     const stopAngle = 360 * spins + baseAngle;
 
     rouletteWheel.style.transition = 'transform 5s cubic-bezier(0.25, 0.1, 0.25, 1)';
