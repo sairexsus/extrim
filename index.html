@@ -22,15 +22,6 @@
 <audio id="bomb-sound" src="soundbomb.mp3" preload="auto"></audio>
 
 <script>
-// Навешиваем обработчик на все ячейки с бомбой
-document.querySelectorAll('.cell.bomb').forEach(cell => {
-    cell.addEventListener('click', () => {
-        let sound = document.getElementById('bomb-sound');
-        sound.currentTime = 0; // начать с начала
-        sound.play();
-    });
-});
-</script>
   body {
     margin: 0;
     font-family: Arial, sans-serif;
