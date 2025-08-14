@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head> <link rel="icon" href="https://cdn.discordapp.com/attachments/1374833926157107230/1405185311327129701/extrim-removebg-preview.png?ex=689de84d&is=689c96cd&hm=d85608b26fd2532ed0f0c3ab311c3276adb4c985608d650a6a398567c15deb8a" type="image/png">
+<head> 
+<link rel="icon" href="https://cdn.discordapp.com/attachments/1374833926157107230/1405185311327129701/extrim-removebg-preview.png?ex=689de84d&is=689c96cd&hm=d85608b26fd2532ed0f0c3ab311c3276adb4c985608d650a6a398567c15deb8a" type="image/png">
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>EXTRIM Прокачки</title>
@@ -33,6 +34,7 @@
     margin-bottom: 20px;
     color: #ffd700;
     text-shadow: 0 0 10px #ffd700;
+    cursor: pointer;
   }
   #buttonsWrapper {
     display: flex;
@@ -106,7 +108,7 @@
     text-shadow: 0 0 10px #ff0000;
   }
   #buttonsBottom {
-    margin-top: 20px; /* опускает кнопки ниже */
+    margin-top: 20px;
     display: flex;
     justify-content: center;
   }
@@ -137,7 +139,6 @@
     cursor: not-allowed;
     color: #555;
   }
-  /* Рулетка */
   #rouletteWrapper {
     position: relative;
     width: 240px;
@@ -210,13 +211,30 @@
     color: gold;
     text-shadow: 0 0 5px #fff;
   }
+
+  /* Анимация взрыва */
+  @keyframes explosion {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(2); opacity: 0.8; }
+    100% { transform: scale(0); opacity: 0; }
+  }
+  .explosion {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ff0 0%, #f00 70%, transparent 100%);
+    animation: explosion 0.6s forwards;
+    pointer-events: none;
+    z-index: 100;
+  }
 </style>
 </head>
 <body>
 
 <div id="container">
   <div id="leftSide">
-    <h1 style="cursor: pointer;" onclick="location.reload()">EXTRIM Прокачки</h1>
+    <h1 onclick="location.reload()">EXTRIM Прокачки</h1>
 
     <div id="buttonsWrapper">
       <div id="twitchBtn" class="channel-btn active">
@@ -339,6 +357,7 @@
     if (data.type === 'bomb') {
       cell.textContent = '💣';
       cell.classList.add('bomb');
+      createExplosion(cell);
       gameOver = true;
       rouletteBtn.disabled = true;
       twitchBtn.classList.add('disabled');
@@ -351,6 +370,19 @@
       rouletteBtn.disabled = false;
       resultMessage.textContent = '';
     }
+  }
+
+  // Создание взрыва
+  function createExplosion(cell) {
+    const explosion = document.createElement('div');
+    explosion.classList.add('explosion');
+    const rect = cell.getBoundingClientRect();
+    explosion.style.left = rect.left + window.scrollX + 'px';
+    explosion.style.top = rect.top + window.scrollY + 'px';
+    document.body.appendChild(explosion);
+    setTimeout(() => {
+      explosion.remove();
+    }, 600);
   }
 
   twitchBtn.addEventListener('click', () => {
@@ -421,6 +453,7 @@
       if (data.type === 'bomb') {
         cell.textContent = '💣';
         cell.classList.add('bomb');
+        createExplosion(cell);
       } else {
         cell.textContent = data.value;
       }
