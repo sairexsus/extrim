@@ -211,7 +211,6 @@
     color: gold;
     text-shadow: 0 0 5px #fff;
   }
-  /* Анимация взрыва */
   .explosion {
     position: absolute;
     width: 100px;
@@ -226,12 +225,10 @@
     0% { transform: scale(0.5); opacity: 1; }
     100% { transform: scale(2); opacity: 0; }
   }
-  /* Подсветка ячейки */
   .highlight-green { animation: highlightGreen 0.6s; }
   .highlight-red { animation: highlightRed 0.6s; }
   @keyframes highlightGreen { 0% { background-color: #0f0; } 100% { background-color: rgba(255,255,255,0.1); } }
   @keyframes highlightRed { 0% { background-color: #f00; } 100% { background-color: rgba(255,255,255,0.1); } }
-  /* Подсветка сектора рулетки */
   .highlight-sector {
     position: absolute;
     top: 0; left:0;
@@ -241,7 +238,6 @@
   }
   .highlight-green-sector { background: conic-gradient(#0f0 0deg 180deg, transparent 180deg 360deg); }
   .highlight-red-sector { background: conic-gradient(#f00 0deg 180deg, transparent 180deg 360deg); }
-  /* История */
   #historyWrapper {
     width: 200px;
     margin-right: 20px;
@@ -286,13 +282,12 @@
 <div id="container">
 
   <div id="historyWrapper">
-    <button id="historyBtn">Последние действия</button>
+    <button id="historyBtn">Последние победы</button>
     <div id="historyList"></div>
   </div>
 
   <div id="leftSide">
     <h1 id="titleHeader">EXTRIM Прокачки</h1>
-
     <div id="buttonsWrapper">
       <div id="twitchBtn" class="channel-btn active">
         <img src="https://cdn.discordapp.com/attachments/1374833926157107230/1404918424618143866/twitch_logo_icon_189242.png" alt="Twitch" />
@@ -303,14 +298,11 @@
         YouTube
       </div>
     </div>
-
     <div id="grid"></div>
-
     <div id="buttonsBottom">
       <button id="rouletteBtn" disabled>Запустить рулетку</button>
       <button id="showAllBtn" disabled>Показать все ячейки</button>
     </div>
-
     <div id="resultMessage"></div>
   </div>
 
@@ -324,66 +316,69 @@
 </div>
 
 <script>
-const grid = document.getElementById('grid');
-const twitchBtn = document.getElementById('twitchBtn');
-const youtubeBtn = document.getElementById('youtubeBtn');
-const rouletteBtn = document.getElementById('rouletteBtn');
-const showAllBtn = document.getElementById('showAllBtn');
-const rouletteWheel = document.getElementById('rouletteWheel');
-const resultMessage = document.getElementById('resultMessage');
-const titleHeader = document.getElementById('titleHeader');
-const historyBtn = document.getElementById('historyBtn');
-const historyList = document.getElementById('historyList');
+const grid=document.getElementById('grid');
+const twitchBtn=document.getElementById('twitchBtn');
+const youtubeBtn=document.getElementById('youtubeBtn');
+const rouletteBtn=document.getElementById('rouletteBtn');
+const showAllBtn=document.getElementById('showAllBtn');
+const rouletteWheel=document.getElementById('rouletteWheel');
+const resultMessage=document.getElementById('resultMessage');
+const historyBtn=document.getElementById('historyBtn');
+const historyList=document.getElementById('historyList');
+const titleHeader=document.getElementById('titleHeader');
 
-titleHeader.addEventListener('click', ()=> location.reload());
-historyBtn.addEventListener('click', ()=> historyList.style.display = historyList.style.display==='flex' ? 'none':'flex');
+titleHeader.addEventListener('click',()=>location.reload());
+historyBtn.addEventListener('click',()=>{ historyList.style.display = historyList.style.display==='flex'?'none':'flex'; });
 
-const twitchRewards = [1000, 1500, 2000, 2500, 3000, 5000];
-const youtubeRewards = [1000, 1500, 2000, 2500, 5000, 10000];
-const twitchChances = [0.4, 0.25, 0.175, 0.125, 0.075, 0.125];
-const youtubeChances = [0.3, 0.3, 0.2, 0.12, 0.09, 0.06];
+const twitchRewards=[1000,1500,2000,2500,3000,5000];
+const youtubeRewards=[1000,1500,2000,2500,5000,10000];
+const twitchChances=[0.4,0.25,0.175,0.125,0.075,0.125];
+const youtubeChances=[0.3,0.3,0.2,0.12,0.09,0.06];
 
-let rewards = twitchRewards;
-let chances = twitchChances;
+let rewards=twitchRewards;
+let chances=twitchChances;
 
-const cellsCount = 64;
-let cellsData = [];
-let selectedCellIndex = null;
-let gameOver = false;
-let rouletteSpinning = false;
+const cellsCount=64;
+let cellsData=[];
+let selectedCellIndex=null;
+let gameOver=false;
+let rouletteSpinning=false;
 
-function createGrid() {
-  grid.innerHTML = '';
-  cellsData = [];
-  selectedCellIndex = null;
-  gameOver = false;
-  rouletteSpinning = false;
-  rouletteBtn.disabled = true;
-  showAllBtn.disabled = true;
-  resultMessage.textContent = '';
+function createGrid(){
+  grid.innerHTML='';
+  cellsData=[];
+  selectedCellIndex=null;
+  gameOver=false;
+  rouletteSpinning=false;
+  rouletteBtn.disabled=true;
+  showAllBtn.disabled=true;
+  resultMessage.textContent='';
+
   twitchBtn.classList.remove('disabled');
   youtubeBtn.classList.remove('disabled');
-  for (let i = 0; i < cellsCount; i++) {
-    const cell = document.createElement('div');
+
+  for(let i=0;i<cellsCount;i++){
+    const cell=document.createElement('div');
     cell.classList.add('cell');
-    cell.dataset.index = i;
-    cell.addEventListener('click', onCellClick);
+    cell.dataset.index=i;
+    cell.addEventListener('click',onCellClick);
     grid.appendChild(cell);
   }
   generateCellsData();
 }
 
-function generateCellsData() {
-  cellsData = [];
-  const guaranteedIndex = Math.floor(Math.random()*cellsCount);
-  for (let i=0;i<cellsCount;i++){
+function generateCellsData(){
+  cellsData=[];
+  const guaranteedIndex=Math.floor(Math.random()*cellsCount);
+  for(let i=0;i<cellsCount;i++){
     if(i===guaranteedIndex){
-      cellsData.push({type:'reward', value:rewards[rewards.length-1]});
+      cellsData.push({type:'reward',value:rewards[rewards.length-1]});
     } else {
-      if(Math.random()<0.08){
+      const bombChance=0.08;
+      if(Math.random()<bombChance){
         cellsData.push({type:'bomb'});
       } else {
-        cellsData.push({type:'reward', value:getRandomReward()});
+        cellsData.push({type:'reward',value:getRandomReward()});
       }
     }
   }
@@ -399,39 +394,53 @@ function getRandomReward(){
   return rewards[0];
 }
 
-function createExplosion(cell){
-  const rect = cell.getBoundingClientRect();
-  const explosion = document.createElement('div');
-  explosion.classList.add('explosion');
-  explosion.style.left = rect.left + window.scrollX + 'px';
-  explosion.style.top = rect.top + window.scrollY + 'px';
-  document.body.appendChild(explosion);
-  setTimeout(()=>explosion.remove(),600);
+// LocalStorage функции
+function saveHistory(){
+  const items=[];
+  document.querySelectorAll('#historyList .history-item').forEach(el=>{
+    items.push({text:el.textContent,type:el.classList.contains('bomb')?'bomb':el.classList.contains('roulette-loss')?'roulette-loss':'roulette-win'});
+  });
+  localStorage.setItem('extrimHistory',JSON.stringify(items));
 }
-
+function loadHistory(){
+  const saved=localStorage.getItem('extrimHistory');
+  if(saved){
+    const items=JSON.parse(saved);
+    historyList.innerHTML='';
+    items.forEach(item=>{
+      const entry=document.createElement('div');
+      entry.classList.add('history-item');
+      if(item.type) entry.classList.add(item.type);
+      entry.textContent=item.text;
+      historyList.appendChild(entry);
+    });
+  }
+}
 function addHistoryEntry(text,type){
   const entry=document.createElement('div');
   entry.classList.add('history-item');
   if(type) entry.classList.add(type);
   entry.textContent=text;
   historyList.prepend(entry);
+  saveHistory();
 }
 
+// Клик по ячейке
 function onCellClick(e){
-  if(gameOver || rouletteSpinning) return;
+  if(gameOver||rouletteSpinning) return;
   if(selectedCellIndex!==null) return;
   const cell=e.currentTarget;
   const index=+cell.dataset.index;
   if(cell.classList.contains('opened')) return;
+
   cell.classList.add('opened');
   selectedCellIndex=index;
   showAllBtn.disabled=false;
+
   const data=cellsData[index];
   if(data.type==='bomb'){
     cell.textContent='💣';
     cell.classList.add('bomb');
-    createExplosion(cell);
-    addHistoryEntry(`Ячейка ${index+1}: 💣`,'bomb');
     gameOver=true;
     rouletteBtn.disabled=true;
     twitchBtn.classList.add('disabled');
@@ -439,6 +448,16 @@ function onCellClick(e){
     twitchBtn.classList.remove('active');
     youtubeBtn.classList.remove('active');
     resultMessage.textContent='Взорвалась бомба! Игра окончена.';
+
+    const explosion=document.createElement('div');
+    explosion.classList.add('explosion');
+    const rect=cell.getBoundingClientRect();
+    explosion.style.left=`${rect.left+rect.width/2-50+window.scrollX}px`;
+    explosion.style.top=`${rect.top+rect.height/2-50+window.scrollY}px`;
+    document.body.appendChild(explosion);
+    setTimeout(()=>document.body.removeChild(explosion),600);
+
+    addHistoryEntry(`Ячейка ${selectedCellIndex+1}: 💣`,'bomb');
   } else {
     cell.textContent=data.value;
     rouletteBtn.disabled=false;
@@ -447,7 +466,7 @@ function onCellClick(e){
 }
 
 twitchBtn.addEventListener('click',()=>{
-  if(gameOver || rouletteSpinning) return;
+  if(gameOver||rouletteSpinning) return;
   if(selectedCellIndex!==null) return;
   rewards=twitchRewards;
   chances=twitchChances;
@@ -457,7 +476,7 @@ twitchBtn.addEventListener('click',()=>{
 });
 
 youtubeBtn.addEventListener('click',()=>{
-  if(gameOver || rouletteSpinning) return;
+  if(gameOver||rouletteSpinning) return;
   if(selectedCellIndex!==null) return;
   rewards=youtubeRewards;
   chances=youtubeChances;
@@ -466,28 +485,29 @@ youtubeBtn.addEventListener('click',()=>{
   createGrid();
 });
 
+// Рулетка
 rouletteBtn.addEventListener('click',()=>{
-  if(rouletteSpinning || selectedCellIndex===null) return;
+  if(rouletteSpinning||selectedCellIndex===null) return;
+
   rouletteSpinning=true;
   rouletteBtn.disabled=true;
   twitchBtn.classList.add('disabled');
   youtubeBtn.classList.add('disabled');
   resultMessage.textContent='Рулетка крутится...';
+
   const spins=3+Math.random()*3;
   const baseAngle=Math.random()*360;
-  const offset=90;
+  const offset=90; 
   const stopAngle=360*spins+baseAngle;
-  rouletteWheel.style.transition='transform 5s cubic-bezier(0.25, 0.1, 0.25, 1)';
+
+  rouletteWheel.style.transition='transform 5s cubic-bezier(0.25,0.1,0.25,1)';
   rouletteWheel.style.transform=`rotate(${stopAngle}deg)`;
+
   setTimeout(()=>{
     rouletteSpinning=false;
     const finalAngle=(stopAngle+offset)%360;
     let isGreen=finalAngle>=0 && finalAngle<180;
-    const highlightSector=document.createElement('div');
-    highlightSector.classList.add('highlight-sector');
-    highlightSector.classList.add(isGreen?'highlight-green-sector':'highlight-red-sector');
-    rouletteWheel.appendChild(highlightSector);
-    setTimeout(()=>highlightSector.remove(),600);
+
     const cell=grid.children[selectedCellIndex];
     if(isGreen){
       const currentValue=parseInt(cell.textContent)||0;
@@ -495,16 +515,33 @@ rouletteBtn.addEventListener('click',()=>{
       cell.textContent=newValue;
       resultMessage.innerHTML=`Поздравляем! Награда удвоена: <span style="color:#0f0;">${newValue}</span>`;
       addHistoryEntry(`Ячейка ${selectedCellIndex+1}: ${newValue} ✅`,'roulette-win');
+
+      // Подсветка ячейки и сектора
       cell.classList.add('highlight-green');
-      setTimeout(()=>cell.classList.remove('highlight-green'),600);
+      const sector=document.createElement('div');
+      sector.classList.add('highlight-sector','highlight-green-sector');
+      rouletteWheel.appendChild(sector);
+      setTimeout(()=>{
+        cell.classList.remove('highlight-green');
+        rouletteWheel.removeChild(sector);
+      },600);
+
     } else {
       const lostValue=parseInt(cell.textContent)||0;
       cell.textContent='💔';
       cell.classList.add('bomb');
       resultMessage.innerHTML=`<span style="color:#f00;">Сумма сгорела! 😢</span>`;
       addHistoryEntry(`Ячейка ${selectedCellIndex+1}: ${lostValue}🔥`,'roulette-loss');
+
       cell.classList.add('highlight-red');
-      setTimeout(()=>cell.classList.remove('highlight-red'),600);
+      const sector=document.createElement('div');
+      sector.classList.add('highlight-sector','highlight-red-sector');
+      rouletteWheel.appendChild(sector);
+      setTimeout(()=>{
+        cell.classList.remove('highlight-red');
+        rouletteWheel.removeChild(sector);
+      },600);
+
       gameOver=true;
     }
   },5200);
@@ -527,6 +564,7 @@ showAllBtn.addEventListener('click',()=>{
 });
 
 createGrid();
+loadHistory();
 </script>
 
 </body>
