@@ -1,13 +1,24 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head> <style>
-  body {
-    cursor: url('https://cdn.discordapp.com/attachments/1374833926157107230/1405530445692801094/cursor_1.png?ex=689f29bb&is=689dd83b&hm=37ff1b5d1e243ac6fbdf5e6ca3ecbaa4623b7d3f325e1bbf4421a29924872bbb') 0 0, auto;
+  :root {
+    /* встроенное изображение курсора + hotspot на острие (24 12) */
+    --extrim-cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAA...<сокращено>...') 24 12, auto;
   }
 
-  a, button, [role="button"], .clickable {
-    cursor: url('https://cdn.discordapp.com/attachments/1374833926157107230/1405530445692801094/cursor_1.png?ex=689f29bb&is=689dd83b&hm=37ff1b5d1e243ac6fbdf5e6ca3ecbaa4623b7d3f325e1bbf4421a29924872bbb') 0 0, auto;
+  html, body { cursor: var(--extrim-cursor) !important; }
+
+  /* один и тот же курсор на всех кликабельных элементах */
+  a, button, [role="button"], h1,
+  .channel-btn, .cell:not(.opened), #rouletteBtn, #showAllBtn, #arrow {
+    cursor: var(--extrim-cursor) !important;
   }
+
+  /* даже когда disabled — если нужно, оставляем тот же курсор */
+  #rouletteBtn:disabled, #showAllBtn:disabled, .channel-btn.disabled {
+    cursor: var(--extrim-cursor) !important;
+  }
+</style>
 </style>
 </style>
 <link rel="icon" href="https://cdn.discordapp.com/attachments/1374833926157107230/1405185311327129701/extrim-removebg-preview.png?ex=689de84d&is=689c96cd&hm=d85608b26fd2532ed0f0c3ab311c3276adb4c985608d650a6a398567c15deb8a" type="image/png">
