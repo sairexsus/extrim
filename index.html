@@ -1,24 +1,18 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head> <style>
-  :root {
-    /* Кастомный курсор с hotspot (24 12) — можно заменить URL на свой */
-    --extrim-cursor: url('https://cdn.discordapp.com/attachments/1374833926157107230/1405530445692801094/cursor_1.png?ex=689f29bb&is=689dd83b&hm=37ff1b5d1e243ac6fbdf5e6ca3ecbaa4623b7d3f325e1bbf4421a29924872bbb&') 24 12, auto;
-  }
-
-  /* Глобально для всего сайта, переопределяем всё */
-  * {
-    cursor: var(--extrim-cursor) !important;
-  }
-</style>
-</style>
-</style>
-</style>
-<link rel="icon" href="https://cdn.discordapp.com/attachments/1374833926157107230/1405185311327129701/extrim-removebg-preview.png?ex=689de84d&is=689c96cd&hm=d85608b26fd2532ed0f0c3ab311c3276adb4c985608d650a6a398567c15deb8a" type="image/png">
+<head> 
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>EXTRIM Прокачки</title>
+
+<link rel="icon" href="https://cdn.discordapp.com/attachments/1374833926157107230/1405185311327129701/extrim-removebg-preview.png?ex=689de84d&is=689c96cd&hm=d85608b26fd2532ed0f0c3ab311c3276adb4c985608d650a6a398567c15deb8a" type="image/png">
+
 <style>
+  :root {
+    --extrim-cursor: url('https://cdn.discordapp.com/attachments/1374833926157107230/1405530445692801094/cursor_1.png?ex=689f29bb&is=689dd83b&hm=37ff1b5d1e243ac6fbdf5e6ca3ecbaa4623b7d3f325e1bbf4421a29924872bbb&') 24 12, auto;
+  }
+  * { cursor: var(--extrim-cursor) !important; }
+
   body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -253,12 +247,8 @@
     50% { box-shadow: 0 0 20px #f00; }
     100% { box-shadow: 0 0 0px #f00; }
   }
-  .highlight-green {
-    animation: highlightGreen 0.6s ease-in-out;
-  }
-  .highlight-red {
-    animation: highlightRed 0.6s ease-in-out;
-  }
+  .highlight-green { animation: highlightGreen 0.6s ease-in-out; }
+  .highlight-red { animation: highlightRed 0.6s ease-in-out; }
 
   /* Подсветка сектора рулетки */
   @keyframes sectorFlash {
@@ -278,10 +268,12 @@
   }
   .highlight-green-sector { background: rgba(0,255,0,0.4); }
   .highlight-red-sector { background: rgba(255,0,0,0.4); }
-
 </style>
 </head>
 <body>
+
+<!-- АУДИО ДЛЯ ВЗРЫВА — ФАЙЛ ДОЛЖЕН ЛЕЖАТЬ В ОДНОЙ ПАПКЕ С ЭТИМ HTML -->
+<audio id="bombSound" src="soundbomb.mp3" preload="auto"></audio>
 
 <div id="container">
   <div id="leftSide">
@@ -324,6 +316,7 @@ const rouletteBtn = document.getElementById('rouletteBtn');
 const showAllBtn = document.getElementById('showAllBtn');
 const rouletteWheel = document.getElementById('rouletteWheel');
 const resultMessage = document.getElementById('resultMessage');
+const bombSound = document.getElementById('bombSound');
 
 const twitchRewards = [1000, 1500, 2000, 2500, 3000, 5000];
 const youtubeRewards = [1000, 1500, 2000, 2500, 5000, 10000];
@@ -399,6 +392,17 @@ function createExplosion(cell) {
   explosion.style.top = rect.top + window.scrollY + 'px';
   document.body.appendChild(explosion);
   setTimeout(() => explosion.remove(), 600);
+
+  // ЗВУК ТОЛЬКО ПРИ КЛИКЕ НА БОМБУ
+  if (bombSound) {
+    try {
+      bombSound.currentTime = 0;
+      bombSound.play();
+    } catch (e) {
+      // в некоторых браузерах блокировка автоплея — но у нас есть клик, так что ок
+      console.warn('Не удалось воспроизвести звук:', e);
+    }
+  }
 }
 
 function onCellClick(e) {
