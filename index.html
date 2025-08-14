@@ -422,6 +422,15 @@ function addHistoryEntry(text,type){
   if(type) entry.classList.add(type);
   entry.textContent=text;
   historyList.prepend(entry);
+
+  // Ограничение списка до 5 последних побед/проигрышей рулетки
+  const allItems = Array.from(historyList.children);
+  const rouletteItems = allItems.filter(item => item.classList.contains('roulette-win') || item.classList.contains('roulette-loss'));
+  while(rouletteItems.length > 5){
+    const last = rouletteItems.pop();
+    historyList.removeChild(last);
+  }
+
   saveHistory();
 }
 
