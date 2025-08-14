@@ -2,16 +2,15 @@
 <html lang="ru">
 <head> <style>
   :root {
+    /* Кастомный курсор с hotspot (24 12) — можно заменить URL на свой */
     --extrim-cursor: url('https://cdn.discordapp.com/attachments/1374833926157107230/1405530445692801094/cursor_1.png?ex=689f29bb&is=689dd83b&hm=37ff1b5d1e243ac6fbdf5e6ca3ecbaa4623b7d3f325e1bbf4421a29924872bbb&') 24 12, auto;
   }
-  html, body { cursor: var(--extrim-cursor) !important; }
-  a, button, [role="button"], h1,
-  .channel-btn, .cell:not(.opened), #rouletteBtn, #showAllBtn, #arrow {
+
+  /* Глобально для всего сайта, переопределяем всё */
+  * {
     cursor: var(--extrim-cursor) !important;
   }
-  #rouletteBtn:disabled, #showAllBtn:disabled, .channel-btn.disabled {
-    cursor: var(--extrim-cursor) !important;
-  }
+</style>
 </style>
 </style>
 </style>
