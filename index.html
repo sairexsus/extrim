@@ -423,12 +423,9 @@ function addHistoryEntry(text,type){
   entry.textContent=text;
   historyList.prepend(entry);
 
-  // Ограничение списка до 5 последних побед/проигрышей рулетки
-  const allItems = Array.from(historyList.children);
-  const rouletteItems = allItems.filter(item => item.classList.contains('roulette-win') || item.classList.contains('roulette-loss'));
-  while(rouletteItems.length > 5){
-    const last = rouletteItems.pop();
-    historyList.removeChild(last);
+  // Ограничение списка до 5 последних записей всех типов
+  while(historyList.children.length > 5){
+    historyList.removeChild(historyList.lastChild);
   }
 
   saveHistory();
@@ -500,75 +497,39 @@ rouletteBtn.addEventListener('click',()=>{
 
   rouletteSpinning=true;
   rouletteBtn.disabled=true;
-  twitchBtn.classList.add('disabled');
-  youtubeBtn.classList.add('disabled');
-  resultMessage.textContent='Рулетка крутится...';
+  showAllBtn.disabled=true;
 
-  const spins=3+Math.random()*3;
-  const baseAngle=Math.random()*360;
-  const offset=90; 
-  const stopAngle=360*spins+baseAngle;
-
-  rouletteWheel.style.transition='transform 5s cubic-bezier(0.25,0.1,0.25,1)';
-  rouletteWheel.style.transform=`rotate(${stopAngle}deg)`;
+  const spinDeg=Math.floor(Math.random()*360)+720; // минимум 2 оборота
+  rouletteWheel.style.transition='transform 3s ease-out';
+  rouletteWheel.style.transform=`rotate(${spinDeg}deg)`;
 
   setTimeout(()=>{
-    rouletteSpinning=false;
-    const finalAngle=(stopAngle+offset)%360;
-    let isGreen=finalAngle>=0 && finalAngle<180;
-
-    const cell=grid.children[selectedCellIndex];
-    if(isGreen){
-      const currentValue=parseInt(cell.textContent)||0;
-      const newValue=currentValue*2;
-      cell.textContent=newValue;
-      resultMessage.innerHTML=`Поздравляем! Награда удвоена: <span style="color:#0f0;">${newValue}</span>`;
-      addHistoryEntry(`Ячейка ${selectedCellIndex+1}: ${newValue} ✅`,'roulette-win');
-
-      // Подсветка ячейки и сектора
-      cell.classList.add('highlight-green');
-      const sector=document.createElement('div');
-      sector.classList.add('highlight-sector','highlight-green-sector');
-      rouletteWheel.appendChild(sector);
-      setTimeout(()=>{
-        cell.classList.remove('highlight-green');
-        rouletteWheel.removeChild(sector);
-      },600);
-
-    } else {
-      const lostValue=parseInt(cell.textContent)||0;
-      cell.textContent='💔';
-      cell.classList.add('bomb');
-      resultMessage.innerHTML=`<span style="color:#f00;">Сумма сгорела! 😢</span>`;
-      addHistoryEntry(`Ячейка ${selectedCellIndex+1}: ${lostValue}🔥`,'roulette-loss');
-
-      cell.classList.add('highlight-red');
-      const sector=document.createElement('div');
-      sector.classList.add('highlight-sector','highlight-red-sector');
-      rouletteWheel.appendChild(sector);
-      setTimeout(()=>{
-        cell.classList.remove('highlight-red');
-        rouletteWheel.removeChild(sector);
-      },600);
-
-      gameOver=true;
+    rouletteWheel.style.transition='';
+    const data=cellsData[selectedCellIndex];
+    const win=Math.random()<0.5;
+    if(data.type==='reward'){
+      if(win){
+        resultMessage.textContent=`Вы выиграли x2: ${data.value*2}`;
+        addHistoryEntry(`Рулетка: +${data.value*2}`,'roulette-win');
+      } else {
+        resultMessage.textContent=`Вы проиграли: ${data.value}`;
+        addHistoryEntry(`Рулетка: -${data.value}`,'roulette-loss');
+      }
     }
-  },5200);
+    rouletteSpinning=false;
+    rouletteBtn.disabled=true;
+  },3100);
 });
 
+// Показать все
 showAllBtn.addEventListener('click',()=>{
-  for(let i=0;i<cellsCount;i++){
-    const cell=grid.children[i];
-    if(cell.classList.contains('opened')) continue;
-    const data=cellsData[i];
+  cellsData.forEach((data,index)=>{
+    const cell=grid.children[index];
+    if(cell.classList.contains('opened')) return;
     cell.classList.add('opened');
-    if(data.type==='bomb'){
-      cell.textContent='💣';
-      cell.classList.add('bomb');
-    } else {
-      cell.textContent=data.value;
-    }
-  }
+    if(data.type==='bomb') cell.textContent='💣';
+    else cell.textContent=data.value;
+  });
   showAllBtn.disabled=true;
 });
 
