@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
+<head> 
+<link rel="icon" href="https://cdn.discordapp.com/attachments/1374833926157107230/1405185311327129701/extrim-removebg-preview.png?ex=689de84d&is=689c96cd&hm=d85608b26fd2532ed0f0c3ab311c3276adb4c985608d650a6a398567c15deb8a" type="image/png">
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>EXTRIM Прокачки</title>
-<link rel="icon" href="https://cdn.discordapp.com/attachments/1374833926157107230/1405185311327129701/extrim-removebg-preview.png?ex=689e910d&is=689d3f8d&hm=7edcfef3ebe399353d761b802929db398b4a2c4ca15403e560f6faa315345428&" type="image/png">
 <style>
   body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: url('https://cdn.discordapp.com/attachments/1374833926157107230/1404916053280034876/photo_2025-08-12_22-54-11.jpg?ex=689ee7c9&is=689d9649&hm=97742f55be397123a7ebf94959529a6795ce312557be873a280d6185ad64adfd&') no-repeat center center fixed;
+    background: url('https://cdn.discordapp.com/attachments/1374833926157107230/1404916053280034876/photo_2025-08-12_22-54-11.jpg?ex=689ced89&is=689b9c09&hm=dbce8ca859b5b1fd093a02839aa670011908ba19a05a91a817267d7122bb7977&') no-repeat center center fixed;
     background-size: cover;
     display: flex;
     justify-content: center;
@@ -22,7 +22,7 @@
   }
   #container {
     display: flex;
-    gap: 20px;
+    gap: 40px;
     align-items: flex-start;
   }
   #leftSide {
@@ -211,83 +211,69 @@
     color: gold;
     text-shadow: 0 0 5px #fff;
   }
+
+  /* Анимация взрыва */
+  @keyframes explosion {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(2); opacity: 0.8; }
+    100% { transform: scale(0); opacity: 0; }
+  }
   .explosion {
     position: absolute;
-    width: 100px;
-    height: 100px;
-    background: radial-gradient(circle, #ff0, #f00);
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
+    background: radial-gradient(circle, #ff0 0%, #f00 70%, transparent 100%);
+    animation: explosion 0.6s forwards;
     pointer-events: none;
-    animation: explode 0.6s ease-out forwards;
-    z-index: 1000;
+    z-index: 100;
   }
-  @keyframes explode {
-    0% { transform: scale(0.5); opacity: 1; }
-    100% { transform: scale(2); opacity: 0; }
+
+  /* Анимация подсветки ячейки */
+  @keyframes highlightGreen {
+    0% { box-shadow: 0 0 0px #0f0; }
+    50% { box-shadow: 0 0 20px #0f0; }
+    100% { box-shadow: 0 0 0px #0f0; }
   }
-  .highlight-green { animation: highlightGreen 0.6s; }
-  .highlight-red { animation: highlightRed 0.6s; }
-  @keyframes highlightGreen { 0% { background-color: #0f0; } 100% { background-color: rgba(255,255,255,0.1); } }
-  @keyframes highlightRed { 0% { background-color: #f00; } 100% { background-color: rgba(255,255,255,0.1); } }
+  @keyframes highlightRed {
+    0% { box-shadow: 0 0 0px #f00; }
+    50% { box-shadow: 0 0 20px #f00; }
+    100% { box-shadow: 0 0 0px #f00; }
+  }
+  .highlight-green {
+    animation: highlightGreen 0.6s ease-in-out;
+  }
+  .highlight-red {
+    animation: highlightRed 0.6s ease-in-out;
+  }
+
+  /* Подсветка сектора рулетки */
+  @keyframes sectorFlash {
+    0% { opacity: 0; }
+    50% { opacity: 0.7; }
+    100% { opacity: 0; }
+  }
   .highlight-sector {
     position: absolute;
-    top: 0; left:0;
-    width: 100%; height: 100%;
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
-    opacity: 0.6;
+    pointer-events: none;
+    opacity: 0.7;
+    animation: sectorFlash 0.6s ease-in-out forwards;
+    z-index: 5;
   }
-  .highlight-green-sector { background: conic-gradient(#0f0 0deg 180deg, transparent 180deg 360deg); }
-  .highlight-red-sector { background: conic-gradient(#f00 0deg 180deg, transparent 180deg 360deg); }
-  #historyWrapper {
-    width: 200px;
-    margin-right: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-  }
-  #historyBtn {
-    padding: 10px;
-    font-weight: bold;
-    cursor: pointer;
-    border-radius: 8px;
-    border: none;
-    background: gold;
-    color: black;
-    margin-bottom: 5px;
-  }
-  #historyList {
-    max-height: 400px;
-    overflow-y: auto;
-    background: rgba(0,0,0,0.6);
-    border-radius: 8px;
-    padding: 10px;
-    display: none;
-    flex-direction: column;
-    gap: 5px;
-    color: #fff;
-    font-size: 14px;
-  }
-  .history-item {
-    padding: 5px;
-    border-radius: 6px;
-    background: rgba(255,255,255,0.1);
-  }
-  .history-item.bomb { background: rgba(255,0,0,0.3); }
-  .history-item.roulette-loss { background: rgba(255,100,0,0.3); }
-  .history-item.roulette-win { background: rgba(0,255,0,0.3); }
+  .highlight-green-sector { background: rgba(0,255,0,0.4); }
+  .highlight-red-sector { background: rgba(255,0,0,0.4); }
+
 </style>
 </head>
 <body>
 
 <div id="container">
-
-  <div id="historyWrapper">
-    <button id="historyBtn">Последние победы</button>
-    <div id="historyList"></div>
-  </div>
-
   <div id="leftSide">
-    <h1 id="titleHeader">EXTRIM Прокачки</h1>
+    <h1 onclick="location.reload()">EXTRIM Прокачки</h1>
+
     <div id="buttonsWrapper">
       <div id="twitchBtn" class="channel-btn active">
         <img src="https://cdn.discordapp.com/attachments/1374833926157107230/1404918424618143866/twitch_logo_icon_189242.png?ex=689ee9fe&is=689d987e&hm=21252fc09a23e33836113e139aee4651214d90898a4be1da7416a3490a96dd50&" alt="Twitch" />
@@ -298,11 +284,14 @@
         YouTube
       </div>
     </div>
+
     <div id="grid"></div>
+
     <div id="buttonsBottom">
       <button id="rouletteBtn" disabled>Запустить рулетку</button>
       <button id="showAllBtn" disabled>Показать все ячейки</button>
     </div>
+
     <div id="resultMessage"></div>
   </div>
 
@@ -312,268 +301,210 @@
     </div>
     <div id="arrow" title="Стрелка рулетки (наведение)"></div>
   </div>
-
 </div>
 
 <script>
-const grid=document.getElementById('grid');
-const twitchBtn=document.getElementById('twitchBtn');
-const youtubeBtn=document.getElementById('youtubeBtn');
-const rouletteBtn=document.getElementById('rouletteBtn');
-const showAllBtn=document.getElementById('showAllBtn');
-const rouletteWheel=document.getElementById('rouletteWheel');
-const resultMessage=document.getElementById('resultMessage');
-const historyBtn=document.getElementById('historyBtn');
-const historyList=document.getElementById('historyList');
-const titleHeader=document.getElementById('titleHeader');
+const grid = document.getElementById('grid');
+const twitchBtn = document.getElementById('twitchBtn');
+const youtubeBtn = document.getElementById('youtubeBtn');
+const rouletteBtn = document.getElementById('rouletteBtn');
+const showAllBtn = document.getElementById('showAllBtn');
+const rouletteWheel = document.getElementById('rouletteWheel');
+const resultMessage = document.getElementById('resultMessage');
 
-titleHeader.addEventListener('click',()=>location.reload());
-historyBtn.addEventListener('click',()=>{ historyList.style.display = historyList.style.display==='flex'?'none':'flex'; });
+const twitchRewards = [1000, 1500, 2000, 2500, 3000, 5000];
+const youtubeRewards = [1000, 1500, 2000, 2500, 5000, 10000];
+const twitchChances = [0.4, 0.25, 0.175, 0.125, 0.075, 0.125];
+const youtubeChances = [0.3, 0.3, 0.2, 0.12, 0.09, 0.06];
 
-const twitchRewards=[1000,1500,2000,2500,3000,5000];
-const youtubeRewards=[1000,1500,2000,2500,5000,10000];
-const twitchChances=[0.4,0.25,0.175,0.125,0.075,0.125];
-const youtubeChances=[0.3,0.3,0.2,0.12,0.09,0.06];
+let rewards = twitchRewards;
+let chances = twitchChances;
 
-let rewards=twitchRewards;
-let chances=twitchChances;
+const cellsCount = 64;
+let cellsData = [];
+let selectedCellIndex = null;
+let gameOver = false;
+let rouletteSpinning = false;
 
-const cellsCount=64;
-let cellsData=[];
-let selectedCellIndex=null;
-let gameOver=false;
-let rouletteSpinning=false;
-
-function createGrid(){
-  grid.innerHTML='';
-  cellsData=[];
-  selectedCellIndex=null;
-  gameOver=false;
-  rouletteSpinning=false;
-  rouletteBtn.disabled=true;
-  showAllBtn.disabled=true;
-  resultMessage.textContent='';
+function createGrid() {
+  grid.innerHTML = '';
+  cellsData = [];
+  selectedCellIndex = null;
+  gameOver = false;
+  rouletteSpinning = false;
+  rouletteBtn.disabled = true;
+  showAllBtn.disabled = true;
+  resultMessage.textContent = '';
 
   twitchBtn.classList.remove('disabled');
   youtubeBtn.classList.remove('disabled');
 
-  for(let i=0;i<cellsCount;i++){
-    const cell=document.createElement('div');
+  for (let i = 0; i < cellsCount; i++) {
+    const cell = document.createElement('div');
     cell.classList.add('cell');
-    cell.dataset.index=i;
-    cell.addEventListener('click',onCellClick);
+    cell.dataset.index = i;
+    cell.addEventListener('click', onCellClick);
     grid.appendChild(cell);
   }
+
   generateCellsData();
 }
 
-function generateCellsData(){
-  cellsData=[];
-  const guaranteedIndex=Math.floor(Math.random()*cellsCount);
-  for(let i=0;i<cellsCount;i++){
-    if(i===guaranteedIndex){
-      cellsData.push({type:'reward',value:rewards[rewards.length-1]});
+function generateCellsData() {
+  cellsData = [];
+  const guaranteedIndex = Math.floor(Math.random() * cellsCount);
+
+  for (let i = 0; i < cellsCount; i++) {
+    if (i === guaranteedIndex) {
+      cellsData.push({ type: 'reward', value: rewards[rewards.length - 1] });
     } else {
-      const bombChance=0.08;
-      if(Math.random()<bombChance){
-        cellsData.push({type:'bomb'});
+      const bombChance = 0.08;
+      if (Math.random() < bombChance) {
+        cellsData.push({ type: 'bomb' });
       } else {
-        cellsData.push({type:'reward',value:getRandomReward()});
+        cellsData.push({ type: 'reward', value: getRandomReward() });
       }
     }
   }
 }
 
-function getRandomReward(){
-  let r=Math.random();
-  let sum=0;
-  for(let i=0;i<chances.length;i++){
-    sum+=chances[i];
-    if(r<=sum) return rewards[i];
+function getRandomReward() {
+  let r = Math.random();
+  let sum = 0;
+  for (let i = 0; i < chances.length; i++) {
+    sum += chances[i];
+    if (r <= sum) return rewards[i];
   }
   return rewards[0];
 }
 
-// LocalStorage функции
-function saveHistory(){
-  const items=[];
-  document.querySelectorAll('#historyList .history-item').forEach(el=>{
-    items.push({text:el.textContent,type:el.classList.contains('bomb')?'bomb':el.classList.contains('roulette-loss')?'roulette-loss':'roulette-win'});
-  });
-  localStorage.setItem('extrimHistory',JSON.stringify(items));
-}
-function loadHistory(){
-  const saved=localStorage.getItem('extrimHistory');
-  if(saved){
-    const items=JSON.parse(saved);
-    historyList.innerHTML='';
-    items.forEach(item=>{
-      const entry=document.createElement('div');
-      entry.classList.add('history-item');
-      if(item.type) entry.classList.add(item.type);
-      entry.textContent=item.text;
-      historyList.appendChild(entry);
-    });
-  }
-}
-function addHistoryEntry(text,type){
-  const entry=document.createElement('div');
-  entry.classList.add('history-item');
-  if(type) entry.classList.add(type);
-  entry.textContent=text;
-  historyList.prepend(entry);
-
-  // Ограничение списка до 5 последних побед/проигрышей рулетки
-  const allItems = Array.from(historyList.children);
-  const rouletteItems = allItems.filter(item => item.classList.contains('roulette-win') || item.classList.contains('roulette-loss'));
-  while(rouletteItems.length > 5){
-    const last = rouletteItems.pop();
-    historyList.removeChild(last);
-  }
-
-  saveHistory();
+function createExplosion(cell) {
+  const rect = cell.getBoundingClientRect();
+  const explosion = document.createElement('div');
+  explosion.classList.add('explosion');
+  explosion.style.left = rect.left + window.scrollX + 'px';
+  explosion.style.top = rect.top + window.scrollY + 'px';
+  document.body.appendChild(explosion);
+  setTimeout(() => explosion.remove(), 600);
 }
 
-// Клик по ячейке
-function onCellClick(e){
-  if(gameOver||rouletteSpinning) return;
-  if(selectedCellIndex!==null) return;
-  const cell=e.currentTarget;
-  const index=+cell.dataset.index;
-  if(cell.classList.contains('opened')) return;
+function onCellClick(e) {
+  if (gameOver || rouletteSpinning) return;
+  if (selectedCellIndex !== null) return;
+
+  const cell = e.currentTarget;
+  const index = +cell.dataset.index;
+  if (cell.classList.contains('opened')) return;
 
   cell.classList.add('opened');
-  selectedCellIndex=index;
-  showAllBtn.disabled=false;
+  selectedCellIndex = index;
+  showAllBtn.disabled = false;
 
-  const data=cellsData[index];
-  if(data.type==='bomb'){
-    cell.textContent='💣';
+  const data = cellsData[index];
+  if (data.type === 'bomb') {
+    cell.textContent = '💣';
     cell.classList.add('bomb');
-    gameOver=true;
-    rouletteBtn.disabled=true;
+    createExplosion(cell); 
+    gameOver = true;
+    rouletteBtn.disabled = true;
     twitchBtn.classList.add('disabled');
     youtubeBtn.classList.add('disabled');
     twitchBtn.classList.remove('active');
     youtubeBtn.classList.remove('active');
-    resultMessage.textContent='Взорвалась бомба! Игра окончена.';
-
-    const explosion=document.createElement('div');
-    explosion.classList.add('explosion');
-    const rect=cell.getBoundingClientRect();
-    explosion.style.left=`${rect.left+rect.width/2-50+window.scrollX}px`;
-    explosion.style.top=`${rect.top+rect.height/2-50+window.scrollY}px`;
-    document.body.appendChild(explosion);
-    setTimeout(()=>document.body.removeChild(explosion),600);
-
-    addHistoryEntry(`Ячейка ${selectedCellIndex+1}: 💣`,'bomb');
+    resultMessage.textContent = 'Взорвалась бомба! Игра окончена.';
   } else {
-    cell.textContent=data.value;
-    rouletteBtn.disabled=false;
-    resultMessage.textContent='';
+    cell.textContent = data.value;
+    rouletteBtn.disabled = false;
+    resultMessage.textContent = '';
   }
 }
 
-twitchBtn.addEventListener('click',()=>{
-  if(gameOver||rouletteSpinning) return;
-  if(selectedCellIndex!==null) return;
-  rewards=twitchRewards;
-  chances=twitchChances;
+twitchBtn.addEventListener('click', () => {
+  if (gameOver || rouletteSpinning) return;
+  if (selectedCellIndex !== null) return;
+  rewards = twitchRewards;
+  chances = twitchChances;
   twitchBtn.classList.add('active');
   youtubeBtn.classList.remove('active');
   createGrid();
 });
 
-youtubeBtn.addEventListener('click',()=>{
-  if(gameOver||rouletteSpinning) return;
-  if(selectedCellIndex!==null) return;
-  rewards=youtubeRewards;
-  chances=youtubeChances;
+youtubeBtn.addEventListener('click', () => {
+  if (gameOver || rouletteSpinning) return;
+  if (selectedCellIndex !== null) return;
+  rewards = youtubeRewards;
+  chances = youtubeChances;
   youtubeBtn.classList.add('active');
   twitchBtn.classList.remove('active');
   createGrid();
 });
 
-// Рулетка
-rouletteBtn.addEventListener('click',()=>{
-  if(rouletteSpinning||selectedCellIndex===null) return;
+rouletteBtn.addEventListener('click', () => {
+  if (rouletteSpinning || selectedCellIndex === null) return;
 
-  rouletteSpinning=true;
-  rouletteBtn.disabled=true;
+  rouletteSpinning = true;
+  rouletteBtn.disabled = true;
   twitchBtn.classList.add('disabled');
   youtubeBtn.classList.add('disabled');
-  resultMessage.textContent='Рулетка крутится...';
 
-  const spins=3+Math.random()*3;
-  const baseAngle=Math.random()*360;
-  const offset=90; 
-  const stopAngle=360*spins+baseAngle;
+  resultMessage.textContent = 'Рулетка крутится...';
 
-  rouletteWheel.style.transition='transform 5s cubic-bezier(0.25,0.1,0.25,1)';
-  rouletteWheel.style.transform=`rotate(${stopAngle}deg)`;
+  const spins = 3 + Math.random() * 3;
+  const baseAngle = Math.random() * 360;
+  const offset = 90; 
+  const stopAngle = 360 * spins + baseAngle;
 
-  setTimeout(()=>{
-    rouletteSpinning=false;
-    const finalAngle=(stopAngle+offset)%360;
-    let isGreen=finalAngle>=0 && finalAngle<180;
+  rouletteWheel.style.transition = 'transform 5s cubic-bezier(0.25, 0.1, 0.25, 1)';
+  rouletteWheel.style.transform = `rotate(${stopAngle}deg)`;
 
-    const cell=grid.children[selectedCellIndex];
-    if(isGreen){
-      const currentValue=parseInt(cell.textContent)||0;
-      const newValue=currentValue*2;
-      cell.textContent=newValue;
-      resultMessage.innerHTML=`Поздравляем! Награда удвоена: <span style="color:#0f0;">${newValue}</span>`;
-      addHistoryEntry(`Ячейка ${selectedCellIndex+1}: ${newValue} ✅`,'roulette-win');
+  setTimeout(() => {
+    rouletteSpinning = false;
+    const finalAngle = (stopAngle + offset) % 360;
+    let isGreen = finalAngle >= 0 && finalAngle < 180;
 
-      // Подсветка ячейки и сектора
+    // Подсветка сектора рулетки
+    const highlightSector = document.createElement('div');
+    highlightSector.classList.add('highlight-sector');
+    highlightSector.classList.add(isGreen ? 'highlight-green-sector' : 'highlight-red-sector');
+    rouletteWheel.appendChild(highlightSector);
+    setTimeout(() => highlightSector.remove(), 600);
+
+    const cell = grid.children[selectedCellIndex];
+    if (isGreen) {
+      const currentValue = parseInt(cell.textContent) || 0;
+      const newValue = currentValue * 2;
+      cell.textContent = newValue;
+      resultMessage.innerHTML = `Поздравляем! Награда удвоена: <span style="color:#0f0;">${newValue}</span>`;
       cell.classList.add('highlight-green');
-      const sector=document.createElement('div');
-      sector.classList.add('highlight-sector','highlight-green-sector');
-      rouletteWheel.appendChild(sector);
-      setTimeout(()=>{
-        cell.classList.remove('highlight-green');
-        rouletteWheel.removeChild(sector);
-      },600);
-
+      setTimeout(() => cell.classList.remove('highlight-green'), 600);
     } else {
-      const lostValue=parseInt(cell.textContent)||0;
-      cell.textContent='💔';
+      cell.textContent = '💔';
       cell.classList.add('bomb');
-      resultMessage.innerHTML=`<span style="color:#f00;">Сумма сгорела! 😢</span>`;
-      addHistoryEntry(`Ячейка ${selectedCellIndex+1}: ${lostValue}🔥`,'roulette-loss');
-
+      resultMessage.innerHTML = `<span style="color:#f00;">Сумма сгорела! 😢</span>`;
       cell.classList.add('highlight-red');
-      const sector=document.createElement('div');
-      sector.classList.add('highlight-sector','highlight-red-sector');
-      rouletteWheel.appendChild(sector);
-      setTimeout(()=>{
-        cell.classList.remove('highlight-red');
-        rouletteWheel.removeChild(sector);
-      },600);
-
-      gameOver=true;
+      setTimeout(() => cell.classList.remove('highlight-red'), 600);
+      gameOver = true;
     }
-  },5200);
+  }, 5200);
 });
 
-showAllBtn.addEventListener('click',()=>{
-  for(let i=0;i<cellsCount;i++){
-    const cell=grid.children[i];
-    if(cell.classList.contains('opened')) continue;
-    const data=cellsData[i];
+showAllBtn.addEventListener('click', () => {
+  for (let i = 0; i < cellsCount; i++) {
+    const cell = grid.children[i];
+    if (cell.classList.contains('opened')) continue;
+    const data = cellsData[i];
     cell.classList.add('opened');
-    if(data.type==='bomb'){
-      cell.textContent='💣';
+    if (data.type === 'bomb') {
+      cell.textContent = '💣';
       cell.classList.add('bomb');
     } else {
-      cell.textContent=data.value;
+      cell.textContent = data.value;
     }
   }
-  showAllBtn.disabled=true;
+  showAllBtn.disabled = true;
 });
 
 createGrid();
-loadHistory();
 </script>
 
 </body>
