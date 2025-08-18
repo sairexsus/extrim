@@ -364,7 +364,7 @@ function generateCellsData() {
     if (i === guaranteedIndex) {
       cellsData.push({ type: 'reward', value: rewards[rewards.length - 1] });
     } else {
-      const bombChance = 0.11;
+      const bombChance = 0.095;
       if (Math.random() < bombChance) {
         cellsData.push({ type: 'bomb' });
       } else {
