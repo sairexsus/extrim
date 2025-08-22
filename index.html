@@ -393,13 +393,11 @@ function createExplosion(cell) {
   document.body.appendChild(explosion);
   setTimeout(() => explosion.remove(), 600);
 
-  // ЗВУК ТОЛЬКО ПРИ КЛИКЕ НА БОМБУ
   if (bombSound) {
     try {
       bombSound.currentTime = 0;
       bombSound.play();
     } catch (e) {
-      // в некоторых браузерах блокировка автоплея — но у нас есть клик, так что ок
       console.warn('Не удалось воспроизвести звук:', e);
     }
   }
