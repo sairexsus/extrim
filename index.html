@@ -1133,9 +1133,9 @@ function renderQuestions() {
   <div class="question" id="q_container_${q.id}">
     <p><strong>Питання ${index + 1} [Бал: ${q.points}]:</strong> ${q.text}</p>
     <div class="btn-group">
-      <button class="${active1}" onclick="setAnswer('${q.id}', 1)">✅ + (100%)</button>
-      <button class="${active05}" onclick="setAnswer('${q.id}', 0.5)">❓ ± (50%)</button>
-      <button class="${active0}" onclick="setAnswer('${q.id}', 0)">❌ − (0%)</button>
+      <button class="${active1}" onclick="setAnswer('${q.id}', 1)">Повна правильна відповідь (100%)</button>
+      <button class="${active05}" onclick="setAnswer('${q.id}', 0.5)">Часткова/неповна відповідь (50%)</button>
+      <button class="${active0}" onclick="setAnswer('${q.id}', 0)">Неправильна відповідь / Не знає (0%)</button>
     </div>
   </div>
 `;
