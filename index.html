@@ -32,6 +32,51 @@
       padding-bottom: 8px;
       margin-top: 25px;
     }
+    .main-menu-btn {
+      background: #282833;
+      color: #ff9f43;
+      border: 1px solid #ff9f43;
+      padding: 10px 20px;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s;
+      margin-bottom: 15px;
+    }
+    .main-menu-btn:hover {
+      background: #ff9f43;
+      color: #16161a;
+    }
+    .block-select-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 30px;
+    }
+    .block-btn {
+      padding: 20px;
+      font-size: 18px;
+      background: #1e1e24;
+      border: 2px solid #3e3e4a;
+      color: #fff;
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+      font-weight: bold;
+    }
+    .block-btn:hover {
+      border-color: #00ff99;
+      background: #24242e;
+    }
+    .block-btn span {
+      display: block;
+      font-size: 14px;
+      color: #aaa;
+      margin-top: 5px;
+      font-weight: normal;
+    }
     .topic-title {
       background: #1e1e24;
       padding: 12px;
@@ -134,13 +179,30 @@
       align-items: center;
       border: 1px solid #444;
     }
+    .prep-details {
+      margin-top: 8px;
+      background: #1b1b22;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 14px;
+      border-left: 3px solid #ff9f43;
+    }
+    .prep-details ul {
+      margin: 5px 0 0 0;
+      padding-left: 20px;
+    }
+    .prep-details li {
+      margin-bottom: 4px;
+    }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h1>Гістологія — Іспит</h1>
-  <div id="timer">Завантаження таймера...</div>
+  <div id="header-area">
+    <h1>Гістологія — Іспит</h1>
+  </div>
+  <div id="timer" style="display:none;">Завантаження таймера...</div>
   <div id="block"></div>
   <div id="summary-report"></div>
 </div>
@@ -177,7 +239,7 @@ const specialHistologyTopics = [
       { id: "s2_6", text: "Лімфоїдний фолікул селезінки: назвати чотири зони, судини крайової зони та переважаючий тип лімфоцитів.", points: 25 },
       { id: "s2_7", text: "Характеристика червоної пульпи селезінки: забарвлення при H&E, причина та її основні компоненти.", points: 15 },
       { id: "s2_8", text: "Назвати 5 типів клітин, що входять до клітинного складу тяжів Більрота.", points: 20 },
-      { id: "s2_9", text: "Особливості будови венозних синусів селезінки: форма та орієнтація ендотеліоцитів, особливості базальної мембрани та функціональне значення цієї структури.", points: 30 }
+      { id: "s2_9", text: "Особливості будови венозних синусів селезінки: forma та орієнтація ендотеліоцитів, особливості базальної мембрани та функціональне значення цієї структури.", points: 30 }
     ]
   },
   {
@@ -240,7 +302,7 @@ const specialHistologyTopics = [
       { id: "s7_2", text: "Назвати три структурні частини аденогіпофіза.", points: 15 },
       { id: "s7_3", text: "Загальна будова аденогіпофіза (строма, паренхіма) та на які групи за тинкторіальними властивостями поділяються його ендокриноцити?", points: 20 },
       { id: "s7_4", text: "Як називаються опорні клітини аденогіпофіза?", points: 10 },
-      { id: "s7_5", text: "Назвати три типи базофільних аденоцитів та гормони, які вони секретують.", points: 20 },
+      { id: "s7_5", text: "Назвати три типи базофільних аденоцитів та гормони, які они секретують.", points: 20 },
       { id: "s7_6", text: "Назвати два типи ацидофільних аденоцитів та їхні гормони.", points: 15 },
       { id: "s7_7", text: "Морфологічні особливості проміжної та туберальної частин аденогіпофіза.", points: 15 },
       { id: "s7_8", text: "Структурні частини нейрогіпофіза, його стромальні елементи та характер паренхіми.", points: 20 },
@@ -253,7 +315,7 @@ const specialHistologyTopics = [
     questions: [
       { id: "s8_1", text: "Яка основна функція тимуса та з яких попередників вона здійснюється?", points: 15 },
       { id: "s8_2", text: "Характеристика грубої та ніжної строми тимуса (типи клітин, походження, кількість типів клітин ніжної строми).", points: 20 },
-      { id: "s8_3", text: "Назвати структурно-функціональну одиницю тимуса, її зони та клітинний склад кіркової речовини.", points: 20 },
+      { id: "s8_3", text: "Назвати структурно-функциональну одиницю тимуса, її зони та клітинний склад кіркової речовини.", points: 20 },
       { id: "s8_4", text: "Перерахувати всі компоненти гематотимусного бар'єру та назвати три його основні функції.", points: 25 },
       { id: "s8_5", text: "Клітинний склад мозкової речовини тимуса, особливості рециркуляції Т-лімфоцитів та де саме і чому вони виходять у судинне русло?", points: 25 },
       { id: "s8_6", text: "Назвати три стадії диференціації Т-клітин за наявністю рецепторів CD4/CD8.", points: 15 },
@@ -379,7 +441,7 @@ const generalHistologyTopics = [
   {
     name: "Тема 2: Морфофункціональна характеристика кісткової тканини",
     questions: [
-      { id: "g2_1", text: "Три типи клітин та загальні характеристики міжклітинної речовини (органічна і неорганічна частини).", points: 25 },
+      { id: "g2_1", text: "Три типу клітин та загальні характеристики міжклітинної речовини (органічна і неорганічна частини).", points: 25 },
       { id: "g2_2", text: "Характеристика остеобласта: локалізація, будова, забарвлення цитоплазми та функція.", points: 20 },
       { id: "g2_3", text: "Характеристика остеоцита: локалізація, форма клітини, функція.", points: 15 },
       { id: "g2_4", text: "Характеристика остеокласта: локалізація, походження, будова та функція.", points: 25 },
@@ -410,9 +472,9 @@ const generalHistologyTopics = [
       { id: "g4_3", text: "Міофібрила: функція, вигляд на препараті (причина посмугованості) та її одиниця.", points: 20 },
       { id: "g4_4", text: "Саркомер та його елементи: типи скоротливих міофіламентів та 5 основних елементів саркомера.", points: 30 },
       { id: "g4_5", text: "Характеристика А-диска та І-диска: забарвлення та склад філаментів.", points: 20 },
-      { id: "g4_6", text: "Білки, асоційовані з актином: білок для зв'язування кальцію та білок, що закриває активні ділянки.", points: 15 },
+      { id: "g4_6", text: "Білки, асиційовані з актином: білок для зв'язування кальцію та білок, що закриває активні ділянки.", points: 15 },
       { id: "g4_7", text: "Саркоплазматична сітка та Т-система: поняття L-системи, її функція та склад тріади.", points: 25 },
-      { id: "g4_8", text: "Функціональні особливості: тип інервації, швидкість, характер скорочень та стомлюваність.", points: 15 },
+      { id: "g4_8", text: "Функціональні особливості: тип інервації, швидкість, характер скорочень та стомлюваність.", points: 15 }
     ]
   },
   {
@@ -488,213 +550,414 @@ const generalHistologyTopics = [
     name: "Тема 11: Морфофункціональна характеристика епітеліальної тканини",
     questions: [
       { id: "g11_1", text: "Чотири основні функції епітеліальної тканини з конкретними прикладами.", points: 25 },
-      { id: "g11_2", text: "П'ять визначальних рис (критеріїв) епітеліальної тканини.", points: 25 },
-      { id: "g11_3", text: "Міжклітинні контакти на латеральній поверхні епітеліоцитів: 4 типи та їхнє функціональне призначення.", points: 30 },
-      { id: "g11_4", text: "Спеціалізовані структури апікальної поверхні (мікроворсинки та війки): компоненти цитоскелета, функції та приклади локалізації.", points: 30 },
-      { id: "g11_5", text: "Структури базального полюса епітеліоцита: позаклітинна структура та тип контакту, їхнє значення.", points: 20 }
+      { id: "g11_2", text: "Головні морфологічні ознаки епітеліїв (полярність, базальна мембрана, відсутність судин).", points: 25 },
+      { id: "g11_3", text: "Морфологічна класифікація покривного епітелію.", points: 20 },
+      { id: "g11_4", text: "Будова та локалізація перехідного епітелію (уротелію).", points: 15 }
     ]
   }
 ];
 
-// БЛОК 3: ПРЕПАРАТЫ
-const slideQuestions = [
-  { id: "p1", text: "Діагностика мікропрепарату: Серце (пучок Пуркін'є, кардіоміоцити). На що звернути увагу?", points: 100 }
+// ==========================================
+// БЛОК 3: ГІСТОЛОГІЧНІ ПРЕПАРАТИ (МІКРОПРЕПАРАТИ)
+// ==========================================
+const slideTopics = [
+  {
+    name: "Препарат 1: Стінка серця (волокна Пуркін'є)",
+    questions: [
+      { id: "p1_1", text: "Надайте морфологічну характеристику препарату. Назвіть забарвлення ядер (метод H&E).", points: 15 },
+      { id: "p1_2", text: "Перерахуйте у правильній послідовності всі 4 шари ендокарду.", points: 20 },
+      { id: "p1_3", text: "Волокна Пуркін'є: вкажіть тип кардіоміоцитів, розмір клітин, кількість і розташування міофібрил.", points: 25 },
+      { id: "p1_4", text: "Волокна Пуркін'є: яке забарвлення має цитоплазма (H&E), які включення містяться у великій кількості і чому вони не візуалізуються?", points: 25 },
+      { id: "p1_5", text: "Які клітини розташовані праворуч і ліворуч від волокон (виглядають як порожні «персні»)? Вкажіть тканинний склад міокарда.", points: 15 }
+    ]
+  },
+  {
+    name: "Препарат 2: Щитоподібна та прищитоподібна залози",
+    questions: [
+      { id: "p2_1", text: "Залоза в нижній частині: назва, структурні елементи паренхіми, тканина строми та компоненти фолікула.", points: 20 },
+      { id: "p2_2", text: "Клітини 1 щитоподібної залози: назва, локалізація, гормони та від чого залежить їхня висота.", points: 25 },
+      { id: "p2_3", text: "Клітини 2 щитоподібної залози: назва (С-клітини), локалізація та гормон, який вони продукують.", points: 20 },
+      { id: "p2_4", text: "Залоза у верхній частині: назва, структури паренхіми, тканина строми.", points: 15 },
+      { id: "p2_5", text: "Клітини прищитоподібної залози: характеристики Головних (розмір, забарвлення, функція) та Оксифільних (розмір, забарвлення, здатність до секреції) паратироцитів.", points: 25 }
+    ]
+  },
+  {
+    name: "Препарат 3: Надниркова залоза",
+    questions: [
+      { id: "p3_1", text: "Вкажіть барвник для ядер (H&E) та склад строми органа (капсула, трабекули).", points: 10 },
+      { id: "p3_2", text: "Зона 1 кіркової речовини: назва, форма епітеліальних тяжів, будова клітин та гормони.", points: 20 },
+      { id: "p3_3", text: "Зона 2 кіркової речовини: назва, форма тяжів, забарвлення цитоплазми та гормони.", points: 20 },
+      { id: "p3_4", text: "Чому клітини зони 2 називаються спонгіоцитами? Опишіть причину такої структури.", points: 15 },
+      { id: "p3_5", text: "Зона 3 кіркової речовини (форма тяжів, гормони) та Мозкова речовина (назва клітин, їх походження, гормони).", points: 25 }
+    ]
+  },
+  {
+    name: "Препарат 4: Лімфатичний вузол",
+    questions: [
+      { id: "p4_1", text: "Опишіть грубу строму органа, структуру-просвітлення під капсулою та ніжну строму.", points: 15 },
+      { id: "p4_2", text: "Кіркова речовина: назвіть дві частини (Частина 1 і Частина 2), їхній вигляд на препараті та переважаючий тип лімфоцитів у Частині 2.", points: 25 },
+      { id: "p4_3", text: "Лімфоїдні фолікули: який тип лімфоцитів переважає, який це вид фолікулів на препараті?", points: 15 },
+      { id: "p4_4", text: "Опишіть 2 зони лімфоїдного фолікула та особливості їхнього забарвлення.", points: 25 },
+      { id: "p4_5", text: "Мозкова речовина: назвіть та охарактеризуйте два її головні компоненти.", points: 20 }
+    ]
+  },
+  {
+    name: "Препарат 5: Розвиток зуба",
+    questions: [
+      { id: "p5_1", text: "Який епітелій ротової порожнини видно на препараті? Яка структура з'єднує епітелій та емалевий орган?", points: 15 },
+      { id: "p5_2", text: "Емалевий орган: вкажіть ембріональне джерело розвитку та його 3 шари.", points: 25 },
+      { id: "p5_3", text: "Зубний сосочок: ембріональне джерело та напрямок диференціації зовнішніх і внутрішніх клітин.", points: 20 },
+      { id: "p5_4", text: "Зубний мішечок: ембріональне джерело та напрямок диференціації зовнішніх і внутрішніх клітин.", points: 20 },
+      { id: "p5_5", text: "Вкажіть походження тканин зрілого зуба (що походить з емалевого органа, сосочка та мішечка).", points: 20 }
+    ]
+  },
+  {
+    name: "Препарат 6: Стравохід",
+    questions: [
+      { id: "p6_1", text: "Слизова оболонка стравоходу: назвіть 3 шари та типи тканин/клітин у них.", points: 25 },
+      { id: "p6_2", text: "Залози стравоходу на препараті: назва, форма, тип клітин, характер секрету та локалізація протоків/секреторних відділів.", points: 25 },
+      { id: "p6_3", text: "Охарактеризуйте підслизовий прошарок та м'язову оболонку (тип тканини, клітини, шари).", points: 25 },
+      { id: "p6_4", text: "Яка частина органа представлена на препараті? Опишіть зовнішню оболонку (назва, тканина).", points: 15 }
+    ]
+  },
+  {
+    name: "Препарат 7: Товста кишка",
+    questions: [
+      { id: "p7_1", text: "Слизова оболонка: назвіть її 3 шари. Охарактеризуйте клітини епітелію та їхню функцію.", points: 25 },
+      { id: "p7_2", text: "Назвіть структури рельєфу слизової оболонки товстої кишки та їхні морфологічні особливості.", points: 20 },
+      { id: "p7_3", text: "Яка структура лімфоїдної тканини присутня у слизовій оболонці? Охарактеризуйте підслизовий прошарок.", points: 20 },
+      { id: "p7_4", text: "М'язова оболонка товстої кишки: тип тканини, кількість шарів та специфічні особливості (тенії). Назвіть зовнішню оболонку.", points: 25 }
+    ]
+  },
+  {
+    name: "Препарат 8: Підшлункова залоза",
+    questions: [
+      { id: "p8_1", text: "Опишіть строму та паренхіму підшлункової залози (екзокринна та ендокринна частини).", points: 20 },
+      { id: "p8_2", text: "Яка будова часточки? Назвіть клітинні компоненти панкреатичного ацинусу.", points: 20 },
+      { id: "p8_3", text: "Екзокринний панкреатоцит: форма, детальний поділ на дві зони (апікальна та базальна), їх забарвлення та вміст.", points: 30 },
+      { id: "p8_4", text: "Перерахуйте види вивідних проток підшлункової залози, що візуалізуються на препараті.", points: 15 }
+    ]
+  },
+  {
+    name: "Препарат 9: Сечовий міхур",
+    questions: [
+      { id: "p9_1", text: "Перерахуйте всі оболонки стінки сечового міхура. З яких шарів складається слизова оболонка?", points: 20 },
+      { id: "p9_2", text: "Назвіть структури рельєфу слизової оболонки. Опишіть шари уротелію (базальний, проміжний, поверхневий).", points: 25 },
+      { id: "p9_3", text: "Чому епітелій сечового міхура називають перехідним? Опишіть механізм.", points: 15 },
+      { id: "p9_4", text: "М'язова оболонка: тип тканини, забарвлення цитоплазми. Вкажіть тканину прошарків та структури в них.", points: 20 }
+    ]
+  },
+  {
+    name: "Препарат 10: Тимус (вилочкова залоза)",
+    questions: [
+      { id: "p10_1", text: "Вкажіть барвник для ядер (H&E). Опишіть грубу строму органа (компоненти, тип тканини, фарбування, структури всередині).", points: 20 },
+      { id: "p10_2", text: "Ніжна строма органа: назва клітин та їх ембріональне походження.", points: 15 },
+      { id: "p10_3", text: "Часточка тимуса: назвіть її 2 компоненти, особливості їхнього забарвлення та причину цієї різниці.", points: 25 },
+      { id: "p10_4", text: "Тільця Гассаля: локалізація, забарвлення, вигляд, назва клітин, що їх утворюють, їхні функції та умови збільшення кількості.", points: 30 }
+    ]
+  },
+  {
+    name: "Препарат 11: Селезінка",
+    questions: [
+      { id: "p11_1", text: "Опишіть грубу строму (компоненти, тканина, забарвлення) та ніжну строму (тканина, клітина, походження).", points: 20 },
+      { id: "p11_2", text: "Паренхіма селезінки: Частина 1 (назва, забарвлення, причина властивостей) та Частина 2 (назва, забарвлення, причина властивостей).", points: 25 },
+      { id: "p11_3", text: "Лімфоїдний фолікул селезінки: вкажіть тип фолікулів та перерахуйте у правильному порядку всі 4 його зони.", points: 25 },
+      { id: "p11_4", text: "Яка артерія розташована у складі лімфоїдного фолікула? Опишіть загальне функціональне значення такої організації.", points: 20 }
+    ]
+  },
+  {
+    name: "Препарат 12: Трахея",
+    questions: [
+      { id: "p12_1", text: "Шари слизової оболонки трахеї: назвіть 2 шари та детальні типи тканин у них.", points: 20 },
+      { id: "p12_2", text: "Морфофункціональна характеристика залоз трахеї: локалізація, тип за будовою, тип секрету.", points: 20 },
+      { id: "p12_3", text: "Яка оболонка утворює основу стінки органа (найбільша за товщиною)? Вкажіть її повний тканинний склад.", points: 20 },
+      { id: "p12_4", text: "Хрящова тканина трахеї: особливості організації, тип хряща, клітини у товщі, їх морфологія та структура, що оточує хрящ.", points: 25 },
+      { id: "p12_5", text: "Назвіть зовнішню оболонку трахеї та її тканинний склад.", points: 10 }
+    ]
+  },
+  {
+    name: "Препарат 13: Губа",
+    questions: [
+      { id: "p13_1", text: "Назвіть 3 частини губи на препараті (верхня, середня, нижня) та тканину, що формує основу органа.", points: 20 },
+      { id: "p13_2", text: "Морфологічна характеристика шкірної частини губи: тип епітелію та структури у сполучній тканині.", points: 20 },
+      { id: "p13_3", text: "Червона облямівка: тип і товщина епітелію, вростання тканини/епітелію, особливості власної пластинки та підслизової основи.", points: 25 },
+      { id: "p13_4", text: "Слизова частина губи: тип і товщина епітелію, особливості власної пластинки та підслизової оболонки.", points: 20 },
+      { id: "p13_5", text: "Губні залози: назва, тип за будовою та тип секрету.", points: 15 }
+    ]
+  },
+  {
+    name: "Препарат 14: Розвиток зуба (стадія дзвона)",
+    questions: [
+      { id: "p14_1", text: "Перерахуйте всі 7 компонентів зубного зачатка на стадії дзвона.", points: 25 },
+      { id: "p14_2", text: "З якої структури розвивається зачаток постійного зуба? Назвіть тканину вистелення ротової порожнини та тканину по периферії зачатка.", points: 20 },
+      { id: "p14_3", text: "Дентинобласти: опишіть морфологічні ознаки (форма, локалізація ядра, забарвлення цитоплазми та причина).", points: 20 },
+      { id: "p14_4", text: "Дентин і Емаль на препараті: вкажіть їх забарвлення, локалізацію та назвіть світліший шар дентинної речовини.", points: 20 },
+      { id: "p14_5", text: "Енамелобласти (амелобласти): опишіть їхні морфологічні особливості (форма клітин, локалізація ядра).", points: 15 }
+    ]
+  },
+  {
+    name: "Препарат 15: Розвиток кістки на місці сполучної тканини",
+    questions: [
+      { id: "p15_1", text: "Внутрішньомембранозний остеогенез: назва 2 барвників (H&E), який з них фарбує ядра?", points: 10 },
+      { id: "p15_2", text: "Зародкова сполучна тканина (мезенхіма): назва, особливості клітин. Які структури розташовані серед клітин мезенхіми?", points: 20 },
+      { id: "p15_3", text: "Опишіть структури щільного скупчення клітин мезенхіми та структури з яскраво-рожевим забарвленням (остеоїд). Чим зумовлене таке забарвлення?", points: 20 },
+      { id: "p15_4", text: "Опишіть Остеобласти та Остеоцити кісткової тканини: їхня локалізація та морфологічні особливості.", points: 20 },
+      { id: "p15_5", text: "Остеокласти: локалізація та детальні морфологічні особливості. Вкажіть тип кісток, що утворюються таким шляхом.", points: 20 }
+    ]
+  }
 ];
 
-const blocksConfig = [
-  { id: "special", name: "1. Спеціальна гістологія", duration: 1200 },
-  { id: "general", name: "2. Загальна гістологія", duration: 1200 },
-  { id: "slides", name: "3. Завдання 3. Діагностика мікропрепарата", duration: 600 }
-];
+// Global State
+let currentBlock = null; 
+let currentQuestions = [];
+let userAnswers = {}; 
+let timerInterval = null;
+let timeLeft = 0; 
+let totalExamPoints = 0;
 
-// ==========================================
-// ДВИЖОК ТЕСТА
-// ==========================================
-let state = {
-  blocks: [],
-  currentBlockIndex: 0,
-  answers: {},
-  timeLeft: 0,
-  timer: null,
-  selectedSpecialTopic: null, // Рандомная тема Специальной гистологии
-  selectedGeneralTopic: null   // Рандомная тема Общей гистологии
+window.onload = function() {
+  showBlockSelection();
 };
 
-function init() {
-  // Рандомный выбор тем при запуске
-  const randSpecialIdx = Math.floor(Math.random() * specialHistologyTopics.length);
-  state.selectedSpecialTopic = specialHistologyTopics[randSpecialIdx];
-
-  const randGeneralIdx = Math.floor(Math.random() * generalHistologyTopics.length);
-  state.selectedGeneralTopic = generalHistologyTopics[randGeneralIdx];
-
-  state.blocks = blocksConfig.map(b => {
-    let qList = [];
-    if (b.id === "special") qList = state.selectedSpecialTopic.questions;
-    if (b.id === "general") qList = state.selectedGeneralTopic.questions;
-    if (b.id === "slides") qList = slideQuestions;
-    
-    return { ...b, questions: qList };
-  });
-
-  startBlock(0);
-}
-
-function startBlock(index) {
-  state.currentBlockIndex = index;
-  state.timeLeft = state.blocks[index].duration;
-  render();
+function showBlockSelection() {
+  currentBlock = null;
+  clearInterval(timerInterval);
+  document.getElementById('timer').style.display = 'none';
+  document.getElementById('summary-report').innerHTML = '';
   
-  clearInterval(state.timer);
-  state.timer = setInterval(() => {
-    state.timeLeft--;
-    updateTimer();
-    if (state.timeLeft <= 0) {
-      nextBlock();
-    }
-  }, 1000);
-  updateTimer();
+  let html = `
+    <div class="topic-title" style="text-align:center; font-weight:bold; color:#ff9f43; border-left:none;">
+      ОБЕРІТЬ ЕКЗАМЕНАЦІЙНИЙ БЛОК ДЛЯ СИМУЛЯЦІЇ
+    </div>
+    <div class="block-select-container">
+      <button class="block-btn" onclick="startExamBlock(1)">
+        БЛОК 1: СПЕЦІАЛЬНА ГІСТОЛОГІЯ
+        <span>Включає 15 комплексних тем (Діоптричний апарат, кровотворні, ендокринні органи, травна система, нефрони тощо)</span>
+      </button>
+      <button class="block-btn" onclick="startExamBlock(2)">
+        БЛОК 2: ЗАГАЛЬНА ГІСТОЛОГІЯ
+        <span>Включає 11 комплексних тем (Мікроскопія, цитоскелет, тканини: епітеліальна, сполучна, хрящова, кісткова, м'язові, нервова)</span>
+      </button>
+      <button class="block-btn" onclick="startExamBlock(3)">
+        БЛОК 3: ГІСТОЛОГІЧНІ ПРЕПАРАТИ (МІКРОСТРУКТУРА)
+        <span>Включає 15 екзаменаційних препаратів (Стінка серця, залози, лімфовузол, розвиток зуба, кістки, органи ШКТ, тимус тощо)</span>
+      </button>
+    </div>
+  `;
+  document.getElementById('block').innerHTML = html;
 }
 
-function updateTimer() {
-  const m = Math.floor(state.timeLeft / 60);
-  const s = state.timeLeft % 60;
-  document.getElementById("timer").innerText = `Залишилось часу на поточний блок: ${m}:${s.toString().padStart(2, '0')}`;
-}
-
-function render() {
-  const block = state.blocks[state.currentBlockIndex];
-  let html = `<h2>Поточний етап: ${block.name}</h2>`;
+function startExamBlock(blockNum) {
+  currentBlock = blockNum;
+  userAnswers = {};
+  totalExamPoints = 0;
   
-  if (block.id === "special") {
-    html += `<div class="topic-title"><strong>Випадковий білет:</strong> ${state.selectedSpecialTopic.name}</div>`;
-  } else if (block.id === "general") {
-    html += `<div class="topic-title"><strong>Випадковий білет:</strong> ${state.selectedGeneralTopic.name}</div>`;
+  let selectedTopics = [];
+  if (blockNum === 1) {
+    selectedTopics = specialHistologyTopics;
+    timeLeft = 45 * 60; // 45 хвилин
+  } else if (blockNum === 2) {
+    selectedTopics = generalHistologyTopics;
+    timeLeft = 35 * 60; // 35 хвилин
+  } else if (blockNum === 3) {
+    selectedTopics = slideTopics;
+    timeLeft = 45 * 60; // 45 хвилин
   }
   
-  block.questions.forEach((q, i) => {
-    const currentAns = state.answers[q.id];
+  // Компіляція питань
+  currentQuestions = [];
+  selectedTopics.forEach(topic => {
+    topic.questions.forEach(q => {
+      currentQuestions.push({
+        id: q.id,
+        text: q.text,
+        points: q.points,
+        topicName: topic.name
+      });
+      totalExamPoints += q.points;
+      userAnswers[q.id] = null; // за замовчуванням не відповіджено
+    });
+  });
+  
+  // Запуск таймера
+  document.getElementById('timer').style.display = 'block';
+  updateTimerDisplay();
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimerDisplay();
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      alert("Час вичерпано! Перехід до генерації екзаменаційного протоколу.");
+      finishExam();
+    }
+  }, 1000);
+  
+  renderQuestions();
+}
+
+function updateTimerDisplay() {
+  let min = Math.floor(timeLeft / 60);
+  let sec = timeLeft % 60;
+  document.getElementById('timer').innerText = `Залишилось часу: ${min}:${sec < 10 ? '0' : ''}${sec}`;
+}
+
+function renderQuestions() {
+  let html = `<button class="main-menu-btn" onclick="showBlockSelection()">← Повернутися до вибору блоку</button>`;
+  let currentTopic = "";
+  
+  currentQuestions.forEach((q, index) => {
+    if (currentTopic !== q.topicName) {
+      currentTopic = q.topicName;
+      html += `<h2>${currentTopic}</h2>`;
+    }
+    
+    let active0 = userAnswers[q.id] === 0 ? "active-0" : "";
+    let active05 = userAnswers[q.id] === 0.5 ? "active-05" : "";
+    let active1 = userAnswers[q.id] === 1 ? "active-1" : "";
+    
     html += `
-      <div class="question">
-        <p><strong>№ ${i+1}. ${q.text}</strong></p>
+      <div class="question" id="q_container_${q.id}">
+        <p><strong>Питання ${index + 1} [Бал: ${q.points}]:</strong> ${q.text}</p>
         <div class="btn-group">
-          <button class="${currentAns === 0 ? 'active-0' : ''}" onclick="setAnswer('${q.id}', 0)">0 (Не знав)</button>
-          <button class="${currentAns === 0.5 ? 'active-05' : ''}" onclick="setAnswer('${q.id}', 0.5)">0.5 (Частково)</button>
-          <button class="${currentAns === 1 ? 'active-1' : ''}" onclick="setAnswer('${q.id}', 1)">1.0 (Повністю)</button>
+          <button class="${active1}" onclick="setAnswer('${q.id}', 1)">Повна правильна відповідь (100%)</button>
+          <button class="${active05}" onclick="setAnswer('${q.id}', 0.5)">Часткова/неповна відповідь (50%)</button>
+          <button class="${active0}" onclick="setAnswer('${q.id}', 0)">Неправильна відповідь / Не знає (0%)</button>
         </div>
       </div>
     `;
   });
   
-  const isLast = state.currentBlockIndex === state.blocks.length - 1;
-  html += `<button class="nav-btn" onclick="nextBlock()">${isLast ? 'Завершити іспит та вивести результати' : 'Зберегти та перейти до наступного блоку'}</button>`;
-  
-  document.getElementById("block").innerHTML = html;
+  html += `<button class="nav-btn" onclick="finishExam()">ЗАВЕРШИТИ ІСПИТ ТА СФОРМУВАТИ ПРОТОКОЛ</button>`;
+  document.getElementById('block').innerHTML = html;
   window.scrollTo(0, 0);
 }
 
-function setAnswer(id, value) {
-  state.answers[id] = value;
-  render();
+function setAnswer(qId, val) {
+  userAnswers[qId] = val;
+  let container = document.getElementById(`q_container_${qId}`);
+  let btns = container.getElementsByTagName('button');
+  
+  btns[0].className = val === 1 ? "active-1" : "";
+  btns[1].className = val === 0.5 ? "active-05" : "";
+  btns[2].className = val === 0 ? "active-00" : ""; // fallback CSS trigger
+  
+  // Перерендер для фіксації стійкого стану
+  renderQuestionsSilently(qId, val);
 }
 
-function nextBlock() {
-  if (state.currentBlockIndex < state.blocks.length - 1) {
-    startBlock(state.currentBlockIndex + 1);
-  } else {
-    finishExam();
-  }
+function renderQuestionsSilently(qId, val) {
+  userAnswers[qId] = val;
 }
 
 function finishExam() {
-  clearInterval(state.timer);
-  document.getElementById("timer").style.display = "none";
-  document.getElementById("block").style.display = "none";
+  clearInterval(timerInterval);
+  document.getElementById('timer').style.display = 'none';
   
-  let tableRowsHtml = "";
-  let totalEarned200 = 0;
+  let earnedPoints = 0;
+  let correctCount = 0;
+  let partialCount = 0;
+  let incorrectCount = 0;
+  let unansweredCount = 0;
   
-  blocksConfig.forEach(bConfig => {
-    let blockQuestions = [];
-    if (bConfig.id === "special") blockQuestions = state.selectedSpecialTopic.questions;
-    if (bConfig.id === "general") blockQuestions = state.selectedGeneralTopic.questions;
-    if (bConfig.id === "slides") blockQuestions = slideQuestions;
-
-    let maxBlockPoints = 0;
-    let earnedBlockPoints = 0;
+  currentQuestions.forEach(q => {
+    let status = userAnswers[q.id];
+    if (status === 1) {
+      earnedPoints += q.points;
+      correctCount++;
+    } else if (status === 0.5) {
+      earnedPoints += (q.points * 0.5);
+      partialCount++;
+    } else if (status === 0) {
+      incorrectCount++;
+    } else {
+      unansweredCount++;
+    }
+  });
+  
+  let percentage = (earnedPoints / totalExamPoints) * 100;
+  let grade5 = 2;
+  let gradeEcts = "F";
+  let gradeStyle = "bad-grade";
+  
+  if (percentage >= 90) { grade5 = 5; gradeEcts = "A"; gradeStyle = "good-grade"; }
+  else if (percentage >= 85) { grade5 = 4; gradeEcts = "B"; gradeStyle = "good-grade"; }
+  else if (percentage >= 75) { grade5 = 4; gradeEcts = "C"; gradeStyle = "good-grade"; }
+  else if (percentage >= 65) { grade5 = 3; gradeEcts = "D"; gradeStyle = "normal-grade"; }
+  else if (percentage >= 60) { grade5 = 3; gradeEcts = "E"; gradeStyle = "normal-grade"; }
+  else if (percentage >= 35) { grade5 = 2; gradeEcts = "FX"; gradeStyle = "bad-grade"; }
+  
+  let reportHtml = `
+    <div class="topic-title" style="text-align:center; font-weight:bold; color:#fff; font-size:22px; border-left:none; background:#222230;">
+      ОФІЦІЙНИЙ ВІДОМОРЕЄСТРАЦІЙНИЙ ПРОТОКОЛ СИМУЛЯЦІЇ (БЛОК ${currentBlock})
+    </div>
     
-    blockQuestions.forEach(q => {
-      const coeff = state.answers[q.id] !== undefined ? state.answers[q.id] : 0;
-      earnedBlockPoints += coeff * q.points;
-      maxBlockPoints += q.points;
-    });
+    <div class="final-score-row">
+      <div>
+        <strong>Рейтинговий бал:</strong> <span class="${gradeStyle}">${earnedPoints.toFixed(1)} / ${totalExamPoints}</span> 
+        <span style="font-size:16px; color:#aaa;">(${percentage.toFixed(1)}%)</span>
+      </div>
+      <div>
+        <strong>Оцінка:</strong> <span class="${gradeStyle}">${grade5} (${gradeEcts})</span>
+      </div>
+    </div>
     
-    const percent = maxBlockPoints > 0 ? Math.round((earnedBlockPoints / maxBlockPoints) * 1000) / 10 : 0;
-    const points200 = Math.round((percent / 100) * 200 * 100) / 100;
+    <h3 style="margin-top:25px; color:#ff9f43;">Статистичний розподіл відповідей:</h3>
+    <ul>
+      <li>Повних правильних відповідей (100% балів): <strong style="color:#10ac84;">${correctCount}</strong></li>
+      <li>Часткових відповідей (50% балів): <strong style="color:#feca57;">${partialCount}</strong></li>
+      <li>Неправильних відповідей / пропущених (0% балів): <strong style="color:#ee5253;">${incorrectCount}</strong></li>
+      <li>Залишено без відповіді: <strong>${unansweredCount}</strong></li>
+    </ul>
     
-    let grade4 = 2;
-    let gradeClass = "bad-grade";
-    if (percent >= 50 && percent < 75) { grade4 = 3; gradeClass = "normal-grade"; }
-    else if (percent >= 75 && percent < 90) { grade4 = 4; gradeClass = "good-grade"; }
-    else if (percent >= 90) { grade4 = 5; gradeClass = "good-grade"; }
+    <h3 style="margin-top:25px; color:#ff9f43;">Деталізований аудит по елементам контролю:</h3>
+    <table class="results-table">
+      <thead>
+        <tr>
+          <th>№</th>
+          <th>Тема / Об'єкт</th>
+          <th>Макс</th>
+          <th>Набрано</th>
+          <th>Статус структури</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+  
+  currentQuestions.forEach((q, index) => {
+    let status = userAnswers[q.id];
+    let earned = 0;
+    let label = "Не знає / Помилка";
+    let cls = "bad-grade";
     
-    totalEarned200 += points200;
+    if (status === 1) { earned = q.points; label = "Зараховано (100%)"; cls = "good-grade"; }
+    else if (status === 0.5) { earned = q.points * 0.5; label = "Частково (50%)"; cls = "normal-grade"; }
+    else if (status === null) { label = "Без відповіді"; }
     
-    let displayedName = "";
-    if(bConfig.id === "special") displayedName = `Спеціальна гістологія (${state.selectedSpecialTopic.name.split(':')[0]})`;
-    if(bConfig.id === "general") displayedName = `Загальна гістологія (${state.selectedGeneralTopic.name.split(':')[0]})`;
-    if(bConfig.id === "slides") displayedName = "Завдання 3. Діагностика мікропрепарата";
-
-    tableRowsHtml += `
+    reportHtml += `
       <tr>
-        <td>${displayedName}</td>
-        <td class="${gradeClass}">${percent}%</td>
-        <td class="${gradeClass}">${points200}</td>
-        <td class="${gradeClass}">${grade4}</td>
+        <td>${index + 1}</td>
+        <td>
+          <span style="font-size:11px; color:#888; display:block;">${q.topicName}</span>
+          ${q.text}
+        </td>
+        <td><strong>${q.points}</strong></td>
+        <td><strong class="${cls}">${earned.toFixed(1)}</strong></td>
+        <td class="${cls}">${label}</td>
       </tr>
     `;
   });
   
-  const finalPoints200 = Math.round((totalEarned200 / 3) * 100) / 100;
-  const finalPercent = Math.round((finalPoints200 / 200) * 1000) / 10;
-  
-  let finalGrade4 = 2;
-  let finalClass = "bad-grade";
-  if (finalPercent >= 50 && finalPercent < 75) { finalGrade4 = 3; finalClass = "normal-grade"; }
-  else if (finalPercent >= 75 && finalPercent < 90) { finalGrade4 = 4; finalClass = "good-grade"; }
-  else if (finalPercent >= 90) { finalGrade4 = 5; finalClass = "good-grade"; }
-  
-  let reportHtml = `
-    <h2>Результати іспиту</h2>
-    <table class="results-table">
-      <thead>
-        <tr>
-          <th>Завдання</th>
-          <th>%</th>
-          <th>200-бальна оцінка</th>
-          <th>4-бальна оцінка</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${tableRowsHtml}
+  reportHtml += `
       </tbody>
     </table>
-    
-    <div class="final-score-row">
-      <span><strong>Итоговая оценка</strong></span>
-      <span>
-        <span class="${finalClass}" style="margin-right:20px;">${finalPercent}%</span>
-        <span class="${finalClass}" style="margin-right:20px;">${finalPoints200}/200</span>
-        <span class="${finalClass}" style="font-size:26px;">${finalGrade4}</span>
-      </span>
-    </div>
-    <p style="text-align:center; color:#aaa; margin-top:30px;">The exam is finished</p>
+    <button class="nav-btn" style="background:#282833; border:1px solid #444; margin-top:30px;" onclick="showBlockSelection()">ПРОЙТИ СИМУЛЯЦІЮ ЗНОВУ (ВИБІР БЛОКУ)</button>
   `;
   
-  document.getElementById("summary-report").innerHTML = reportHtml;
+  document.getElementById('block').innerHTML = '';
+  document.getElementById('summary-report').innerHTML = reportHtml;
+  window.scrollTo(0, 0);
 }
-
-init();
 </script>
 
 </body>
