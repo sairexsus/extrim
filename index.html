@@ -1055,8 +1055,7 @@ function getRandomTopic(blockNum) {
   
   const randomIndex = Math.floor(Math.random() * topics.length);
   const selectedTopic = topics[randomIndex];
-  // ПРИБРАЛИ shuffleArray - питання йдуть у вашому порядку
-  const questions = [...selectedTopic.questions];
+  const questions = [...selectedTopic.questions];  // ← БЕЗ ПЕРЕМІШУВАННЯ
   
   return { name: selectedTopic.name, questions: questions };
 }
