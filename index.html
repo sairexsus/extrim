@@ -1,523 +1,270 @@
 <!DOCTYPE html>
-<html lang="ru">
-<head> 
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>EXTRIM Прокачки</title>
-
-<link rel="icon" href="extrim.png" type="image/png">
-
-<style>
-  :root {
-    --extrim-cursor: url('cursor_1.png') 24 12, auto;
-  }
-  * { cursor: var(--extrim-cursor) !important; }
-
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: url('fon.jpg') no-repeat center center fixed;
-    background-size: cover;
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-    color: #eee;
-    user-select: none;
-    min-height: 100vh;
-    background-color: rgba(0,0,0,0.6);
-    background-blend-mode: multiply;
-  }
-  #container {
-    display: flex;
-    gap: 40px;
-    align-items: flex-start;
-  }
-  #leftSide {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  h1 {
-    margin-bottom: 20px;
-    color: #ffd700;
-    text-shadow: 0 0 10px #ffd700;
-    cursor: pointer;
-  }
-  #buttonsWrapper {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 20px;
-  }
-  .channel-btn {
-    padding: 10px 25px 10px 40px;
-    cursor: pointer;
-    background: rgba(255,255,255,0.2);
-    border-radius: 10px;
-    font-weight: bold;
-    color: #eee;
-    user-select: none;
-    transition: background-color 0.3s, color 0.3s;
-    position: relative;
-    display: flex;
-    align-items: center;
-  }
-  .channel-btn.active {
-    background: gold;
-    color: black;
-  }
-  .channel-btn.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-  .channel-btn img {
-    position: absolute;
-    left: 10px;
-    width: 20px;
-    height: 20px;
-    object-fit: contain;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-  #grid {
-    display: grid;
-    grid-template-columns: repeat(8, 80px);
-    grid-gap: 10px;
-  }
-  .cell {
-    background: rgba(255,255,255,0.1);
-    border: 2px solid rgba(255,255,255,0.3);
-    border-radius: 12px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 24px;
-    color: #b0f2b6;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    user-select: none;
-    transition: background-color 0.3s, transform 0.3s;
-    width: 80px;
-    height: 80px;
-  }
-  .cell:hover:not(.opened) {
-    background-color: rgba(50,255,50,0.3);
-    transform: scale(1.1);
-  }
-  .cell.opened {
-    cursor: default;
-    background-color: rgba(0,0,0,0.6);
-    color: #fff;
-    text-shadow: 0 0 6px #0f0;
-  }
-  .cell.bomb {
-    background-color: #ff3333 !important;
-    color: white !important;
-    text-shadow: 0 0 10px #ff0000;
-  }
-  #buttonsBottom {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-  }
-  #rouletteBtn, #showAllBtn {
-    padding: 12px 28px;
-    font-size: 18px;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-    margin: 0 10px;
-  }
-  #rouletteBtn {
-    background: gold;
-    color: black;
-  }
-  #rouletteBtn:disabled {
-    background: #666;
-    color: #ccc;
-    cursor: not-allowed;
-  }
-  #showAllBtn {
-    background: #444;
-    color: #eee;
-  }
-  #showAllBtn:disabled {
-    background: #222;
-    cursor: not-allowed;
-    color: #555;
-  }
-  #rouletteWrapper {
-    position: relative;
-    width: 240px;
-    height: 240px;
-    user-select: none;
-  }
-  #rouletteWheel {
-    width: 240px;
-    height: 240px;
-    border-radius: 50%;
-    border: 8px solid gold;
-    box-shadow: 0 0 30px gold;
-    background: conic-gradient(
-      #a6f5a6 0deg 180deg,
-      #f5a6a6 180deg 360deg
-    );
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-    font-size: 18px;
-    user-select: none;
-    text-shadow: 0 0 5px #000;
-    color: #fff;
-  }
-  #labelCombined {
-    user-select: none;
-    pointer-events: none;
-    color: #fff;
-    display: flex;
-    gap: 8px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-  #labelCombined .red {
-    color: #a00;
-    text-shadow: 0 0 8px #f00;
-  }
-  #labelCombined .green {
-    color: #0a0;
-    text-shadow: 0 0 8px #0f0;
-  }
-  #arrow {
-    position: absolute;
-    top: 50%;
-    right: -50px;
-    transform: translateY(-50%) rotate(-90deg);
-    width: 0;
-    height: 0;
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
-    border-bottom: 30px solid gold;
-    filter: drop-shadow(0 0 3px #fff);
-    z-index: 10;
-    cursor: pointer;
-    transition: filter 0.3s ease;
-  }
-  #arrow:hover {
-    filter: drop-shadow(0 0 8px gold);
-  }
-  #resultMessage {
-    margin-top: 15px;
-    font-size: 22px;
-    font-weight: bold;
-    text-align: center;
-    min-height: 30px;
-    color: gold;
-    text-shadow: 0 0 5px #fff;
-  }
-  @keyframes explosion {
-    0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(2); opacity: 0.8; }
-    100% { transform: scale(0); opacity: 0; }
-  }
-  .explosion {
-    position: absolute;
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: radial-gradient(circle, #ff0 0%, #f00 70%, transparent 100%);
-    animation: explosion 0.6s forwards;
-    pointer-events: none;
-    z-index: 100;
-  }
-
-  /* Анимация подсветки ячейки */
-  @keyframes highlightGreen {
-    0% { box-shadow: 0 0 0px #0f0; }
-    50% { box-shadow: 0 0 20px #0f0; }
-    100% { box-shadow: 0 0 0px #0f0; }
-  }
-  @keyframes highlightRed {
-    0% { box-shadow: 0 0 0px #f00; }
-    50% { box-shadow: 0 0 20px #f00; }
-    100% { box-shadow: 0 0 0px #f00; }
-  }
-  .highlight-green { animation: highlightGreen 0.6s ease-in-out; }
-  .highlight-red { animation: highlightRed 0.6s ease-in-out; }
-
-  /* Подсветка сектора рулетки */
-  @keyframes sectorFlash {
-    0% { opacity: 0; }
-    50% { opacity: 0.7; }
-    100% { opacity: 0; }
-  }
-  .highlight-sector {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    pointer-events: none;
-    opacity: 0.7;
-    animation: sectorFlash 0.6s ease-in-out forwards;
-    z-index: 5;
-  }
-  .highlight-green-sector { background: rgba(0,255,0,0.4); }
-  .highlight-red-sector { background: rgba(255,0,0,0.4); }
-</style>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Симулятор іспиту з гістології</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0f0f11;
+      color: #e5e5e7;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #16161a;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    h1 {
+      text-align: center;
+      color: #ffffff;
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+    h2 {
+      color: #ff9f43;
+      border-bottom: 2px solid #333;
+      padding-bottom: 8px;
+      margin-top: 20px;
+    }
+    #timer {
+      font-size: 24px;
+      text-align: center;
+      margin: 15px 0;
+      color: #00ff99;
+      font-weight: bold;
+      background: #1e1e24;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    .question {
+      background: #22222b;
+      padding: 16px;
+      margin: 15px 0;
+      border-radius: 8px;
+      border-left: 5px solid #ff9f43;
+      transition: transform 0.2s;
+    }
+    .question p {
+      margin: 0 0 12px 0;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    button {
+      padding: 8px 16px;
+      cursor: pointer;
+      background: #32323e;
+      color: #fff;
+      border: 1px solid #444;
+      border-radius: 6px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    button:hover {
+      background: #454556;
+    }
+    button.active-0 { background: #ee5253 !important; border-color: #ff6b6b; }
+    button.active-05 { background: #feca57 !important; border-color: #ffff66; color: #000; }
+    button.active-1 { background: #10ac84 !important; border-color: #1dd1a1; }
+    
+    .nav-btn {
+      margin-top: 25px;
+      background: #0052cc;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      width: 100%;
+      border-radius: 8px;
+    }
+    .nav-btn:hover {
+      background: #0066ff;
+    }
+    #result {
+      margin-top: 25px;
+      font-size: 20px;
+      text-align: center;
+      padding: 20px;
+      background: #1e1e24;
+      border-radius: 8px;
+      border: 1px solid #333;
+    }
+    #result strong {
+      color: #00ff99;
+    }
+  </style>
 </head>
 <body>
 
-<!-- АУДИО ДЛЯ ВЗРЫВА — ФАЙЛ ДОЛЖЕН ЛЕЖАТЬ В ОДНОЙ ПАПКЕ С ЭТИМ HTML -->
-<audio id="bombSound" src="soundbomb.mp3" preload="auto"></audio>
-
-<div id="container">
-  <div id="leftSide">
-    <h1 onclick="location.reload()">EXTRIM Прокачки</h1>
-
-    <div id="buttonsWrapper">
-      <div id="twitchBtn" class="channel-btn active">
-        <img src="twitchlogo.png" alt="Twitch" />
-        Twitch
-      </div>
-      <div id="youtubeBtn" class="channel-btn">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png" alt="YouTube" />
-        YouTube
-      </div>
-    </div>
-
-    <div id="grid"></div>
-
-    <div id="buttonsBottom">
-      <button id="rouletteBtn" disabled>Запустить рулетку</button>
-      <button id="showAllBtn" disabled>Показать все ячейки</button>
-    </div>
-
-    <div id="resultMessage"></div>
-  </div>
-
-  <div id="rouletteWrapper">
-    <div id="rouletteWheel">
-      <div id="labelCombined"><span class="red">Сгорело</span>   |   <span class="green">x2</span></div>
-    </div>
-    <div id="arrow" title="Стрелка рулетки (наведение)"></div>
-  </div>
+<div class="container">
+  <h1>Гістологія — симулятор іспиту</h1>
+  <div id="timer">Завантаження таймера...</div>
+  <div id="block"></div>
+  <div id="result">Поточний результат: 0% → Очінка: —</div>
 </div>
 
 <script>
-const grid = document.getElementById('grid');
-const twitchBtn = document.getElementById('twitchBtn');
-const youtubeBtn = document.getElementById('youtubeBtn');
-const rouletteBtn = document.getElementById('rouletteBtn');
-const showAllBtn = document.getElementById('showAllBtn');
-const rouletteWheel = document.getElementById('rouletteWheel');
-const resultMessage = document.getElementById('resultMessage');
-const bombSound = document.getElementById('bombSound');
+// ==========================================
+// БАЗА ДАНИХ (Сюди потім вставляй свої питання)
+// ==========================================
+const questionBank = [
+  // Загальна гістологія (topics: ["general"])
+  { id: "g1", text: "Клітини кісткової тканини (остеобласти, остеоцити, остеокласти). Хто що робить?", weight: 9, topics: ["general"] },
+  { id: "g2", text: "Морфофункціональна характеристика та класифікація епітелію.", weight: 11, topics: ["general"] },
 
-const twitchRewards = [1000, 1500, 2000, 2500, 3000, 5000];
-const youtubeRewards = [1000, 1500, 2000, 2500, 5000, 10000];
-const twitchChances = [0.4, 0.25, 0.175, 0.125, 0.075, 0.125];
-const youtubeChances = [0.3, 0.3, 0.25, 0.125, 0.09, 0.06];
+  // Спеціальна гістологія (topics: ["special"])
+  { id: "s1", text: "Будова часточки печінки, тріади печінки та хід крові.", weight: 15, topics: ["special"] },
+  { id: "s2", text: "Ендокринна частина підшлункової залози (острівці Лангерганса).", weight: 10, topics: ["special"] },
 
-let rewards = twitchRewards;
-let chances = twitchChances;
+  // Препарати (topics: ["slides"])
+  { id: "p1", text: "Мікропрепарат: Серце (пучок Пуркін'є, кардіоміоцити). На що звернути увагу?", weight: 10, topics: ["slides"] },
+  { id: "p2", text: "Мікропрепарат: Легеня (альвеоли, бронхи різного калібру).", weight: 10, topics: ["slides"] }
+];
 
-const cellsCount = 64;
-let cellsData = [];
-let selectedCellIndex = null;
-let gameOver = false;
-let rouletteSpinning = false;
+// Налаштування блоків (час у секундах: 300 сек = 5 хвилин)
+const blocksConfig = [
+  { id: "general", name: "Блок 1: Загальна гістологія", duration: 300 },
+  { id: "special", name: "Блок 2: Спеціальна гістологія", duration: 300 },
+  { id: "slides", name: "Блок 3: Мікропрепарати", duration: 300 }
+];
 
-function createGrid() {
-  grid.innerHTML = '';
-  cellsData = [];
-  selectedCellIndex = null;
-  gameOver = false;
-  rouletteSpinning = false;
-  rouletteBtn.disabled = true;
-  showAllBtn.disabled = true;
-  resultMessage.textContent = '';
+// ==========================================
+// ЛОГІКА ДОДАТКУ (Двигун симулятора)
+// ==========================================
+let state = {
+  blocks: [],
+  currentBlock: 0,
+  answers: {},
+  timeLeft: 0,
+  timer: null
+};
 
-  twitchBtn.classList.remove('disabled');
-  youtubeBtn.classList.remove('disabled');
-
-  for (let i = 0; i < cellsCount; i++) {
-    const cell = document.createElement('div');
-    cell.classList.add('cell');
-    cell.dataset.index = i;
-    cell.addEventListener('click', onCellClick);
-    grid.appendChild(cell);
-  }
-
-  generateCellsData();
+function init() {
+  state.blocks = buildBlocks();
+  startBlock(0);
 }
 
-function generateCellsData() {
-  cellsData = [];
-  const guaranteedIndex = Math.floor(Math.random() * cellsCount);
+function buildBlocks() {
+  return blocksConfig.map(block => {
+    const filtered = questionBank.filter(q => q.topics.includes(block.id));
+    return {
+      ...block,
+      questions: shuffle([...filtered]) // Рандомізація порядку всередині блоку
+    };
+  });
+}
 
-  for (let i = 0; i < cellsCount; i++) {
-    if (i === guaranteedIndex) {
-      cellsData.push({ type: 'reward', value: rewards[rewards.length - 1] });
-    } else {
-      const bombChance = 0.095;
-      if (Math.random() < bombChance) {
-        cellsData.push({ type: 'bomb' });
-      } else {
-        cellsData.push({ type: 'reward', value: getRandomReward() });
-      }
+function startBlock(index) {
+  state.currentBlock = index;
+  state.timeLeft = state.blocks[index].duration;
+  render();
+  
+  clearInterval(state.timer);
+  state.timer = setInterval(() => {
+    state.timeLeft--;
+    updateTimer();
+    if (state.timeLeft <= 0) {
+      nextBlock();
     }
-  }
+  }, 1000);
+  updateTimer();
 }
 
-function getRandomReward() {
-  let r = Math.random();
-  let sum = 0;
-  for (let i = 0; i < chances.length; i++) {
-    sum += chances[i];
-    if (r <= sum) return rewards[i];
-  }
-  return rewards[0];
+function render() {
+  const block = state.blocks[state.currentBlock];
+  let html = `<h2>${block.name}</h2>`;
+  
+  block.questions.forEach(q => {
+    const currentAns = state.answers[q.id];
+    
+    html += `
+      <div class="question">
+        <p><strong>${q.text}</strong> <span style="color:#aaa;">(Вага: ${q.weight}%)</span></p>
+        <div class="btn-group">
+          <button class="${currentAns === 0 ? 'active-0' : ''}" onclick="answer('${q.id}', 0)">Не відповів (-)</button>
+          <button class="${currentAns === 0.5 ? 'active-05' : ''}" onclick="answer('${q.id}', 0.5)">Частково (½)</button>
+          <button class="${currentAns === 1 ? 'active-1' : ''}" onclick="answer('${q.id}', 1)">Повністю (+)</button>
+        </div>
+      </div>
+    `;
+  });
+  
+  const isLast = state.currentBlock === state.blocks.length - 1;
+  html += `<button class="nav-btn" onclick="nextBlock()">${isLast ? 'Завершити іспит' : 'Перейти до наступного блоку'}</button>`;
+  
+  document.getElementById("block").innerHTML = html;
 }
 
-function createExplosion(cell) {
-  const rect = cell.getBoundingClientRect();
-  const explosion = document.createElement('div');
-  explosion.classList.add('explosion');
-  explosion.style.left = rect.left + window.scrollX + 'px';
-  explosion.style.top = rect.top + window.scrollY + 'px';
-  document.body.appendChild(explosion);
-  setTimeout(() => explosion.remove(), 600);
-
-  if (bombSound) {
-    try {
-      bombSound.currentTime = 0;
-      bombSound.play();
-    } catch (e) {
-      console.warn('Не удалось воспроизвести звук:', e);
-    }
-  }
+function answer(id, val) {
+  state.answers[id] = val;
+  render(); // перерендер для оновлення підсвітки кнопок
+  calculate();
 }
 
-function onCellClick(e) {
-  if (gameOver || rouletteSpinning) return;
-  if (selectedCellIndex !== null) return;
+function calculate() {
+  let total = 0;
+  let max = 0;
 
-  const cell = e.currentTarget;
-  const index = +cell.dataset.index;
-  if (cell.classList.contains('opened')) return;
+  questionBank.forEach(q => {
+    const v = state.answers[q.id] !== undefined ? state.answers[q.id] : 0;
+    total += v * q.weight;
+    max += q.weight;
+  });
 
-  cell.classList.add('opened');
-  selectedCellIndex = index;
-  showAllBtn.disabled = false;
+  const percent = max > 0 ? Math.round((total / max) * 100) : 0;
 
-  const data = cellsData[index];
-  if (data.type === 'bomb') {
-    cell.textContent = '💣';
-    cell.classList.add('bomb');
-    createExplosion(cell); 
-    gameOver = true;
-    rouletteBtn.disabled = true;
-    twitchBtn.classList.add('disabled');
-    youtubeBtn.classList.add('disabled');
-    twitchBtn.classList.remove('active');
-    youtubeBtn.classList.remove('active');
-    resultMessage.textContent = 'Взорвалась бомба! Игра окончена.';
+  let grade = 2;
+  if (percent >= 50 && percent < 75) grade = 3;
+  else if (percent >= 75 && percent < 90) grade = 4;
+  else if (percent >= 90) grade = 5;
+
+  let color = "#ee5253";
+  if (grade === 3) color = "#feca57";
+  if (grade >= 4) color = "#10ac84";
+
+  document.getElementById("result").innerHTML = `
+    Поточний загальний результат: <strong style="color:${color};">${percent}%</strong> → Оцінка: <strong style="color:${color};">${grade}</strong>
+  `;
+
+  localStorage.setItem("histology_exam_res", JSON.stringify({ percent, grade }));
+}
+
+function updateTimer() {
+  const m = Math.floor(state.timeLeft / 60);
+  const s = state.timeLeft % 60;
+  document.getElementById("timer").innerText = `Залишилось часу на блок: ${m}:${s.toString().padStart(2, '0')}`;
+}
+
+function nextBlock() {
+  if (state.currentBlock < state.blocks.length - 1) {
+    startBlock(state.currentBlock + 1);
   } else {
-    cell.textContent = data.value;
-    rouletteBtn.disabled = false;
-    resultMessage.textContent = '';
+    clearInterval(state.timer);
+    document.getElementById("block").innerHTML = "<h2 style='text-align:center; color:#10ac84;'>Іспит завершено! Привітання кафедрі!</h2>";
+    document.getElementById("timer").style.display = "none";
+    calculate(); // Фінальний розрахунок
   }
 }
 
-twitchBtn.addEventListener('click', () => {
-  if (gameOver || rouletteSpinning) return;
-  if (selectedCellIndex !== null) return;
-  rewards = twitchRewards;
-  chances = twitchChances;
-  twitchBtn.classList.add('active');
-  youtubeBtn.classList.remove('active');
-  createGrid();
-});
-
-youtubeBtn.addEventListener('click', () => {
-  if (gameOver || rouletteSpinning) return;
-  if (selectedCellIndex !== null) return;
-  rewards = youtubeRewards;
-  chances = youtubeChances;
-  youtubeBtn.classList.add('active');
-  twitchBtn.classList.remove('active');
-  createGrid();
-});
-
-rouletteBtn.addEventListener('click', () => {
-  if (rouletteSpinning || selectedCellIndex === null) return;
-
-  rouletteSpinning = true;
-  rouletteBtn.disabled = true;
-  twitchBtn.classList.add('disabled');
-  youtubeBtn.classList.add('disabled');
-
-  resultMessage.textContent = 'Рулетка крутится...';
-
-  const spins = 3 + Math.random() * 3;
-  const baseAngle = Math.random() * 360;
-  const offset = 90; 
-  const stopAngle = 360 * spins + baseAngle;
-
-  rouletteWheel.style.transition = 'transform 5s cubic-bezier(0.25, 0.1, 0.25, 1)';
-  rouletteWheel.style.transform = `rotate(${stopAngle}deg)`;
-
-  setTimeout(() => {
-    rouletteSpinning = false;
-    const finalAngle = (stopAngle + offset) % 360;
-    let isGreen = finalAngle >= 0 && finalAngle < 180;
-
-    // Подсветка сектора рулетки
-    const highlightSector = document.createElement('div');
-    highlightSector.classList.add('highlight-sector');
-    highlightSector.classList.add(isGreen ? 'highlight-green-sector' : 'highlight-red-sector');
-    rouletteWheel.appendChild(highlightSector);
-    setTimeout(() => highlightSector.remove(), 600);
-
-    const cell = grid.children[selectedCellIndex];
-    if (isGreen) {
-      const currentValue = parseInt(cell.textContent) || 0;
-      const newValue = currentValue * 2;
-      cell.textContent = newValue;
-      resultMessage.innerHTML = `Поздравляем! Награда удвоена: <span style="color:#0f0;">${newValue}</span>`;
-      cell.classList.add('highlight-green');
-      setTimeout(() => cell.classList.remove('highlight-green'), 600);
-    } else {
-      cell.textContent = '💔';
-      cell.classList.add('bomb');
-      resultMessage.innerHTML = `<span style="color:#f00;">Сумма сгорела! 😢</span>`;
-      cell.classList.add('highlight-red');
-      setTimeout(() => cell.classList.remove('highlight-red'), 600);
-      gameOver = true;
-    }
-  }, 5200);
-});
-
-showAllBtn.addEventListener('click', () => {
-  for (let i = 0; i < cellsCount; i++) {
-    const cell = grid.children[i];
-    if (cell.classList.contains('opened')) continue;
-    const data = cellsData[i];
-    cell.classList.add('opened');
-    if (data.type === 'bomb') {
-      cell.textContent = '💣';
-      cell.classList.add('bomb');
-    } else {
-      cell.textContent = data.value;
-    }
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
-  showAllBtn.disabled = true;
-});
+  return arr;
+}
 
-createGrid();
+// Запуск
+init();
 </script>
 
 </body>
