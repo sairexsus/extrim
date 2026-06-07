@@ -179,20 +179,22 @@
       align-items: center;
       border: 1px solid #444;
     }
-    .prep-details {
-      margin-top: 8px;
-      background: #1b1b22;
-      padding: 10px;
-      border-radius: 6px;
+    .selected-topic-info {
+      background: #1e1e24;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+      border: 1px solid #ff9f43;
+    }
+    .selected-topic-info h3 {
+      margin: 0 0 5px 0;
+      color: #ff9f43;
+    }
+    .selected-topic-info p {
+      margin: 0;
+      color: #aaa;
       font-size: 14px;
-      border-left: 3px solid #ff9f43;
-    }
-    .prep-details ul {
-      margin: 5px 0 0 0;
-      padding-left: 20px;
-    }
-    .prep-details li {
-      margin-bottom: 4px;
     }
   </style>
 </head>
@@ -710,6 +712,7 @@ const slideTopics = [
 // Global State
 let currentBlock = null; 
 let currentQuestions = [];
+let currentTopicInfo = null;
 let userAnswers = {}; 
 let timerInterval = null;
 let timeLeft = 0; 
@@ -722,6 +725,29 @@ function shuffleArray(arr) {
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
   return arr;
+}
+
+// Функція для отримання випадкової теми з блоку
+function getRandomTopic(blockNum) {
+  let topics = [];
+  if (blockNum === 1) {
+    topics = specialHistologyTopics;
+  } else if (blockNum === 2) {
+    topics = generalHistologyTopics;
+  } else if (blockNum === 3) {
+    topics = slideTopics;
+  }
+  
+  const randomIndex = Math.floor(Math.random() * topics.length);
+  const selectedTopic = topics[randomIndex];
+  
+  // Перемішуємо питання в межах теми
+  const shuffledQuestions = shuffleArray([...selectedTopic.questions]);
+  
+  return {
+    name: selectedTopic.name,
+    questions: shuffledQuestions
+  };
 }
 
 window.onload = function() {
@@ -741,15 +767,15 @@ function showBlockSelection() {
     <div class="block-select-container">
       <button class="block-btn" onclick="startExamBlock(1)">
         БЛОК 1: СПЕЦІАЛЬНА ГІСТОЛОГІЯ
-        <span>Включає 15 комплексних тем (Діоптричний апарат, кровотворні, ендокринні органи, травна система, нефрони тощо)</span>
+        <span>15 тем. Випадково обирається ОДНА тема з усіма її питаннями. Час: 5 хвилин</span>
       </button>
       <button class="block-btn" onclick="startExamBlock(2)">
         БЛОК 2: ЗАГАЛЬНА ГІСТОЛОГІЯ
-        <span>Включає 11 комплексних тем (Мікроскопія, цитоскелет, тканини: епітеліальна, сполучна, хрящова, кісткова, м'язові, нервова)</span>
+        <span>11 тем. Випадково обирається ОДНА тема з усіма її питаннями. Час: 5 хвилин</span>
       </button>
       <button class="block-btn" onclick="startExamBlock(3)">
         БЛОК 3: ГІСТОЛОГІЧНІ ПРЕПАРАТИ (МІКРОСТРУКТУРА)
-        <span>Включає 15 екзаменаційних препаратів (Стінка серця, залози, лімфовузол, розвиток зуба, кістки, органи ШКТ, тимус тощо)</span>
+        <span>15 тем. Випадково обирається ОДНА тема з усіма її питаннями. Час: 5 хвилин</span>
       </button>
     </div>
   `;
@@ -759,36 +785,21 @@ function showBlockSelection() {
 function startExamBlock(blockNum) {
   currentBlock = blockNum;
   userAnswers = {};
+  
+  // Отримуємо випадкову тему з блоку
+  const randomTopic = getRandomTopic(blockNum);
+  currentTopicInfo = randomTopic.name;
+  currentQuestions = randomTopic.questions;
+  
+  // Обчислюємо загальну суму балів
   totalExamPoints = 0;
-  
-  let selectedTopics = [];
-  if (blockNum === 1) {
-    selectedTopics = specialHistologyTopics;
-    timeLeft = 45 * 60;
-  } else if (blockNum === 2) {
-    selectedTopics = generalHistologyTopics;
-    timeLeft = 35 * 60;
-  } else if (blockNum === 3) {
-    selectedTopics = slideTopics;
-    timeLeft = 45 * 60;
-  }
-  
-  // Компіляція питань з перемішуванням в межах КОЖНОЇ теми
-  currentQuestions = [];
-  selectedTopics.forEach(topic => {
-    // Створюємо копію масиву питань і перемішуємо її
-    const shuffledTopicQuestions = shuffleArray([...topic.questions]);
-    shuffledTopicQuestions.forEach(q => {
-      currentQuestions.push({
-        id: q.id,
-        text: q.text,
-        points: q.points,
-        topicName: topic.name
-      });
-      totalExamPoints += q.points;
-      userAnswers[q.id] = null;
-    });
+  currentQuestions.forEach(q => {
+    totalExamPoints += q.points;
+    userAnswers[q.id] = null;
   });
+  
+  // Час: 5 хвилин = 300 секунд
+  timeLeft = 5 * 60;
   
   // Запуск таймера
   document.getElementById('timer').style.display = 'block';
@@ -815,14 +826,17 @@ function updateTimerDisplay() {
 
 function renderQuestions() {
   let html = `<button class="main-menu-btn" onclick="showBlockSelection()">← Повернутися до вибору блоку</button>`;
-  let currentTopic = "";
+  
+  // Інформація про вибрану тему
+  html += `
+    <div class="selected-topic-info">
+      <h3>📚 ВИПАДКОВО ОБРАНА ТЕМА</h3>
+      <p>${currentTopicInfo}</p>
+      <p style="margin-top: 8px; font-size: 12px; color: #00ff99;">⏱️ Час на виконання: 5 хвилин | Всього питань: ${currentQuestions.length}</p>
+    </div>
+  `;
   
   currentQuestions.forEach((q, index) => {
-    if (currentTopic !== q.topicName) {
-      currentTopic = q.topicName;
-      html += `<h2>${currentTopic}</h2>`;
-    }
-    
     let active0 = userAnswers[q.id] === 0 ? "active-0" : "";
     let active05 = userAnswers[q.id] === 0.5 ? "active-05" : "";
     let active1 = userAnswers[q.id] === 1 ? "active-1" : "";
@@ -852,7 +866,6 @@ function setAnswer(qId, val) {
   if (container) {
     const btns = container.querySelectorAll('.btn-group button');
     if (btns.length >= 3) {
-      // Скидаємо класи
       btns[0].className = val === 1 ? "active-1" : "";
       btns[1].className = val === 0.5 ? "active-05" : "";
       btns[2].className = val === 0 ? "active-0" : "";
@@ -897,9 +910,20 @@ function finishExam() {
   else if (percentage >= 60) { grade5 = 3; gradeEcts = "E"; gradeStyle = "normal-grade"; }
   else if (percentage >= 35) { grade5 = 2; gradeEcts = "FX"; gradeStyle = "bad-grade"; }
   
+  let blockName = "";
+  if (currentBlock === 1) blockName = "СПЕЦІАЛЬНА ГІСТОЛОГІЯ";
+  else if (currentBlock === 2) blockName = "ЗАГАЛЬНА ГІСТОЛОГІЯ";
+  else blockName = "ГІСТОЛОГІЧНІ ПРЕПАРАТИ";
+  
   let reportHtml = `
     <div class="topic-title" style="text-align:center; font-weight:bold; color:#fff; font-size:22px; border-left:none; background:#222230;">
-      ОФІЦІЙНИЙ ВІДОМОРЕЄСТРАЦІЙНИЙ ПРОТОКОЛ СИМУЛЯЦІЇ (БЛОК ${currentBlock})
+      ОФІЦІЙНИЙ ПРОТОКОЛ СИМУЛЯЦІЇ
+    </div>
+    
+    <div class="selected-topic-info" style="margin-top: 10px;">
+      <h3>📋 ОБРАНА ТЕМА</h3>
+      <p>${currentTopicInfo}</p>
+      <p style="margin-top: 5px;"><strong>Блок:</strong> ${blockName}</p>
     </div>
     
     <div class="final-score-row">
@@ -916,19 +940,19 @@ function finishExam() {
     <ul>
       <li>Повних правильних відповідей (100% балів): <strong style="color:#10ac84;">${correctCount}</strong></li>
       <li>Часткових відповідей (50% балів): <strong style="color:#feca57;">${partialCount}</strong></li>
-      <li>Неправильних відповідей / пропущених (0% балів): <strong style="color:#ee5253;">${incorrectCount}</strong></li>
+      <li>Неправильних відповідей (0% балів): <strong style="color:#ee5253;">${incorrectCount}</strong></li>
       <li>Залишено без відповіді: <strong>${unansweredCount}</strong></li>
     </ul>
     
-    <h3 style="margin-top:25px; color:#ff9f43;">Деталізований аудит по елементам контролю:</h3>
+    <h3 style="margin-top:25px; color:#ff9f43;">Деталізований аудит по питаннях:</h3>
     <table class="results-table">
       <thead>
         <tr>
           <th>№</th>
-          <th>Тема / Об'єкт</th>
+          <th>Питання</th>
           <th>Макс</th>
           <th>Набрано</th>
-          <th>Статус структури</th>
+          <th>Статус</th>
         </tr>
       </thead>
       <tbody>
@@ -942,15 +966,12 @@ function finishExam() {
     
     if (status === 1) { earned = q.points; label = "Зараховано (100%)"; cls = "good-grade"; }
     else if (status === 0.5) { earned = q.points * 0.5; label = "Частково (50%)"; cls = "normal-grade"; }
-    else if (status === null) { label = "Без відповіді"; }
+    else if (status === null) { label = "Без відповіді"; cls = "bad-grade"; }
     
     reportHtml += `
       <tr>
         <td>${index + 1}</td>
-        <td>
-          <span style="font-size:11px; color:#888; display:block;">${q.topicName}</span>
-          ${q.text}
-        </td>
+        <td>${q.text}</td>
         <td><strong>${q.points}</strong></td>
         <td><strong class="${cls}">${earned.toFixed(1)}</strong></td>
         <td class="${cls}">${label}</td>
