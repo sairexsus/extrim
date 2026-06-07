@@ -32,15 +32,6 @@
       padding-bottom: 8px;
       margin-top: 25px;
     }
-    .topic-title {
-      background: #1e1e24;
-      padding: 12px;
-      border-radius: 6px;
-      color: #00ff99;
-      font-size: 18px;
-      margin-bottom: 15px;
-      border-left: 4px solid #00ff99;
-    }
     #timer {
       font-size: 22px;
       text-align: center;
@@ -140,10 +131,20 @@
 
 <div class="container">
   <h1>Гістологія — Іспит</h1>
-  <div id="timer">Завантаження таймера...</div>
+  <div id="timer">Залишилось часу на поточний блок: 20:00</div>
   <div id="block"></div>
   <div id="summary-report"></div>
 </div>
 
 <script>
 // ==========================================
+// БЛОК 1: СПЕЦІАЛЬНА ГІСТОЛОГІЯ
+// ==========================================
+const specialQuestions = [
+  // Тема 1
+  { id: "s1_1", text: "Морфофункціональна характеристика діоптричного апарату ока: Компоненти діоптричного апарату ока.", points: 15 },
+  { id: "s1_2", text: "Шари рогівки (5 шарів у послідовності).", points: 20 },
+  { id: "s1_3", text: "Морфологічна характеристика переднього епітелію рогівки.", points: 10 },
+  { id: "s1_4", text: "Тип і вид тканини, що утворює власну речовину рогівки.", points: 10 },
+  { id: "s1_5", text: "Structural компоненти власної речовини рогівки.", points: 15 },
+  { id: "s1_6", text: "Речовини, що забезпечують прозорість власної речо
