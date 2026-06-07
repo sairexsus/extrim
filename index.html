@@ -715,6 +715,15 @@ let timerInterval = null;
 let timeLeft = 0; 
 let totalExamPoints = 0;
 
+// Функція для перемішування масиву (алгоритм Fisher-Yates)
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 window.onload = function() {
   showBlockSelection();
 };
@@ -755,19 +764,21 @@ function startExamBlock(blockNum) {
   let selectedTopics = [];
   if (blockNum === 1) {
     selectedTopics = specialHistologyTopics;
-    timeLeft = 5 * 60; // 45 хвилин
+    timeLeft = 45 * 60;
   } else if (blockNum === 2) {
     selectedTopics = generalHistologyTopics;
-    timeLeft = 5 * 60; // 35 хвилин
+    timeLeft = 35 * 60;
   } else if (blockNum === 3) {
     selectedTopics = slideTopics;
-    timeLeft = 5 * 60; // 45 хвилин
+    timeLeft = 45 * 60;
   }
   
-  // Компіляція питань
+  // Компіляція питань з перемішуванням в межах КОЖНОЇ теми
   currentQuestions = [];
   selectedTopics.forEach(topic => {
-    topic.questions.forEach(q => {
+    // Створюємо копію масиву питань і перемішуємо її
+    const shuffledTopicQuestions = shuffleArray([...topic.questions]);
+    shuffledTopicQuestions.forEach(q => {
       currentQuestions.push({
         id: q.id,
         text: q.text,
@@ -775,7 +786,7 @@ function startExamBlock(blockNum) {
         topicName: topic.name
       });
       totalExamPoints += q.points;
-      userAnswers[q.id] = null; // за замовчуванням не відповіджено
+      userAnswers[q.id] = null;
     });
   });
   
@@ -835,19 +846,18 @@ function renderQuestions() {
 
 function setAnswer(qId, val) {
   userAnswers[qId] = val;
-  let container = document.getElementById(`q_container_${qId}`);
-  let btns = container.getElementsByTagName('button');
   
-  btns[0].className = val === 1 ? "active-1" : "";
-  btns[1].className = val === 0.5 ? "active-05" : "";
-  btns[2].className = val === 0 ? "active-00" : ""; // fallback CSS trigger
-  
-  // Перерендер для фіксації стійкого стану
-  renderQuestionsSilently(qId, val);
-}
-
-function renderQuestionsSilently(qId, val) {
-  userAnswers[qId] = val;
+  // Оновлюємо візуальний стан кнопок для конкретного питання
+  const container = document.getElementById(`q_container_${qId}`);
+  if (container) {
+    const btns = container.querySelectorAll('.btn-group button');
+    if (btns.length >= 3) {
+      // Скидаємо класи
+      btns[0].className = val === 1 ? "active-1" : "";
+      btns[1].className = val === 0.5 ? "active-05" : "";
+      btns[2].className = val === 0 ? "active-0" : "";
+    }
+  }
 }
 
 function finishExam() {
